@@ -1,0 +1,10 @@
+{
+  "pack": {
+    "pack_format": 34,
+    "description": "Default Texture Of Turtle Client",
+    "supported_formats": {
+      "min_inclusive": 30,
+      "max_inclusive": 99
+    }
+  }
+}
