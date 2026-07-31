@@ -1,0 +1,38 @@
+{
+	"schemaVersion": 1,
+	"id": "turtle-client",
+	"version": "${version}",
+	"name": "Turtle Client",
+	"description": "A custom Minecraft client with HUD, ClickGUI and modules.",
+	"authors": [
+		"You"
+	],
+	"contact": {},
+	"license": "MIT",
+	"icon": "assets/turtle-client/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			{
+				"value": "com.endiq.TurtleClient",
+				"adapter": "kotlin"
+			}
+		],
+		"client": [
+			{
+				"value": "com.endiq.client.TurtleClientClient",
+				"adapter": "kotlin"
+			}
+		]
+	},
+	"mixins": [
+		"turtle-client.mixins.json"
+	],
+	"depends": {
+		"fabricloader": "*",
+		"minecraft": ">=1.21.4",
+		"java": ">=21",
+		"fabric-api": "*",
+		"fabric-language-kotlin": "*"
+	}
+}
