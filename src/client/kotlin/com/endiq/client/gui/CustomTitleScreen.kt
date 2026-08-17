@@ -6,6 +6,7 @@ import net.minecraft.client.gui.screen.Screen
 import net.minecraft.client.gui.screen.multiplayer.MultiplayerScreen
 import net.minecraft.client.gui.screen.option.OptionsScreen
 import net.minecraft.client.gui.screen.world.SelectWorldScreen
+import net.minecraft.client.render.RenderLayer
 import net.minecraft.text.Text
 import net.minecraft.util.Identifier
 import net.minecraft.util.Util
@@ -116,14 +117,14 @@ class CustomTitleScreen : Screen(Text.literal("Turtle Client")) {
         drawPanorama(ctx)
 
         try {
-            ctx.drawTexture(LOGO, logoX, logoY, 0f, 0f, logoSize, logoSize, logoSize, logoSize)
+            ctx.drawTexture(RenderLayer::getGuiTextured, LOGO, logoX, logoY, 0f, 0f, logoSize, logoSize, logoSize, logoSize, -1)
         } catch (ignored: Exception) {}
 
         for (b in buttons) drawMenuButton(ctx, b, mx, my)
         for (b in icons) drawMenuButton(ctx, b, mx, my)
 
         try {
-            ctx.drawTexture(FOOTER, footerX, footerY, 0f, 0f, footerW, footerH, footerW, footerH)
+            ctx.drawTexture(RenderLayer::getGuiTextured, FOOTER, footerX, footerY, 0f, 0f, footerW, footerH, footerW, footerH, -1)
         } catch (ignored: Exception) {}
         val ver = "Turtle Client v1.0"
         ctx.drawTextWithShadow(textRenderer, ver, width / 2 - textRenderer.getWidth(ver) / 2, footerY + footerH + 4, 0xFFFFFFFF.toInt())
@@ -135,7 +136,7 @@ class CustomTitleScreen : Screen(Text.literal("Turtle Client")) {
         val hovered = mx in b.x..(b.x + b.w) && my in b.y..(b.y + b.h)
         val tex = if (hovered) b.hover else b.normal
         try {
-            ctx.drawTexture(tex, b.x, b.y, 0f, 0f, b.w, b.h, b.w, b.h)
+            ctx.drawTexture(RenderLayer::getGuiTextured, tex, b.x, b.y, 0f, 0f, b.w, b.h, b.w, b.h, -1)
         } catch (ignored: Exception) {}
         if (hovered) {
             ctx.drawTextWithShadow(textRenderer, b.label, mx + 12, my - 10, 0xFFFFFFFF.toInt())
@@ -153,14 +154,14 @@ class CustomTitleScreen : Screen(Text.literal("Turtle Client")) {
         val frac = (totalT - Math.floor(totalT)).toFloat()
 
         try {
-            ctx.drawTexture(panoFaces[idx], 0, 0, 0f, 0f, width, height, width, height)
+            ctx.drawTexture(RenderLayer::getGuiTextured, panoFaces[idx], 0, 0, 0f, 0f, width, height, width, height, -1)
         } catch (ignored: Exception) {}
 
         if (frac > 0.02f) {
             try {
-                ctx.setShaderColor(1f, 1f, 1f, frac)
-                ctx.drawTexture(panoFaces[nextIdx], 0, 0, 0f, 0f, width, height, width, height)
-                ctx.setShaderColor(1f, 1f, 1f, 1f)
+                val alpha = (frac.coerceIn(0f, 1f) * 255f).toInt()
+                val color = (alpha shl 24) or 0x00FFFFFF
+                ctx.drawTexture(RenderLayer::getGuiTextured, panoFaces[nextIdx], 0, 0, 0f, 0f, width, height, width, height, color)
             } catch (ignored: Exception) {}
         }
 

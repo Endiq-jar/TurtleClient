@@ -19,7 +19,7 @@ class DirectionHudModule : Module("Direction HUD", "Shows facing direction", Cat
     val westColor   = color("West Color", r=255, g=170, b=0)
     fun getText(): String {
         val p = MinecraftClient.getInstance().player ?: return "Dir: N/A"
-        val dir = Direction.fromRotation(p.yaw.toDouble()).getName().uppercase()
+        val dir = Direction.fromHorizontalDegrees(p.yaw.toDouble()).getName().uppercase()
         return if (showArrow.value) "$dir ${getArrow(p.yaw)}" else dir
     }
     private fun getArrow(yaw: Float) = when {

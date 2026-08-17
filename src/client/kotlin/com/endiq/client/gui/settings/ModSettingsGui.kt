@@ -8,6 +8,7 @@ import com.endiq.client.modules.DropdownSetting
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.gui.screen.Screen
+import net.minecraft.client.render.RenderLayer
 import net.minecraft.text.Text
 import net.minecraft.util.Identifier
 import org.lwjgl.glfw.GLFW
@@ -59,8 +60,7 @@ class ModSettingsGui(
 
         // Logo
         try {
-            ctx.setShaderColor(1f, 1f, 1f, 1f)
-            ctx.drawTexture(LOGO, sx + 4, sy + 3, 0f, 0f, 22, 22, 22, 22)
+            ctx.drawTexture(RenderLayer::getGuiTextured, LOGO, sx + 4, sy + 3, 0f, 0f, 22, 22, 22, 22, -1)
         } catch (_: Exception) {}
 
         // Title

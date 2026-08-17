@@ -4,6 +4,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.SplashOverlay;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -43,7 +44,7 @@ public class ExampleClientMixin {
 
             // Turtle loading icon 88x88
             try {
-                ctx.drawTexture(LOADING, cx - 44, cy - 44, 0f, 0f, 88, 88, 88, 88);
+                ctx.drawTexture(RenderLayer::getGuiTextured, LOADING, cx - 44, cy - 44, 0f, 0f, 88, 88, 88, 88, -1);
             } catch (Exception ignored) {}
 
             // Progress bar
@@ -82,10 +83,8 @@ public class ExampleClientMixin {
             try {
                 int sw = ctx.getScaledWindowWidth();
                 int sh = ctx.getScaledWindowHeight();
-                // Draw 48x16 turtle logo bottom-right
-                ctx.setShaderColor(1f, 1f, 1f, 0.7f);
-                ctx.drawTexture(LOGO, sw - 52, sh - 18, 0f, 0f, 48, 16, 48, 16);
-                ctx.setShaderColor(1f, 1f, 1f, 1f);
+                // Draw 48x16 turtle logo bottom-right at ~70% opacity
+                ctx.drawTexture(RenderLayer::getGuiTextured, LOGO, sw - 52, sh - 18, 0f, 0f, 48, 16, 48, 16, 0xB2FFFFFF);
             } catch (Exception ignored) {}
         }
 
