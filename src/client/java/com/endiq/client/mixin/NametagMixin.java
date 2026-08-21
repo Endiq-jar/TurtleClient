@@ -48,7 +48,7 @@ public class NametagMixin {
             float by = -bh / 2f;
 
             var vc = vcp.getBuffer(
-                net.minecraft.client.render.RenderLayer.getEntityTranslucentCull(BADGE));
+                net.minecraft.client.render.RenderLayer.getEntityTranslucent(BADGE));
 
             // Simple quad for the badge icon
             vc.vertex(mat, bx,      by,      0).color(255,255,255,220).texture(0f,0f).light(light);
