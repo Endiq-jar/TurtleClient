@@ -3,16 +3,14 @@ package com.endiq.client.cosmetics
 import net.minecraft.client.MinecraftClient
 import java.io.File
 
-/**
- * Registry + equip-state for custom cosmetics.
- *
- * Cosmetics are PNGs dropped by the user into:
- *   <run_dir>/custom_cosmetics/<folderName>/*.png
- *
- * This manager only tracks the registry and equip state. Actual rendering
- * (cape/hat/wings meshes, texture upload) is a separate concern per
- * COSMETICS_README.txt and is not implemented here.
- */
+// Registry + equip-state for custom cosmetics.
+//
+// Cosmetics are PNG files dropped by the user into:
+//   <run_dir>/custom_cosmetics/<folderName>/  (any PNG in that folder)
+//
+// This manager only tracks the registry and equip state. Actual rendering
+// (cape/hat/wings meshes, texture upload) is a separate concern per
+// COSMETICS_README.txt and is not implemented here.
 object CosmeticManager {
 
     enum class CosmeticType(val displayName: String, val icon: String, val folderName: String) {
