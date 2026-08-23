@@ -55,28 +55,26 @@ public class EntityCullingMixin {
 
         if (!CullingBridge.getOcclusionCullEnabled()) return;
 
+        // 3 sample points, not 5 -- fewer RaycastContext allocations per entity
+        // per frame while still catching "fully behind a wall" cases. Two
+        // opposite corners plus center is enough to avoid false-cancels on
+        // partially-visible entities without doubling the raycast cost.
         Box box = entity.getBoundingBox();
-        Vec3d[] targets = new Vec3d[]{
-                new Vec3d(box.minX, box.minY, box.minZ),
-                new Vec3d(box.maxX, box.minY, box.maxZ),
-                new Vec3d(box.minX, box.maxY, box.minZ),
-                new Vec3d(box.maxX, box.maxY, box.maxZ),
-                new Vec3d((box.minX + box.maxX) / 2.0, (box.minY + box.maxY) / 2.0, (box.minZ + box.maxZ) / 2.0),
-        };
-
-        for (Vec3d target : targets) {
-            RaycastContext rc = new RaycastContext(
-                    camPos, target,
-                    RaycastContext.ShapeType.COLLIDER,
-                    RaycastContext.FluidHandling.NONE,
-                    entity
-            );
-            HitResult hit = entity.getWorld().raycast(rc);
-            if (hit == null || hit.getType() == HitResult.Type.MISS) {
-                return; // at least one point is visible -- render normally
-            }
+        if (turtleClient$rayBlocked(camPos, new Vec3d(box.minX, box.minY, box.minZ), entity)
+                && turtleClient$rayBlocked(camPos, new Vec3d(box.maxX, box.maxY, box.maxZ), entity)
+                && turtleClient$rayBlocked(camPos, box.getCenter(), entity)) {
+            ci.cancel();
         }
+    }
 
-        ci.cancel(); // every sampled point was blocked
+    private boolean turtleClient$rayBlocked(Vec3d from, Vec3d to, Entity entity) {
+        RaycastContext rc = new RaycastContext(
+                from, to,
+                RaycastContext.ShapeType.COLLIDER,
+                RaycastContext.FluidHandling.NONE,
+                entity
+        );
+        HitResult hit = entity.getWorld().raycast(rc);
+        return hit != null && hit.getType() != HitResult.Type.MISS;
     }
 }
