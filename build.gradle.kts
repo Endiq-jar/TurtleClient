@@ -96,8 +96,9 @@ java {
     }
 }
 
+val projectName = property("mod.id") as String
+
 tasks.jar {
-    val projectName = property("mod.id") as String
     inputs.property("projectName", projectName)
     from("LICENSE") {
         rename { "${it}_$projectName" }
