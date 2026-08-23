@@ -81,7 +81,15 @@ tasks.withType<JavaCompile>().configureEach {
 
 kotlin {
     compilerOptions {
-        jvmTarget = JvmTarget.fromTarget(requiredJava.majorVersion)
+        // Kotlin Gradle plugin is pinned to 2.1.20 (see deps.fabric_kotlin comment
+        // in stonecutter.properties.toml re: the Loom remap metadata ceiling), but
+        // JvmTarget.JVM_25/26 weren't added until Kotlin 2.3.0. On the 26.2 node
+        // (requiredJava = VERSION_25) JvmTarget.fromTarget("25") throws
+        // "Unknown Kotlin JVM target: 25". Fall back to the highest target this
+        // plugin version actually knows about rather than bumping the plugin
+        // globally, which would reintroduce the remap failure on every other node.
+        jvmTarget = runCatching { JvmTarget.fromTarget(requiredJava.majorVersion) }
+            .getOrElse { JvmTarget.entries.last() }
     }
 }
 
