@@ -23,7 +23,6 @@ stonecutter {
     create(rootProject) {
         // Yarn-mapped era (obfuscated) -- edit this list to add/drop versions.
         versions(
-            "1.17.1",
             "1.18.2",
             "1.19.4",
             "1.20.1",
