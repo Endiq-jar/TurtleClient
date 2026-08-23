@@ -45,8 +45,10 @@ dependencies {
     // (unobfuscated) -- loom-back-compat picks the right one per node.
     loomx.applyMojangMappings()
 
+    val fabricApiVersion: String = sc.properties["deps.fabric_api"]
+
     modImplementation("net.fabricmc:fabric-loader:${property("deps.fabric_loader")}")
-    modImplementation("net.fabricmc.fabric-api:fabric-api:${sc.properties["deps.fabric_api"]}")
+    modImplementation("net.fabricmc.fabric-api:fabric-api:$fabricApiVersion")
     modImplementation("net.fabricmc:fabric-language-kotlin:${property("deps.fabric_kotlin")}")
 }
 
