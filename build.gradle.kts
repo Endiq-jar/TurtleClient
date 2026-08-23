@@ -105,6 +105,7 @@ java {
 }
 
 val projectName = property("mod.id") as String
+val modVersion = property("mod.version") as String
 
 tasks.jar {
     inputs.property("projectName", projectName)
@@ -119,7 +120,7 @@ tasks.register<Copy>("buildAndCollect") {
     group = "build"
     description = "Builds this version's jar and copies it to build/libs/{mc version}/"
 
-    inputs.property("version", property("mod.version"))
+    inputs.property("version", modVersion)
     from(loomx.modJar.flatMap { it.archiveFile }, loomx.modSourcesJar.flatMap { it.archiveFile })
     into(rootProject.layout.buildDirectory.file("libs/${sc.current.version}"))
 }
