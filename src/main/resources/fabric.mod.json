@@ -26,12 +26,12 @@
 		]
 	},
 	"mixins": [
-		"turtle-client.mixins.json"
+		"turtle-client.mixins.json",
+		"turtle-client.client.mixins.json"
 	],
 	"depends": {
-		"fabricloader": "*",
-		"minecraft": "*",
-		"java": "*",
+		"fabricloader": ">=0.17",
+		"minecraft": "${minecraft}",
 		"fabric-api": "*",
 		"fabric-language-kotlin": "*"
 	}

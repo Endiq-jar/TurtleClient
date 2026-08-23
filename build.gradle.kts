@@ -1,72 +1,119 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-	id("fabric-loom")
-	`maven-publish`
-	id("org.jetbrains.kotlin.jvm") version "2.1.20"
+    // Applies the correct Loom variant (remapping Yarn build vs. unobfuscated
+    // Mojang-names build) automatically based on the active Minecraft version.
+    id("dev.kikugie.loom-back-compat")
+    id("org.jetbrains.kotlin.jvm") version "2.1.20"
+    `maven-publish`
 }
 
-version = providers.gradleProperty("mod_version").get()
-group = providers.gradleProperty("maven_group").get()
+// DO NOT set group here manually per-version -- Stonecutter needs it consistent.
+group = property("mod.group") as String
+version = "${property("mod.version")}+${sc.current.version}"
+base.archivesName.set(property("mod.id") as String)
+
+val requiredJava: JavaVersion = when {
+    sc.current.parsed >= "26.1" -> JavaVersion.VERSION_25
+    sc.current.parsed >= "1.20.5" -> JavaVersion.VERSION_21
+    sc.current.parsed >= "1.18" -> JavaVersion.VERSION_17
+    sc.current.parsed >= "1.17" -> JavaVersion.VERSION_16
+    else -> JavaVersion.VERSION_1_8
+}
 
 repositories {
+    maven("https://maven.fabricmc.net/") { name = "Fabric" }
 }
 
 loom {
-	splitEnvironmentSourceSets()
+    splitEnvironmentSourceSets()
 
-	mods {
-		register("turtle-client") {
-			sourceSet(sourceSets.main.get())
-			sourceSet(sourceSets.getByName("client"))
-		}
-	}
+    mods {
+        register(property("mod.id") as String) {
+            sourceSet(sourceSets.main.get())
+            sourceSet(sourceSets.getByName("client"))
+        }
+    }
+
+    fabricModJsonPath = rootProject.file("src/main/resources/fabric.mod.json")
 }
 
 dependencies {
-	minecraft("com.mojang:minecraft:${providers.gradleProperty("minecraft_version").get()}")
-	mappings("net.fabricmc:yarn:${providers.gradleProperty("yarn_mappings").get()}:v2")
-	modImplementation("net.fabricmc:fabric-loader:${providers.gradleProperty("loader_version").get()}")
-	modImplementation("net.fabricmc.fabric-api:fabric-api:${providers.gradleProperty("fabric_api_version").get()}")
-	modImplementation("net.fabricmc:fabric-language-kotlin:${providers.gradleProperty("fabric_kotlin_version").get()}")
+    minecraft("com.mojang:minecraft:${sc.current.version}")
+
+    // Yarn on pre-26.1 (obfuscated) versions, Mojang's own names on 26.1+
+    // (unobfuscated) -- loom-back-compat picks the right one per node.
+    loomx.applyMojangMappings()
+
+    modImplementation("net.fabricmc:fabric-loader:${property("deps.fabric_loader")}")
+    modImplementation("net.fabricmc.fabric-api:fabric-api:${sc.properties["deps.fabric_api"]}")
+    modImplementation("net.fabricmc:fabric-language-kotlin:${property("deps.fabric_kotlin")}")
 }
 
 tasks.processResources {
-	val version = version
-	inputs.property("version", version)
-	filesMatching("fabric.mod.json") {
-		expand("version" to version)
-	}
+    fun MutableMap<String, String>.register(key: String, prop: String) {
+        val value: String = sc.properties[prop]
+        inputs.property(key, value)
+        set(key, value)
+    }
+
+    val props = buildMap {
+        register("id", "mod.id")
+        register("name", "mod.name")
+        register("version", "mod.version")
+        register("minecraft", "mod.mc_compat")
+    }
+
+    filesMatching("fabric.mod.json") { expand(props) }
+
+    val mixinJava = "JAVA_${requiredJava.majorVersion}"
+    filesMatching("*.mixins.json") { expand("java" to mixinJava) }
 }
 
 tasks.withType<JavaCompile>().configureEach {
-	options.release = 21
+    options.release = requiredJava.majorVersion.toInt()
 }
 
 kotlin {
-	compilerOptions {
-		jvmTarget = JvmTarget.JVM_21
-	}
+    compilerOptions {
+        jvmTarget = JvmTarget.fromTarget(requiredJava.majorVersion)
+    }
 }
 
 java {
-	withSourcesJar()
-	sourceCompatibility = JavaVersion.VERSION_21
-	targetCompatibility = JavaVersion.VERSION_21
+    withSourcesJar()
+    sourceCompatibility = requiredJava
+    targetCompatibility = requiredJava
+
+    toolchain {
+        vendor = JvmVendorSpec.ADOPTIUM
+        languageVersion = JavaLanguageVersion.of(requiredJava.majorVersion)
+    }
 }
 
 tasks.jar {
-	val projectName = project.name
-	inputs.property("projectName", projectName)
-	from("LICENSE") {
-		rename { "${it}_$projectName" }
-	}
+    val projectName = property("mod.id") as String
+    inputs.property("projectName", projectName)
+    from("LICENSE") {
+        rename { "${it}_$projectName" }
+    }
+}
+
+// Builds every version and collects the jars into build/libs/<mc-version>/
+// Run from Termux/CI with: ./gradlew chiseledBuild
+tasks.register<Copy>("buildAndCollect") {
+    group = "build"
+    description = "Builds this version's jar and copies it to build/libs/{mc version}/"
+
+    inputs.property("version", property("mod.version"))
+    from(loomx.modJar.flatMap { it.archiveFile }, loomx.modSourcesJar.flatMap { it.archiveFile })
+    into(rootProject.layout.buildDirectory.file("libs/${sc.current.version}"))
 }
 
 publishing {
-	publications {
-		register<MavenPublication>("mavenJava") {
-			from(components["java"])
-		}
-	}
+    publications {
+        register<MavenPublication>("mavenJava") {
+            from(components["java"])
+        }
+    }
 }

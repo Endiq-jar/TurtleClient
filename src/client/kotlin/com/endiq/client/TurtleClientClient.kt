@@ -12,7 +12,12 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents
+//? if >=1.21.8 {
+/*import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry
+import net.minecraft.util.Identifier
+*///?} else {
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback
+//?}
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.option.KeyBinding
@@ -24,7 +29,16 @@ object TurtleClientClient : ClientModInitializer {
 
     override fun onInitializeClient() {
         ModuleManager.init()
+
+        // Fabric's old HudRenderCallback (DrawContext-based) was replaced by
+        // HudElementRegistry in 1.21.6, which itself moved package and switched
+        // from PoseStack to Matrix3x2fStack in 1.21.8. HudRenderer.onHudRender
+        // needs a matching overload on the >=1.21.8 branch -- see MIGRATION_NOTES.md.
+        //? if >=1.21.8 {
+        /*HudElementRegistry.addLast(Identifier.of("turtle-client", "hud"), HudRenderer::onHudRender)
+        *///?} else {
         HudRenderCallback.EVENT.register(HudRenderer::onHudRender)
+        //?}
 
         val guiKey = KeyBindingHelper.registerKeyBinding(
             KeyBinding("key.turtle-client.gui", InputUtil.Type.KEYSYM,

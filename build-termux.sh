@@ -58,6 +58,14 @@ chmod +x "$PROJECT_DIR/gradlew"
 success "gradlew ready"
 
 # ── Step 5: Build ────────────────────────────────────────────────────
+# Turtle Client now targets multiple Minecraft versions via Stonecutter.
+# Pass one as the first argument, e.g.: bash build-termux.sh 1.21.11
+# Defaults to the 1.21.4 baseline. 26.2 needs a Java 25 JDK -- if Termux's
+# repo doesn't have one yet, that node will fail to build here; build it via
+# GitHub Actions CI instead (.github/workflows/build.yml already matrices
+# across every version).
+MC_VERSION="${1:-1.21.4}"
+info "Target version: $MC_VERSION (pass a different one as \$1 to switch)"
 info "Building TurtleClient (this takes 5–15 min on first run)..."
 info "Gradle will download Minecraft and all dependencies automatically."
 echo ""
@@ -72,12 +80,12 @@ export PATH="$JAVA_HOME/bin:$PATH"
 mkdir -p "$HOME/tmp"
 BUILD_LOG="$HOME/tmp/turtle_build.log"
 
-# Run build
-./gradlew build --no-daemon 2>&1 | tee "$BUILD_LOG" | grep -E "BUILD|FAILED|error:|> Task|Exception"
+# Run build for the selected version node
+./gradlew "${MC_VERSION}:buildAndCollect" --no-daemon 2>&1 | tee "$BUILD_LOG" | grep -E "BUILD|FAILED|error:|> Task|Exception"
 echo ""
 
 # ── Step 6: Check result ─────────────────────────────────────────────
-JAR=$(find "$PROJECT_DIR/build/libs" -name "*.jar" ! -name "*-sources.jar" 2>/dev/null | head -1)
+JAR=$(find "$PROJECT_DIR/build/libs/${MC_VERSION}" -name "*.jar" ! -name "*-sources.jar" 2>/dev/null | head -1)
 
 if [ -z "$JAR" ]; then
     echo ""

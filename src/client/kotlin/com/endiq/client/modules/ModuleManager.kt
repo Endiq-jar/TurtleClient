@@ -29,7 +29,7 @@ object ModuleManager {
         // Render
         register(AnimationsModule()); register(MotionBlurModule())
         register(NoWeatherModule()); register(TimeChangerModule()); register(ZoomModule())
-        register(FovChangerModule()); register(FullBrightModule())
+        register(FovChangerModule()); register(FullBrightModule()); register(CullingModule())
         // Utility
         register(AutoTextModule()); register(CameraModule()); register(ChatModule())
         register(NickHiderModule()); register(PopupEventsModule())

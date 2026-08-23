@@ -184,10 +184,11 @@ object HudRenderer {
         // PvP Info
         mod<PvpInfoModule>("PvP Info")?.let {
             if (it.enabled && player != null) {
-                val nearby = client.world?.entities
-                    ?.filterIsInstance<net.minecraft.entity.player.PlayerEntity>()
-                    ?.filter { e -> e != player && player.distanceTo(e) < 20f }
-                    ?.sortedBy { e -> player.distanceTo(e) }?.take(5) ?: emptyList()
+                val nearby = com.endiq.client.modules.impl.render.EntityCache
+                    .playersWithin(it.maxDist.value.toDouble())
+                    .filter { e -> e != player }
+                    .sortedBy { e -> player.distanceTo(e) }
+                    .take(it.maxPlayers.value.toInt())
                 if (nearby.isNotEmpty()) {
                     var py = 60
                     ctx.drawTextWithShadow(tr, "Nearby:", 2, py, RED); py += 10

@@ -1,6 +1,16 @@
-# 🐢 TurtleClient — Fabric 1.21.1
+# 🐢 TurtleClient — Fabric, multi-version
 
-A custom Minecraft client mod built with Fabric + Kotlin.
+A custom Minecraft client mod built with Fabric + Kotlin, targeting 1.17.1
+through 26.2 via [Stonecutter](https://stonecutter.kikugie.dev/). See
+`MIGRATION_NOTES.md` for the version ladder, toolchain split at 26.1, and
+known API differences that still need per-module fixes.
+
+Quick reference:
+
+```
+./gradlew "1.21.4:build"       # build one version
+./gradlew chiseledBuild        # build every version
+```
 
 ## Features
 
