@@ -1,0 +1,87 @@
+name: Build
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        mc_version:
+          - "1.17.1"
+          - "1.18.2"
+          - "1.19.4"
+          - "1.20.1"
+          - "1.20.6"
+          - "1.21.1"
+          - "1.21.4"
+          - "1.21.11"
+          - "26.2"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 26.2 needs Java 25; everything else is fine on 21+. setup-java with
+      # multiple versions installed lets Gradle's toolchain resolver pick the
+      # right one per node (see requiredJava in build.gradle.kts).
+      - name: Set up JDKs
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: |
+            25
+            21
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build ${{ matrix.mc_version }}
+        run: ./gradlew "${{ matrix.mc_version }}:buildAndCollect" --stacktrace
+
+      - name: Locate output jar
+        id: jar
+        run: |
+          JAR=$(find build/libs -path "*${{ matrix.mc_version }}*" -name "*.jar" \
+            ! -name "*-sources.jar" ! -name "*-dev.jar" | head -n1)
+          if [ -z "$JAR" ]; then
+            echo "No output jar found for ${{ matrix.mc_version }}" >&2
+            exit 1
+          fi
+          echo "path=$JAR" >> "$GITHUB_OUTPUT"
+          echo "name=$(basename "$JAR")" >> "$GITHUB_OUTPUT"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: turtle-client-${{ matrix.mc_version }}-${{ github.run_number }}
+          path: ${{ steps.jar.outputs.path }}
+
+  release:
+    needs: build
+    if: github.event_name == 'push' && github.ref_name == github.event.repository.default_branch
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ github.run_number }}
+          name: Build ${{ github.run_number }}
+          files: artifacts/**/*.jar
+          generate_release_notes: true
