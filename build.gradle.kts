@@ -26,16 +26,19 @@ repositories {
 }
 
 loom {
-    splitEnvironmentSourceSets()
-
-    mods {
-        register(property("mod.id") as String) {
-            sourceSet(sourceSets.main.get())
-            sourceSet(sourceSets.getByName("client"))
-        }
-    }
-
+    // splitEnvironmentSourceSets() requires the client jar to bundle a server
+    // jar, which only exists from 1.18 onward -- 1.17.1 doesn't have one and
+    // throws UnsupportedOperationException trying to split. TurtleClient has
+    // no server-side code at all (see fabric.mod.json: "environment": "client"),
+    // so there's nothing the split was protecting here. Merge src/client into
+    // the main source set instead, for every version uniformly.
     fabricModJsonPath = rootProject.file("src/main/resources/fabric.mod.json")
+}
+
+sourceSets.main.get().apply {
+    java.srcDir("src/client/java")
+    kotlin.srcDir("src/client/kotlin")
+    resources.srcDir("src/client/resources")
 }
 
 dependencies {

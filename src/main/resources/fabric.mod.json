@@ -10,7 +10,7 @@
 	"contact": {},
 	"license": "MIT",
 	"icon": "assets/turtle-client/icon.png",
-	"environment": "*",
+	"environment": "client",
 	"entrypoints": {
 		"main": [
 			{
