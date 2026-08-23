@@ -3,12 +3,7 @@
  "package": "com.endiq.client.mixin",
  "compatibilityLevel": "JAVA_21",
  "mixins": [],
- "client": [
-  "ExampleClientMixin$SplashMixin",
-  "ExampleClientMixin$ScreenMixin",
-  "NametagMixin",
-  "TitleScreenMixin"
- ],
+ "client": [],
  "injectors": {
   "defaultRequire": 1
  }
