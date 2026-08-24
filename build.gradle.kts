@@ -79,6 +79,25 @@ tasks.processResources {
     // class syntax in mixin class names (e.g. "ExampleClientMixin$SplashMixin")
     // and throws MissingPropertyException on any such name. Mixins.json is copied
     // as-is now; nothing in it actually needs templating.
+
+    // Guard rail for the bug above (and any future resource-processing regression
+    // that corrupts these files the same way): verify every packaged *.mixins.json
+    // is still valid JSON once processResources is done writing it out. A crash log
+    // dated 2026-08-24 (1.21.1 node) showed this exact failure reaching a device --
+    // "java.lang.IllegalArgumentException: The specified resource
+    // 'turtle-client.client.mixins.json' was invalid or could not be read" out of
+    // FabricMixinBootstrap -- from a jar built before this fix landed. Failing the
+    // build here turns that class of bug into a CI failure instead of a runtime
+    // crash on someone's phone.
+    doLast {
+        val broken = fileTree(destinationDir) { include("**/*.mixins.json") }.mapNotNull { file ->
+            runCatching { groovy.json.JsonSlurper().parse(file) }
+                .exceptionOrNull()?.let { "${file.name}: ${it.message}" }
+        }
+        if (broken.isNotEmpty()) {
+            throw GradleException("processResources emitted invalid mixin config JSON:\n" + broken.joinToString("\n"))
+        }
+    }
 }
 
 tasks.withType<JavaCompile>().configureEach {
