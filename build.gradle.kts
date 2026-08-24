@@ -108,7 +108,12 @@ tasks.processResources {
     // expected filenames first closes that blind spot.
     doLast {
         val expectedMixinConfigs = setOf("turtle-client.mixins.json", "turtle-client.client.mixins.json")
-        val packaged = fileTree(destinationDir) { include("**/*.mixins.json") }.files.associateBy { it.name }
+        // NOTE: Copy/ProcessResources' old File-typed destinationDir getter is gone
+        // as of this project's Gradle 9.5.1 wrapper -- destinationDirectory
+        // (Provider API) is the one that still exists. This got reverted back to
+        // destinationDir once already; if it goes red again on every node at once
+        // with no useful stack trace, this line is the first thing to check.
+        val packaged = fileTree(destinationDirectory.get().asFile) { include("**/*.mixins.json") }.files.associateBy { it.name }
         val missing = expectedMixinConfigs - packaged.keys
         if (missing.isNotEmpty()) {
             throw GradleException(
