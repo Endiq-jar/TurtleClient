@@ -6,6 +6,7 @@ import com.endiq.client.modules.impl.movement.*
 import com.endiq.client.modules.impl.render.*
 import com.endiq.client.modules.impl.utility.*
 import com.endiq.client.modules.impl.hypixel.*
+import com.endiq.client.modules.impl.performance.*
 
 object ModuleManager {
     val modules = mutableListOf<Module>()
@@ -37,9 +38,12 @@ object ModuleManager {
         // Hypixel
         register(HypixelAddonsModule()); register(SkyblockAddonsModule())
         register(TabStatModule()); register(UhcOverlayModule())
+        // Performance
+        register(DynamicRenderDistanceModule()); register(AdaptiveVsyncModule())
 
         modules.filter { it.name in listOf("Auto Hide HUD", "Camera", "UHC Overlay",
-            "Net Graph", "Combo Counter", "FOV Changer", "Full Bright", "Team View") }
+            "Net Graph", "Combo Counter", "FOV Changer", "Full Bright", "Team View",
+            "Dynamic Render Distance", "Adaptive VSync") }
             .forEach { it.isNew = true }
     }
 

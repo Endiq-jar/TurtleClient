@@ -94,10 +94,25 @@ real — e.g. you want TurtleClient to auto-install Lithium/Starlight/Sodium
 the way TurtleLauncher's Performance Features catalog does — that's a
 concrete, scoped feature I can build. Say which one.
 
-- **Dynamic Render/Simulation Distance** — scale `options.viewDistance` /
-  `simulationDistance` based on FPS or thermal state. This is a real,
-  scoped, buildable module (reads `MinecraftClient.getInstance().options`,
-  same pattern as `FullBrightModule`) — say the word and I'll build it next.
+## Implemented in this pass (2) — new Performance category
+
+- **Dynamic Render Distance** (`DynamicRenderDistanceModule.kt`) — polls
+  `MinecraftClient.currentFps` on an interval, steps `options.viewDistance`
+  (and optionally `simulationDistance`) down when FPS falls under a target
+  minus tolerance, back up when there's headroom, clamped to a configurable
+  min/max. No version gating needed: Simulation Distance is an 1.18+ concept
+  and 1.17.1 was already dropped from `stonecutter.properties.toml`.
+- **Adaptive VSync** (`AdaptiveVsyncModule.kt`) — flips `options.enableVsync`
+  on above an FPS threshold, off below it. TurtleLauncher already does this
+  at the whole-window renderer level; this is the client-mod-side
+  counterpart for people running TurtleClient standalone.
+
+Both follow the same `SimpleOption<T>.value` pattern as `FullBrightModule` /
+`FovChangerModule` — uncompiled, like everything else in this repo until the
+next CI run (sandbox has no network to `maven.fabricmc.net`). Paste build
+errors if `viewDistance`/`simulationDistance`/`enableVsync` are typed
+differently in your local Yarn mappings.
+
 - **Adaptive VSync / Frame Pacing / Battery & Thermal-Aware Optimization** —
   TurtleLauncher already has adaptive vsync + FORCE_VSYNC wiring per earlier
   work; whether that needs a TurtleClient-side counterpart depends on

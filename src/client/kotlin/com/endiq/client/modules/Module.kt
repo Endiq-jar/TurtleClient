@@ -35,6 +35,7 @@ abstract class Module(
 
     enum class Category(val displayName: String) {
         ALL("All"), HUD("HUD"), HYPIXEL("Hypixel"),
-        PVP("PvP"), RENDER("Render"), MOVEMENT("Movement"), UTILITY("Utility")
+        PVP("PvP"), RENDER("Render"), MOVEMENT("Movement"), UTILITY("Utility"),
+        PERFORMANCE("Performance")
     }
 }

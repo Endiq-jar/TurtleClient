@@ -60,7 +60,7 @@ class ClickGui : Screen(Text.literal("TurtleClient")) {
     private val MOD_TABS = listOf(
         Module.Category.ALL, Module.Category.HUD, Module.Category.HYPIXEL,
         Module.Category.PVP, Module.Category.RENDER, Module.Category.MOVEMENT,
-        Module.Category.UTILITY
+        Module.Category.UTILITY, Module.Category.PERFORMANCE
     )
     private val COS_TYPES = CosmeticType.values().toList()
 
