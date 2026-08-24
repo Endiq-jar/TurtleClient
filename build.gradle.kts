@@ -102,13 +102,8 @@ tasks.processResources {
     // content-only JSON check silently passes on zero files found. Checking for the
     // expected filenames first closes that blind spot.
     doLast {
-        // NOTE: Copy/ProcessResources' old File-typed destinationDir getter is gone
-        // as of this project's Gradle 9.5.1 wrapper -- use the Provider-API
-        // destinationDirectory instead, or this doLast fails to even compile the
-        // script (which reads as every node failing identically, unrelated to
-        // whatever processResources actually did or didn't copy).
         val expectedMixinConfigs = setOf("turtle-client.mixins.json", "turtle-client.client.mixins.json")
-        val packaged = fileTree(destinationDirectory.get().asFile) { include("**/*.mixins.json") }.files.associateBy { it.name }
+        val packaged = fileTree(destinationDir) { include("**/*.mixins.json") }.files.associateBy { it.name }
         val missing = expectedMixinConfigs - packaged.keys
         if (missing.isNotEmpty()) {
             throw GradleException(
@@ -118,6 +113,7 @@ tasks.processResources {
                     + "that never made it into the jar."
             )
         }
+
         val broken = packaged.values.mapNotNull { file ->
             runCatching { groovy.json.JsonSlurper().parse(file) }
                 .exceptionOrNull()?.let { "${file.name}: ${it.message}" }
@@ -126,8 +122,6 @@ tasks.processResources {
             throw GradleException("processResources emitted invalid mixin config JSON:\n" + broken.joinToString("\n"))
         }
     }
-}
-
 tasks.withType<JavaCompile>().configureEach {
     options.release = requiredJava.majorVersion.toInt()
 }
