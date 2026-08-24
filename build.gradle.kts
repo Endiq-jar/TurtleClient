@@ -36,19 +36,26 @@ loom {
 }
 
 sourceSets.main.get().apply {
-    java.srcDir("src/client/java")
-    kotlin.srcDir("src/client/kotlin")
-    // NOTE: resources.srcDir("src/client/resources") used to be set here too, same
-    // as the java/kotlin lines above. It silently did nothing -- fabric.mod.json
-    // and every *.mixins.json under src/client/resources never made it into any
-    // built jar, on every Stonecutter node including the active one (so this isn't
-    // a chiseling issue), while the java/kotlin dirs on the lines above compiled
-    // fine. Most likely cause: something in the Loom plugin chain resets
-    // sourceSets.main.resources.srcDirs in an afterEvaluate block, which runs after
-    // this whole script body, silently dropping the addition -- Loom has no
-    // equivalent reason to touch the java/kotlin dirs, which is why only this one
-    // line was affected. Feeding processResources directly below sidesteps that
-    // instead of fighting it.
+    // src/client/{java,kotlin,resources} used to be merged in here via extra
+    // srcDir() entries. That silently didn't work: this whole build goes through
+    // Stonecutter's per-node generated source tree (see the `stonecutterGenerate`
+    // task, which runs before processResources/compileKotlin for every node,
+    // including the "active" one), and Stonecutter only redirects the standard
+    // src/main/{java,kotlin,resources} convention dirs into that generated tree --
+    // it has no reason to know about a custom src/client dir. Real CI logs confirm
+    // it: processResources found turtle-client.mixins.json (from src/main/resources)
+    // but never turtle-client.client.mixins.json (from src/client/resources), on
+    // every node. Nothing here compiled or packaged those files; the resulting jars
+    // were just missing everything client-side, which is what crashed the game with
+    // "resource ... was invalid or could not be read" on FabricMixinBootstrap.
+    //
+    // Fix: src/client/{java,kotlin,resources} was merged directly into
+    // src/main/{java,kotlin,resources} (same relative subpaths, no filename
+    // collisions) so everything goes through the one tree Stonecutter actually
+    // redirects. The mod is client-only anyway ("environment": "client" in
+    // fabric.mod.json), so this split was never load-bearing at the Fabric level --
+    // it was purely a dev-side organizational choice, and not one worth fighting
+    // Stonecutter over.
 }
 
 dependencies {
@@ -66,8 +73,6 @@ dependencies {
 }
 
 tasks.processResources {
-    from("src/client/resources")
-
     fun MutableMap<String, String>.register(key: String, prop: String) {
         val value: String = sc.properties[prop]
         inputs.property(key, value)
