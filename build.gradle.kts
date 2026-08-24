@@ -122,6 +122,7 @@ tasks.processResources {
             throw GradleException("processResources emitted invalid mixin config JSON:\n" + broken.joinToString("\n"))
         }
     }
+}
 tasks.withType<JavaCompile>().configureEach {
     options.release = requiredJava.majorVersion.toInt()
 }
