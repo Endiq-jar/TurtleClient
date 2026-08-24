@@ -38,7 +38,17 @@ loom {
 sourceSets.main.get().apply {
     java.srcDir("src/client/java")
     kotlin.srcDir("src/client/kotlin")
-    resources.srcDir("src/client/resources")
+    // NOTE: resources.srcDir("src/client/resources") used to be set here too, same
+    // as the java/kotlin lines above. It silently did nothing -- fabric.mod.json
+    // and every *.mixins.json under src/client/resources never made it into any
+    // built jar, on every Stonecutter node including the active one (so this isn't
+    // a chiseling issue), while the java/kotlin dirs on the lines above compiled
+    // fine. Most likely cause: something in the Loom plugin chain resets
+    // sourceSets.main.resources.srcDirs in an afterEvaluate block, which runs after
+    // this whole script body, silently dropping the addition -- Loom has no
+    // equivalent reason to touch the java/kotlin dirs, which is why only this one
+    // line was affected. Feeding processResources directly below sidesteps that
+    // instead of fighting it.
 }
 
 dependencies {
@@ -56,6 +66,8 @@ dependencies {
 }
 
 tasks.processResources {
+    from("src/client/resources")
+
     fun MutableMap<String, String>.register(key: String, prop: String) {
         val value: String = sc.properties[prop]
         inputs.property(key, value)
