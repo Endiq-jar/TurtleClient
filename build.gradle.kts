@@ -80,17 +80,28 @@ tasks.processResources {
     // and throws MissingPropertyException on any such name. Mixins.json is copied
     // as-is now; nothing in it actually needs templating.
 
-    // Guard rail for the bug above (and any future resource-processing regression
-    // that corrupts these files the same way): verify every packaged *.mixins.json
-    // is still valid JSON once processResources is done writing it out. A crash log
-    // dated 2026-08-24 (1.21.1 node) showed this exact failure reaching a device --
-    // "java.lang.IllegalArgumentException: The specified resource
+    // Guard rail: verify every mixins.json fabric.mod.json expects is both PRESENT
+    // in the packaged output and still valid JSON. A crash log from a 1.21.1 device
+    // build hit "java.lang.IllegalArgumentException: The specified resource
     // 'turtle-client.client.mixins.json' was invalid or could not be read" out of
-    // FabricMixinBootstrap -- from a jar built before this fix landed. Failing the
-    // build here turns that class of bug into a CI failure instead of a runtime
-    // crash on someone's phone.
+    // FabricMixinBootstrap. That message covers two different Mixin-side failures --
+    // resource not found at all, vs. found but unparseable -- and CI had previously
+    // gone green on a build that still crashed on-device this way, because a
+    // content-only JSON check silently passes on zero files found. Checking for the
+    // expected filenames first closes that blind spot.
     doLast {
-        val broken = fileTree(destinationDir) { include("**/*.mixins.json") }.mapNotNull { file ->
+        val expectedMixinConfigs = setOf("turtle-client.mixins.json", "turtle-client.client.mixins.json")
+        val packaged = fileTree(destinationDir) { include("**/*.mixins.json") }.files.associateBy { it.name }
+        val missing = expectedMixinConfigs - packaged.keys
+        if (missing.isNotEmpty()) {
+            throw GradleException(
+                "processResources for ${sc.current.version} did not package expected mixin config(s): $missing "
+                    + "(found: ${packaged.keys}). This is why the game crashes with "
+                    + "\"resource ... was invalid or could not be read\" -- fabric.mod.json references a file "
+                    + "that never made it into the jar."
+            )
+        }
+        val broken = packaged.values.mapNotNull { file ->
             runCatching { groovy.json.JsonSlurper().parse(file) }
                 .exceptionOrNull()?.let { "${file.name}: ${it.message}" }
         }
