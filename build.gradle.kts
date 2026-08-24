@@ -71,8 +71,14 @@ tasks.processResources {
 
     filesMatching("fabric.mod.json") { expand(props) }
 
-    val mixinJava = "JAVA_${requiredJava.majorVersion}"
-    filesMatching("*.mixins.json") { expand("java" to mixinJava) }
+    // NOTE: previously also ran expand("java" to "JAVA_${requiredJava.majorVersion}")
+    // over *.mixins.json, but that was a no-op for its intended purpose --
+    // compatibilityLevel is hardcoded ("JAVA_21") in both mixins.json files, not
+    // templated. All it did was make Gradle's Groovy-template expand() scan the
+    // WHOLE file for "$identifier"/"${...}" patterns, which matches Java's inner
+    // class syntax in mixin class names (e.g. "ExampleClientMixin$SplashMixin")
+    // and throws MissingPropertyException on any such name. Mixins.json is copied
+    // as-is now; nothing in it actually needs templating.
 }
 
 tasks.withType<JavaCompile>().configureEach {
