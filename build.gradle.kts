@@ -61,9 +61,23 @@ sourceSets.main.get().apply {
 dependencies {
     minecraft("com.mojang:minecraft:${sc.current.version}")
 
-    // Yarn on pre-26.1 (obfuscated) versions, Mojang's own names on 26.1+
-    // (unobfuscated) -- loom-back-compat picks the right one per node.
-    loomx.applyMojangMappings()
+    // loomx.applyMojangMappings() does NOT auto-switch between Yarn and Mojang
+    // per node -- per the plugin's own docs it always applies Mojang's official
+    // mapping names (it's a shorthand for mappings(loom.officialMojangMappings()),
+    // "but only on remapped versions" -- i.e. it's a no-op on unobfuscated ones,
+    // not a Yarn fallback). The mod's source is written entirely in Yarn's naming
+    // (MinecraftClient, KeyBinding, InputUtil, DrawContext, Identifier, Text,
+    // RenderLayer, textRenderer, drawTextWithShadow, etc, across 19+ files), so
+    // forcing Mojang mappings on every node breaks every Minecraft-API reference
+    // in the whole mod. 26.2 ships fully unobfuscated with no Yarn mappings at
+    // all, so it's the one node that has no choice but Mojang's names -- every
+    // other node needs real Yarn to match how the code is actually written.
+    if (sc.current.parsed >= "26.1") {
+        loomx.applyMojangMappings()
+    } else {
+        val yarnBuild: String = sc.properties["deps.yarn"]
+        mappings("net.fabricmc:yarn:$yarnBuild:v2")
+    }
 
     val fabricApiVersion: String = sc.properties["deps.fabric_api"]
 
