@@ -103,7 +103,11 @@ class ClickGui : Screen(Text.literal("TurtleClient")) {
         ctx.fill(gx, gy, gx + GW, gy + TOPH, TOPBG)
         ctx.fill(gx, gy + TOPH - 1, gx + GW, gy + TOPH, RED)
         val ls = 22; val ly = gy + (TOPH - ls) / 2
+        //? if >=1.21.4 {
         try { ctx.drawTexture(RenderLayer::getGuiTextured, LOGO, gx+4, ly, 0f,0f, ls,ls, ls,ls, -1) } catch(_:Exception){}
+        //?} else {
+        /*try { ctx.drawTexture(LOGO, gx+4, ly, 0f,0f, ls,ls, ls,ls) } catch(_:Exception){}
+        *///?}
         val t = if (showCosmetics) "TurtleClient  |  COSMETICS" else "TurtleClient  |  MOD MENU"
         ctx.drawTextWithShadow(textRenderer, t, gx+4+ls+4, gy+(TOPH-8)/2, WHITE)
         // close

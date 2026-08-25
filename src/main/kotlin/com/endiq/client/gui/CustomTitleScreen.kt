@@ -2,6 +2,7 @@ package com.endiq.client.gui
 
 import com.endiq.client.modules.Module
 import com.endiq.client.modules.ModuleManager
+import com.mojang.blaze3d.systems.RenderSystem
 import net.minecraft.SharedConstants
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.DrawContext
@@ -147,6 +148,7 @@ class CustomTitleScreen : Screen(Text.literal("Turtle Client")) {
         Module.Category.MOVEMENT -> 0xFFEAB308.toInt()
         Module.Category.UTILITY -> 0xFF14B8A6.toInt()
         Module.Category.HYPIXEL -> 0xFFF97316.toInt()
+        Module.Category.PERFORMANCE -> 0xFF3B82F6.toInt()
         Module.Category.ALL -> 0xFF6B7280.toInt()
     }
 
@@ -168,9 +170,15 @@ class CustomTitleScreen : Screen(Text.literal("Turtle Client")) {
     override fun render(ctx: DrawContext, mx: Int, my: Int, delta: Float) {
         drawPanorama(ctx)
 
+        //? if >=1.21.4 {
         try {
             ctx.drawTexture(RenderLayer::getGuiTextured, LOGO, logoX, logoY, 0f, 0f, logoSize, logoSize, logoSize, logoSize, -1)
         } catch (ignored: Exception) {}
+        //?} else {
+        /*try {
+            ctx.drawTexture(LOGO, logoX, logoY, 0f, 0f, logoSize, logoSize, logoSize, logoSize)
+        } catch (ignored: Exception) {}
+        *///?}
         val title = "TURTLE CLIENT"
         ctx.drawTextWithShadow(textRenderer, title, width / 2 - textRenderer.getWidth(title) / 2, logoY + logoSize + 6, COL_TEXT)
 
@@ -227,9 +235,19 @@ class CustomTitleScreen : Screen(Text.literal("Turtle Client")) {
     private fun drawIconButton(ctx: DrawContext, b: IconButton, mx: Int, my: Int) {
         val hov = hovered(mx, my, b.x, b.y, b.size, b.size)
         val color = if (hov) COL_ACCENT else b.tint
+        //? if >=1.21.4 {
         try {
             ctx.drawTexture(RenderLayer::getGuiTextured, b.texture, b.x, b.y, 0f, 0f, b.size, b.size, b.size, b.size, color)
         } catch (ignored: Exception) {}
+        //?} else {
+        /*try {
+            val a = (color ushr 24 and 0xFF) / 255f; val r = (color ushr 16 and 0xFF) / 255f
+            val g = (color ushr 8 and 0xFF) / 255f; val bl = (color and 0xFF) / 255f
+            RenderSystem.setShaderColor(r, g, bl, a)
+            ctx.drawTexture(b.texture, b.x, b.y, 0f, 0f, b.size, b.size, b.size, b.size)
+            RenderSystem.setShaderColor(1f, 1f, 1f, 1f)
+        } catch (ignored: Exception) {}
+        *///?}
     }
 
     private fun drawQuickToggle(ctx: DrawContext, q: QuickToggle, mx: Int, my: Int) {
@@ -260,16 +278,30 @@ class CustomTitleScreen : Screen(Text.literal("Turtle Client")) {
         val nextIdx = (idx + 1) % panoFaces.size
         val frac = (totalT - Math.floor(totalT)).toFloat()
 
+        //? if >=1.21.4 {
         try {
             ctx.drawTexture(RenderLayer::getGuiTextured, panoFaces[idx], 0, 0, 0f, 0f, width, height, width, height, -1)
         } catch (ignored: Exception) {}
+        //?} else {
+        /*try {
+            ctx.drawTexture(panoFaces[idx], 0, 0, 0f, 0f, width, height, width, height)
+        } catch (ignored: Exception) {}
+        *///?}
 
         if (frac > 0.02f) {
+            //? if >=1.21.4 {
             try {
                 val alpha = (frac.coerceIn(0f, 1f) * 255f).toInt()
                 val color = (alpha shl 24) or 0x00FFFFFF
                 ctx.drawTexture(RenderLayer::getGuiTextured, panoFaces[nextIdx], 0, 0, 0f, 0f, width, height, width, height, color)
             } catch (ignored: Exception) {}
+            //?} else {
+            /*try {
+                RenderSystem.setShaderColor(1f, 1f, 1f, frac.coerceIn(0f, 1f))
+                ctx.drawTexture(panoFaces[nextIdx], 0, 0, 0f, 0f, width, height, width, height)
+                RenderSystem.setShaderColor(1f, 1f, 1f, 1f)
+            } catch (ignored: Exception) {}
+            *///?}
         }
 
         // Darken for readability, slightly heavier than before to match the reference's near-black look.
