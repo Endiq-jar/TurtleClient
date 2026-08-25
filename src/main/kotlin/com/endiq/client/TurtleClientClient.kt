@@ -40,15 +40,30 @@ object TurtleClientClient : ClientModInitializer {
         HudRenderCallback.EVENT.register(HudRenderer::onHudRender)
         //?}
 
+        // KeyBinding categories became a structured KeyBinding.Category record in
+        // 1.21.9 (replacing the old plain translation-key String) -- see Fabric's
+        // 1.21.9 changelog. InputUtil.isKeyPressed switched from a raw GLFW long
+        // handle to the Window object in the same release.
+        //? if >=1.21.9 {
+        /*val guiKey = KeyBindingHelper.registerKeyBinding(
+            KeyBinding("key.turtle-client.gui", InputUtil.Type.KEYSYM,
+                GLFW.GLFW_KEY_RIGHT_SHIFT, KeyBinding.Category.create(net.minecraft.util.Identifier.of("turtle-client", "general")))
+        )
+        *///?} else {
         val guiKey = KeyBindingHelper.registerKeyBinding(
             KeyBinding("key.turtle-client.gui", InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_RIGHT_SHIFT, "TurtleClient")
         )
+        //?}
 
         ClientTickEvents.END_CLIENT_TICK.register { client ->
             ModuleManager.modules.forEach { mod ->
-                if (mod.key != GLFW.GLFW_KEY_UNKNOWN &&
-                    InputUtil.isKeyPressed(client.window.handle, mod.key)) {
+                //? if >=1.21.9 {
+                /*val keyDown = mod.key != GLFW.GLFW_KEY_UNKNOWN && InputUtil.isKeyPressed(client.window, mod.key)
+                *///?} else {
+                val keyDown = mod.key != GLFW.GLFW_KEY_UNKNOWN && InputUtil.isKeyPressed(client.window.handle, mod.key)
+                //?}
+                if (keyDown) {
                     if (!mod.keyWasDown) { mod.toggle(); mod.keyWasDown = true }
                 } else {
                     mod.keyWasDown = false

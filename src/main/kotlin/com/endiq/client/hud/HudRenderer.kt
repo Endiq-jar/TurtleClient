@@ -9,7 +9,9 @@ import com.endiq.client.modules.impl.utility.*
 import com.endiq.client.modules.impl.hypixel.*
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.DrawContext
+//? if >=1.21 {
 import net.minecraft.client.render.RenderTickCounter
+//?}
 import net.minecraft.util.hit.BlockHitResult
 import net.minecraft.scoreboard.Team
 
@@ -86,7 +88,11 @@ object HudRenderer {
         mod<HitColorModule>("Hit Color")?.let { it.tick() }
     }
 
+    //? if >=1.21 {
     fun onHudRender(ctx: DrawContext, tickCounter: RenderTickCounter) {
+    //?} else {
+    /*fun onHudRender(ctx: DrawContext, tickDelta: Float) {
+    *///?}
         val client = MinecraftClient.getInstance() ?: return
         val player = client.player
         val tr = client.textRenderer
