@@ -11,7 +11,8 @@
   "EntityCullingMixin",
   "BlockEntityCullingMixin",
   "ParticleCullingMixin",
-  "SkyCloudCullingMixin"
+  "SkyCloudCullingMixin",
+  "ChunkOcclusionCullingMixin"
  ],
  "injectors": {
   "defaultRequire": 1

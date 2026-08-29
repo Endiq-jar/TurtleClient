@@ -16,13 +16,16 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 // it is far safer than a hand-rolled font renderer rewrite).
 //
 // Full block/chunk occlusion culling (skipping whole hidden chunk sections)
-// is deliberately NOT handled here either -- that's a chunk visibility-graph
-// rewrite that Sodium already does far better than a hand-rolled version
-// could; this module only touches per-object rendering (entities/particles/
-// block entities/sky/clouds), same scope as before, just wider coverage.
+// gets a supplementary, opt-in pass here: ChunkOcclusionCullingMixin raycasts
+// section centers on top of whatever WorldRenderer's own visibility graph
+// already produced each frame. It is NOT a replacement for that graph (or
+// for Sodium) -- vanilla's BFS is the real occlusion culler; this only trims
+// a few extra sections the BFS's conservative face-adjacency test leaves in.
+// Off by default and marked experimental: see ChunkOcclusionCullingMixin's
+// javadoc for why this one is riskier than the others.
 class CullingModule : Module(
     "Culling",
-    "Skips rendering entities, players, block entities, particles, sky, and clouds that are far away, hidden, or not worth drawing",
+    "Skips rendering entities, players, block entities, particles, sky, clouds, and (experimental) occluded chunk sections",
     Category.RENDER
 ) {
     private val optEntity = bool("Entity Culling", "Hide entities blocked by terrain", default = true)
@@ -40,6 +43,9 @@ class CullingModule : Module(
 
     private val optSky = bool("Sky Culling", "Skip rendering the sky (sun/moon/stars/horizon)", default = false)
     private val optClouds = bool("Cloud Culling", "Skip rendering clouds", default = false)
+
+    private val optChunkOcclusion = bool("Chunk Occlusion Culling (Experimental)", "Extra raycast pass to drop hidden terrain sections vanilla's own culling missed", default = false)
+    private val optChunkOcclusionMinDist = slider("Chunk Occlusion Min Distance", "Never touch sections closer than this to the camera", default = 32f, min = 16f, max = 128f, suffix = "b")
 
     init {
         // Registered once (Module instances are constructed once by
@@ -67,5 +73,8 @@ class CullingModule : Module(
 
         CullingBridge.skyCullingEnabled = enabled && optSky.value
         CullingBridge.cloudCullingEnabled = enabled && optClouds.value
+
+        CullingBridge.chunkOcclusionCullingEnabled = enabled && optChunkOcclusion.value
+        CullingBridge.chunkOcclusionMinDistance = optChunkOcclusionMinDist.value.toDouble()
     }
 }

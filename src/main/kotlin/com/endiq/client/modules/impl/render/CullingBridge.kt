@@ -27,4 +27,12 @@ object CullingBridge {
     // these are on/off only, not range-based.
     @JvmStatic var skyCullingEnabled = false
     @JvmStatic var cloudCullingEnabled = false
+
+    // Experimental: supplementary raycast pass over vanilla's own per-frame
+    // visible-section list (see ChunkOcclusionCullingMixin). Off by default.
+    // minDistance guards against touching the sections right around the
+    // camera, where a raycast can misfire from inside a section's own
+    // geometry.
+    @JvmStatic var chunkOcclusionCullingEnabled = false
+    @JvmStatic var chunkOcclusionMinDistance = 32.0
 }
