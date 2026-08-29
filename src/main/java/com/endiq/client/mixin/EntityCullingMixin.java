@@ -2,6 +2,7 @@ package com.endiq.client.mixin;
 
 import com.endiq.client.modules.impl.render.CullingBridge;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
@@ -23,10 +24,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
  * or the game crashes on world load, paste the stack trace back -- the fix
  * is almost always the injected method's exact parameter types below.
  *
- * Skips rendering entities beyond entityCullRange, and (if occlusionCullEnabled)
- * further skips entities where a raycast from the camera to every corner of
- * the entity's bounding box is blocked by terrain -- same technique as the
- * standalone "EntityCulling" mod.
+ * Skips rendering entities beyond entityCullRange (or playerCullRange for
+ * other players in multiplayer -- see CullingBridge), and (if
+ * occlusionCullEnabled) further skips entities where a raycast from the
+ * camera to every corner of the entity's bounding box is blocked by terrain
+ * -- same technique as the standalone "EntityCulling" mod. Purely a distance/
+ * visibility optimization: it never reveals anything the vanilla client
+ * wouldn't already know about (no wallhack/ESP behavior), it only hides
+ * things earlier.
  */
 @Mixin(EntityRenderDispatcher.class)
 public class EntityCullingMixin {
@@ -37,16 +42,24 @@ public class EntityCullingMixin {
             MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light,
             CallbackInfo ci) {
 
-        if (!CullingBridge.getEntityCullingEnabled()) return;
-
         MinecraftClient mc = MinecraftClient.getInstance();
         if (entity == mc.player || entity == mc.cameraEntity) return; // never cull the camera/self
+
+        // Other players (remote, in multiplayer) get their own toggle+range
+        // instead of the generic entity settings -- see CullingBridge for
+        // why. AbstractClientPlayerEntity covers every non-local player the
+        // client renders (survival, spectator-visible, etc.).
+        boolean isOtherPlayer = entity instanceof AbstractClientPlayerEntity;
+        boolean cullingEnabled = isOtherPlayer
+                ? CullingBridge.getPlayerCullingEnabled()
+                : CullingBridge.getEntityCullingEnabled();
+        if (!cullingEnabled) return;
 
         Camera camera = mc.gameRenderer.getCamera();
         if (camera == null) return;
         Vec3d camPos = camera.getPos();
 
-        double range = CullingBridge.getEntityCullRange();
+        double range = isOtherPlayer ? CullingBridge.getPlayerCullRange() : CullingBridge.getEntityCullRange();
         double distSq = camPos.squaredDistanceTo(entity.getX(), entity.getY(), entity.getZ());
         if (distSq > range * range) {
             ci.cancel();

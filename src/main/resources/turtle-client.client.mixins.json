@@ -10,7 +10,8 @@
   "TitleScreenMixin",
   "EntityCullingMixin",
   "BlockEntityCullingMixin",
-  "ParticleCullingMixin"
+  "ParticleCullingMixin",
+  "SkyCloudCullingMixin"
  ],
  "injectors": {
   "defaultRequire": 1
