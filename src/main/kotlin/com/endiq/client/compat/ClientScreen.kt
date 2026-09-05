@@ -34,7 +34,7 @@ abstract class ClientScreen(title: String) : Screen(literalText(title)) {
     open fun onMouseDragged(mx: Double, my: Double, button: Int, dx: Double, dy: Double) = false
     open fun onMouseScrolled(mx: Double, my: Double, horizontal: Double, vertical: Double) = false
     open fun onKeyPressed(key: Int, scancode: Int, modifiers: Int) = false
-    open fun onCharTyped(text: String, modifiers: Int) = false
+    open fun onCharTyped(text: String) = false
 
 //? if >=26.1 {
 /*    final override fun mouseClicked(event: net.minecraft.client.input.MouseButtonEvent, doubled: Boolean): Boolean =
@@ -46,7 +46,7 @@ abstract class ClientScreen(title: String) : Screen(literalText(title)) {
     final override fun keyPressed(event: net.minecraft.client.input.KeyEvent): Boolean =
         onKeyPressed(event.key(), event.scancode(), event.modifiers()) || super.keyPressed(event)
     final override fun charTyped(event: net.minecraft.client.input.CharacterEvent): Boolean =
-        onCharTyped(String(Character.toChars(event.codepoint())), event.modifiers()) || super.charTyped(event)
+        onCharTyped(event.codepointAsString()) || super.charTyped(event)
 *///?} else if >=1.21.9 {
 /*    final override fun mouseClicked(event: net.minecraft.client.gui.Click, doubled: Boolean): Boolean =
         onMouseClicked(event.x(), event.y(), event.button()) || super.mouseClicked(event, doubled)
@@ -57,7 +57,7 @@ abstract class ClientScreen(title: String) : Screen(literalText(title)) {
     final override fun keyPressed(event: net.minecraft.client.input.KeyInput): Boolean =
         onKeyPressed(event.key(), event.scancode(), event.modifiers()) || super.keyPressed(event)
     final override fun charTyped(event: net.minecraft.client.input.CharInput): Boolean =
-        onCharTyped(event.asString(), event.modifiers()) || super.charTyped(event)
+        onCharTyped(event.asString()) || super.charTyped(event)
 *///?} else {
     final override fun mouseClicked(mx: Double, my: Double, button: Int): Boolean =
         onMouseClicked(mx, my, button) || super.mouseClicked(mx, my, button)
@@ -68,7 +68,7 @@ abstract class ClientScreen(title: String) : Screen(literalText(title)) {
     final override fun keyPressed(key: Int, scancode: Int, modifiers: Int): Boolean =
         onKeyPressed(key, scancode, modifiers) || super.keyPressed(key, scancode, modifiers)
     final override fun charTyped(character: Char, modifiers: Int): Boolean =
-        onCharTyped(character.toString(), modifiers) || super.charTyped(character, modifiers)
+        onCharTyped(character.toString()) || super.charTyped(character, modifiers)
 //?}
 
 //? if >=1.20.2 {

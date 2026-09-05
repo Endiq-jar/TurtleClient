@@ -28,7 +28,9 @@ class GuiContext(val native: NativeGuiContext) {
 /*        native.item(stack, x, y)
 *///?} else if >=1.20 {
         native.drawItem(stack, x, y)
-//?} else {
+//?} else if >=1.19.3 {
+/*        MinecraftClient.getInstance().itemRenderer.renderInGui(native, stack, x, y)
+*///?} else {
 /*        MinecraftClient.getInstance().itemRenderer.renderInGui(stack, x, y)
 *///?}
     }
@@ -55,12 +57,25 @@ class GuiContext(val native: NativeGuiContext) {
         } finally {
             com.mojang.blaze3d.systems.RenderSystem.setShaderColor(1f, 1f, 1f, 1f)
         }
-*///?} else {
+*///?} else if >=1.19.4 {
 /*        val a = (color ushr 24 and 255) / 255f
         val r = (color ushr 16 and 255) / 255f
         val g = (color ushr 8 and 255) / 255f
         val b = (color and 255) / 255f
         com.mojang.blaze3d.systems.RenderSystem.setShader { net.minecraft.client.render.GameRenderer.getPositionTexProgram() }
+        com.mojang.blaze3d.systems.RenderSystem.setShaderTexture(0, texture)
+        com.mojang.blaze3d.systems.RenderSystem.setShaderColor(r, g, b, a)
+        try {
+            net.minecraft.client.gui.DrawableHelper.drawTexture(native, x, y, 0f, 0f, width, height, width, height)
+        } finally {
+            com.mojang.blaze3d.systems.RenderSystem.setShaderColor(1f, 1f, 1f, 1f)
+        }
+*///?} else {
+/*        val a = (color ushr 24 and 255) / 255f
+        val r = (color ushr 16 and 255) / 255f
+        val g = (color ushr 8 and 255) / 255f
+        val b = (color and 255) / 255f
+        com.mojang.blaze3d.systems.RenderSystem.setShader { net.minecraft.client.render.GameRenderer.getPositionTexShader() }
         com.mojang.blaze3d.systems.RenderSystem.setShaderTexture(0, texture)
         com.mojang.blaze3d.systems.RenderSystem.setShaderColor(r, g, b, a)
         try {

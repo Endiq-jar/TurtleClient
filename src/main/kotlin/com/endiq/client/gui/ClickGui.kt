@@ -395,7 +395,7 @@ class ClickGui : ClientScreen("TurtleClient") {
         }
         return super.onKeyPressed(kc,sc,mods)
     }
-    override fun onCharTyped(c: String, m: Int): Boolean {if(!showCosmetics&&searchFocused){searchQuery+=c;scroll=0;return true};return super.onCharTyped(c,m)}
+    override fun onCharTyped(c: String): Boolean {if(!showCosmetics&&searchFocused){searchQuery+=c;scroll=0;return true};return super.onCharTyped(c)}
 
     private fun getIcon(n:String)=when(n){"FPS"->"FPS";"CPS"->"CPS";"Coordinates"->"XYZ";"Keystrokes"->"KEY";"Armor Status"->"ARM";"Armor Bar"->"BAR";"Attack Indicator"->"ATK";"Autohide HUD"->"HUD";"Block Indicator"->"BLK";"Block Overlay"->"OVR";"Boss Bar"->"BSS";"Crosshair"->" + ";"Hotbar"->"HOT";"Nametags"->"TAG";"Pack Display"->"PKG";"Ping"->"PNG";"Potion Status"->"POT";"Scoreboard"->"SCR";"Server Address"->"SRV";"Reach Display"->"RCH";"Speed HUD"->"SPD";"Memory HUD"->"MEM";"Clock HUD"->"CLK";"Direction HUD"->"DIR";"Hit Color"->"HIT";"PvP Info"->"PVP";"Team Circles"->"CRL";"Toggle Sprint"->"SPR";"Sprint"->">>>";"Freecam"->"CAM";"Animations"->"ANI";"Motion Blur"->"BLR";"NoWeather"->"SUN";"TimeChanger"->"TME";"Zoom"->"ZOM";"Auto Text"->"TXT";"Camera"->"PIC";"Chat"->"MSG";"Nick Hider"->"NCK";"Popup Events"->"POP";"Timers"->"TMR";"Waypoints"->"WPT";"UHC Overlay"->"UHC";"Hypixel Addons"->"HYP";"Skyblock Addons"->"SKY";"Tab Stat"->"TAB";"Net Graph"->"NET";"Combo Counter"->"CMB";"FOV Changer"->"FOV";"Full Bright"->"BRT";"Team View"->"TM";else->"MOD"}
 }

@@ -180,7 +180,6 @@ val LivingEntity.forwardSpeed: Float get() = zza
 val LivingEntity.armor: Int get() = armorValue
 val LivingEntity.statusEffects get() = activeEffects
 val PlayerEntity.hungerManager get() = foodData
-val net.minecraft.world.food.FoodData.saturationLevel: Float get() = saturation
 fun PlayerEntity.getAttackCooldownProgress(delta: Float) = getAttackStrengthScale(delta)
 val ItemStack.damage: Int get() = damageValue
 *///?}
@@ -191,3 +190,14 @@ fun playerName(): String =
 *///?} else {
     MinecraftClient.getInstance().session.username
 //?}
+
+fun optionsScreen(parent: Screen): Screen {
+    val client = MinecraftClient.getInstance()
+    //? if >=26.1 {
+    /*return OptionsScreen(parent, client.options, client.world != null)
+    *///?} else {
+    return OptionsScreen(parent, client.options)
+    //?}
+}
+
+fun isLocalPlayer(entity: Entity): Boolean = entity.uuid == MinecraftClient.getInstance().player?.uuid

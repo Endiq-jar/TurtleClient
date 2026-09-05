@@ -100,7 +100,7 @@ class CustomTitleScreen : ClientScreen("Turtle Client") {
         val icons = listOf(
             IconDef("mods", "Mod List", COL_TEXT) { client?.setScreen(ClickGui()) },
             IconDef("packs", "Resource Packs", COL_TEXT) { /* not wired up yet */ },
-            IconDef("controls", "Controls", COL_TEXT) { client?.let { c -> c.setScreen(ControlsOptionsScreen(this, c.options)) } },
+            IconDef("controls", "Controls", COL_TEXT) { client?.let { c -> c.setScreen(ControlsoptionsScreen(this)) } },
             IconDef("cosmetics", "Cosmetics", COL_ACCENT) { /* not wired up yet */ },
             IconDef("screenshots", "Open Screenshots Folder", COL_TEXT) { openScreenshotsFolder() },
             IconDef("servers", "Server List", COL_TEXT) { client?.setScreen(MultiplayerScreen(this)) },
@@ -115,7 +115,7 @@ class CustomTitleScreen : ClientScreen("Turtle Client") {
         // Settings gear floats above the dock, right-aligned.
         val gearSize = 18
         iconButtons.add(IconButton(width - 12 - gearSize, topMargin, gearSize, icon("settings"), "Options", COL_TEXT_DIM) {
-            client?.let { c -> c.setScreen(OptionsScreen(this, c.options)) }
+            client?.let { c -> c.setScreen(optionsScreen(this)) }
         })
 
         // ── Bottom-left favorited-module quick toggles ──

@@ -108,6 +108,7 @@ tasks.processResources {
     filesMatching("*.mixins.json") {
         filter { line ->
             when {
+                sc.current.parsed < "1.21.2" && line.contains("\"BadgeRenderStateMixin\"") -> ""
                 sc.current.parsed >= "1.19" && line.contains("\"LegacyChatMixin\"") -> ""
                 sc.current.parsed >= "1.19.4" && line.contains("\"LegacyFpsAccessor\"") -> ""
                 else -> line.replace("\"JAVA_21\"", "\"JAVA_${requiredJava.majorVersion}\"")
@@ -211,7 +212,10 @@ publishing {
 
 // Temporary CI diagnostics while validating the multi-version migration.
 if (System.getenv("GITHUB_ACTIONS") == "true") {
-    logger.lifecycle("::add-matcher::${rootProject.file(".github/problem-matchers.json")}")
+    if (!rootProject.extra.has("turtleClient.problemMatchers")) {
+        rootProject.extra["turtleClient.problemMatchers"] = true
+        logger.lifecycle("::add-matcher::${rootProject.file(".github/problem-matchers.json")}")
+    }
     if (sc.current.version == "26.2") {
         apply(from = rootProject.file(".github/inspect-api.init.gradle"))
     }
