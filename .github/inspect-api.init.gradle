@@ -3,16 +3,16 @@ tasks.register('inspectMinecraftApi') {
     doLast {
         def cp = sourceSets.main.compileClasspath.asPath
         def specs = [
-            'net.minecraft.client.renderer.extract.LevelExtractor': '(extract|[Ss]etup|[Cc]ull|[Tt]errain|[Ss]ection|visible)',
-            'net.minecraft.client.renderer.LevelRenderer': '(Sky|Cloud|Terrain|Section|RenderSection|setup|visible)',
-            'net.minecraft.client.renderer.entity.EntityRenderDispatcher': '(shouldRender|class |extractRenderState)',
-            'net.minecraft.client.renderer.blockentity.BlockEntityRenderer': '.*',
-            'net.minecraft.client.renderer.entity.EntityRenderer': '(NameTag|nameTag|extractRenderState|class )',
-            'net.minecraft.client.renderer.entity.state.EntityRenderState': '(nameTag|light|[Pp]os|class )',
-            'net.minecraft.client.renderer.chunk.SectionRenderDispatcher$RenderSection': '(Origin|origin|BlockPos|class )',
-            'net.minecraft.client.particle.ParticleEngine': '(createParticle|ParticleOptions|class )',
-            'net.minecraft.client.gui.screens.LoadingOverlay': '(reload|extractRenderState|class )',
-            'net.minecraft.client.renderer.state.level.CameraRenderState': '(orientation|class )'
+            'net.minecraft.client.renderer.entity.EntityRenderDispatcher': '(submit|render|class |[Nn]ame[Tt]ag)',
+            'net.minecraft.client.renderer.entity.EntityRenderer': '(submit|render|class |[Nn]ame[Tt]ag)',
+            'net.minecraft.client.renderer.SubmitNodeCollector': '(CustomGeometry|NameTag|class |interface )',
+            'net.minecraft.client.renderer.SubmitNodeStorage$NameTagSubmit': '.*',
+            'net.minecraft.client.renderer.feature.NameTagFeatureRenderer': '.*',
+            'net.minecraft.client.renderer.LevelRenderer': '(submitFeatures|submitEntity|NameTag|nameTag)',
+            'net.minecraft.client.renderer.state.level.LevelRenderState': '(entities|Entity|nameTag|NameTag|cameraRenderState)',
+            'net.minecraft.client.renderer.entity.state.EntityRenderState': '.*',
+            'com.mojang.blaze3d.vertex.VertexConsumer': '(addVertex|setOverlay|setLight|setNormal|class |interface )',
+            'net.minecraft.client.renderer.rendertype.RenderTypes': 'entityTranslucent'
         ]
         specs.each { name, pattern ->
             def process = new ProcessBuilder(System.getenv('JAVA_HOME_25_X64') + '/bin/javap', '-private', '-classpath', cp, name).redirectErrorStream(true).start()

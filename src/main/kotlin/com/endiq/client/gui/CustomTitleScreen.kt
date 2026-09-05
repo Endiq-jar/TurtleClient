@@ -100,7 +100,7 @@ class CustomTitleScreen : ClientScreen("Turtle Client") {
         val icons = listOf(
             IconDef("mods", "Mod List", COL_TEXT) { client?.setScreen(ClickGui()) },
             IconDef("packs", "Resource Packs", COL_TEXT) { /* not wired up yet */ },
-            IconDef("controls", "Controls", COL_TEXT) { client?.let { c -> c.setScreen(ControlsoptionsScreen(this)) } },
+            IconDef("controls", "Controls", COL_TEXT) { client?.let { c -> c.setScreen(ControlsOptionsScreen(this, c.options)) } },
             IconDef("cosmetics", "Cosmetics", COL_ACCENT) { /* not wired up yet */ },
             IconDef("screenshots", "Open Screenshots Folder", COL_TEXT) { openScreenshotsFolder() },
             IconDef("servers", "Server List", COL_TEXT) { client?.setScreen(MultiplayerScreen(this)) },

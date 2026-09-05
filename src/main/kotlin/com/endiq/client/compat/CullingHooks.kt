@@ -48,7 +48,7 @@ object CullingHooks {
 //? if >=26.1 {
 /*        MinecraftClient.getInstance().gameRenderer.mainCamera().entity()
 *///?} else {
-        MinecraftClient.getInstance().cameraEntity
+        MinecraftClient.getInstance().gameRenderer.camera.focusedEntity
 //?}
 
     private fun cameraPosition(): Vec3d =
@@ -118,6 +118,9 @@ object CullingHooks {
     }
 
     private fun findVisibleSections(renderer: Any): MutableCollection<*>? {
+//? if >=26.1 {
+/*        return (renderer as net.minecraft.client.renderer.LevelRenderer).visibleSections()
+*///?} else {
         if (rendererClass != renderer.javaClass) {
             rendererClass = renderer.javaClass
             visibleSectionsField = null
@@ -145,6 +148,7 @@ object CullingHooks {
             TurtleClient.LOGGER.debug("No visible sections available for supplementary chunk culling yet")
         }
         return null
+//?}
     }
 
     private fun sectionCenter(info: Any): Vec3d? {
@@ -155,7 +159,11 @@ object CullingHooks {
             } ?: return null
             runCatching { field.get(info) as? BuiltChunk }.getOrNull() ?: return null
         }
+//? if >=26.1 {
+/*        val pos = section.renderOrigin
+*///?} else {
         val pos = section.origin
+//?}
         return Vec3d(pos.x + 8.0, pos.y + 8.0, pos.z + 8.0)
     }
 }

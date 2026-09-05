@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.util.zip.ZipFile
 
 plugins {
     // Applies the correct Loom variant (remapping Yarn build vs. unobfuscated
@@ -84,6 +85,9 @@ dependencies {
     modImplementation("net.fabricmc:fabric-loader:${property("deps.fabric_loader")}")
     modImplementation("net.fabricmc.fabric-api:fabric-api:$fabricApiVersion")
     modImplementation("net.fabricmc:fabric-language-kotlin:${property("deps.fabric_kotlin")}")
+
+    testImplementation(kotlin("test-junit"))
+    testImplementation("org.ow2.asm:asm-tree:9.8")
 }
 
 tasks.processResources {
@@ -157,6 +161,10 @@ tasks.withType<JavaCompile>().configureEach {
 }
 
 kotlin {
+    // These pure compatibility tests are shared unchanged by every version node.
+    sourceSets.named("test") {
+        kotlin.setSrcDirs(listOf(rootProject.file("src/test/kotlin")))
+    }
     compilerOptions {
         // Kotlin Gradle plugin is pinned to 2.1.20 (see deps.fabric_kotlin comment
         // in stonecutter.properties.toml re: the Loom remap metadata ceiling), but
@@ -191,12 +199,76 @@ tasks.jar {
     }
 }
 
+// Validate the final jar, not just processResources: every mixin and entrypoint
+// named in its metadata must have an actual class file in the shipped artifact.
+val verifyModJar = tasks.register("verifyModJar") {
+    group = "verification"
+    description = "Checks that the packaged mod contains every declared mixin and entrypoint"
+    val archive = loomx.modJar.flatMap { it.archiveFile }
+    inputs.file(archive)
+    dependsOn(loomx.modJar)
+
+    doLast {
+        ZipFile(archive.get().asFile).use { jar ->
+            fun readJson(name: String): Map<*, *> {
+                val entry = jar.getEntry(name)
+                    ?: throw GradleException("${sc.current.version}: missing $name in mod jar")
+                return jar.getInputStream(entry).use { input ->
+                    groovy.json.JsonSlurper().parse(input) as? Map<*, *>
+                        ?: throw GradleException("${sc.current.version}: $name is not a JSON object")
+                }
+            }
+            fun requireClass(name: String) {
+                val path = name.replace('.', '/') + ".class"
+                if (jar.getEntry(path) == null) {
+                    throw GradleException("${sc.current.version}: metadata references missing class $name")
+                }
+            }
+
+            val metadata = readJson("fabric.mod.json")
+            val configs = metadata["mixins"] as? List<*>
+                ?: throw GradleException("fabric.mod.json must declare its mixin configurations")
+            for (config in configs) {
+                val name = (config as? String) ?: (config as? Map<*, *>)?.get("config") as? String
+                    ?: throw GradleException("Invalid mixin configuration entry: $config")
+                val json = readJson(name)
+                val pkg = json["package"] as? String ?: throw GradleException("Missing mixin package in $name")
+                for (section in listOf("mixins", "client", "server")) {
+                    for (mixin in json[section] as? List<*> ?: emptyList<Any>()) {
+                        requireClass("$pkg.$mixin")
+                    }
+                }
+            }
+            val entrypoints = metadata["entrypoints"] as? Map<*, *>
+                ?: throw GradleException("fabric.mod.json must declare its entrypoints")
+            for (entries in entrypoints.values) {
+                for (entry in entries as? List<*> ?: emptyList<Any>()) {
+                    val name = (entry as? String) ?: (entry as? Map<*, *>)?.get("value") as? String
+                        ?: throw GradleException("Invalid entrypoint: $entry")
+                    requireClass(name.substringBefore("::"))
+                }
+            }
+        }
+    }
+}
+
+tasks.test {
+    useJUnit()
+    testLogging {
+        events("passed", "skipped", "failed")
+        exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+    }
+}
+
+tasks.check { dependsOn(verifyModJar) }
+
 // Builds every version and collects the jars into build/libs/<mc-version>/
 // Run from Termux/CI with: ./gradlew chiseledBuild
 tasks.register<Copy>("buildAndCollect") {
     group = "build"
     description = "Builds this version's jar and copies it to build/libs/{mc version}/"
 
+    dependsOn(tasks.named("build"))
     inputs.property("version", modVersion)
     from(loomx.modJar.flatMap { it.archiveFile }, loomx.modSourcesJar.flatMap { it.archiveFile })
     into(rootProject.layout.buildDirectory.file("libs/${sc.current.version}"))
