@@ -212,7 +212,7 @@ publishing {
 // Temporary CI diagnostics while validating the multi-version migration.
 if (System.getenv("GITHUB_ACTIONS") == "true") {
     logger.lifecycle("::add-matcher::${rootProject.file(".github/problem-matchers.json")}")
-    if (sc.current.version == "26.2" && System.getenv("GITHUB_EVENT_NAME") == "workflow_dispatch") {
+    if (sc.current.version == "26.2") {
         apply(from = rootProject.file(".github/inspect-api.init.gradle"))
     }
 }
