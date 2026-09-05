@@ -1,76 +1,88 @@
-# Multi-version migration notes
+# Multi-version compatibility
 
-Turtle Client now targets 9 Minecraft versions via [Stonecutter](https://stonecutter.kikugie.dev/),
-spanning two toolchain eras:
+The configured build matrix contains eight Minecraft targets. Keep the matrix in
+`settings.gradle.kts`, `stonecutter.properties.toml`, and CI in sync.
 
-| Version   | Mappings         | Notes |
-|-----------|------------------|-------|
-| 1.17.1    | Yarn (obf.)      | oldest supported, Java 16 |
-| 1.18.2    | Yarn (obf.)      | Java 17 required from here |
-| 1.19.4    | Yarn (obf.)      | |
-| 1.20.1    | Yarn (obf.)      | |
-| 1.20.6    | Yarn (obf.)      | Java 21 required from here |
-| 1.21.1    | Yarn (obf.)      | |
-| 1.21.4    | Yarn (obf.)      | **current single-version baseline** |
-| 1.21.11   | Yarn (obf.)      | last version with Yarn mappings at all |
-| 26.2      | Mojang (unobf.)  | Java 25 required; no remapping |
+| Minecraft | Mappings | Java toolchain |
+|---|---|---|
+| 1.18.2 | Yarn | 17 |
+| 1.19.4 | Yarn | 17 |
+| 1.20.1 | Yarn | 17 |
+| 1.20.6 | Yarn | 21 |
+| 1.21.1 | Yarn | 21 |
+| 1.21.4 | Yarn — active editor baseline | 21 |
+| 1.21.11 | Yarn | 21 |
+| 26.2 | Mojang's unobfuscated names | 25 |
 
-`26.1` shipped March 2026 as the first Minecraft release with **no obfuscation at
-all**. Mods below it need Yarn/remapping; mods on it and above compile directly
-against Mojang's own class/method names. `dev.kikugie.loom-back-compat` +
-`loomx.applyMojangMappings()` in `build.gradle.kts` picks the right Loom variant
-per node automatically, so you don't need a second build script for that era —
-but code that references Minecraft internals by name still needs the right names
-for each side of that line.
+Loom Back Compat chooses the appropriate Loom variant. Yarn mappings are supplied
+explicitly below 26.1; newer nodes use Mojang's published names. Changing mappings
+alone does **not** translate source-level Minecraft API references.
 
-## How to build
+## Building and checking
 
-- `./gradlew "1.21.4:build"` — build a single version.
-- `./gradlew chiseledBuild` — build every version in the ladder, jars land in
-  `build/libs/<mc version>/`.
-- Switch which version your editor sees with the **"Set active project to ..."**
-  Gradle tasks, or edit `stonecutter active "..."` in `stonecutter.gradle.kts`.
+Build one target, run its checks, and collect its artifacts:
 
-Do this from Termux/CI, not this sandbox — the sandbox can't reach
-`maven.fabricmc.net`, Mojang's library servers, or Yarn/Mojmap artifacts, so none
-of this has been compiled yet. **Paste me the first build's errors and I'll fix
-them version by version.**
+```sh
+./gradlew 1.21.4:buildAndCollect
+```
 
-## Fixed already
+Build the entire configured matrix locally:
 
-- `TurtleClientClient.kt` — HUD registration is now version-conditioned:
-  `HudRenderCallback` below 1.21.8, `HudElementRegistry` (new `hud` package,
-  `Matrix3x2fStack`) from 1.21.8 up, which covers both 1.21.11 and 26.2.
+```sh
+./gradlew 1.18.2:buildAndCollect 1.19.4:buildAndCollect \
+  1.20.1:buildAndCollect 1.20.6:buildAndCollect \
+  1.21.1:buildAndCollect 1.21.4:buildAndCollect \
+  1.21.11:buildAndCollect 26.2:buildAndCollect
+```
 
-## Still needs work — known breaking points in this range
+Collected jars are in `build/libs/<minecraft-version>/`. The Gradle wrapper needs
+a JDK and network access for the Minecraft, Fabric, and toolchain dependencies.
+Gradle selects Java 17, 21, or 25 for each target through its toolchain configuration.
+Kotlin 2.1.20 emits JVM 23 bytecode for the Java 25 target; those classes can run on
+Java 25 alongside Java sources compiled for 25.
 
-These affect the other ~54 modules and haven't been touched yet. Grep for them
-and wrap with `//? if <condition> { ... //?} else { /*...*/ //?}`:
+The existing GitHub workflow runs `buildAndCollect` separately for each target.
+That task depends on the full `build` lifecycle, including:
 
-- **`HudRenderer.kt`** — its render method's signature needs to match whichever
-  HUD API `TurtleClientClient.kt` calls it with (`DrawContext` pre-1.21.6,
-  `GuiGraphicsExtractor`/`Matrix3x2fStack` from 1.21.8). Every HUD module that
-  draws directly (armor bar, coordinates, keystrokes, crosshair, etc.) touches
-  this.
-- **`ColorProviderRegistry` → `BlockColorRegistry`** (26.1+) — only matters if
-  any render module tints blocks; check `AnimationsModule.kt`, `NoWeatherModule.kt`.
-- **`ItemStack` → `ItemStackTemplate`** (26.1+) — an `ItemStack` can no longer be
-  constructed before a world loads; several methods return the new type instead.
-  Check `ArmorStatusModule.kt`, `PotionStatusModule.kt`, `AttackIndicatorModule.kt`
-  — anything reading inventory/armor contents.
-- **Villager trading is fully data-driven from 26.1** — irrelevant unless a
-  module reads trade offers.
-- **`ResourceLocation`/`Identifier` naming** — Yarn calls it `Identifier`,
-  Mojang's own mappings call it `ResourceLocation`. Anywhere you construct one
-  (`Identifier.of(...)`) needs a version-conditioned import on the 26.1+ side.
-- **Fabric API module renames on 26.1** — e.g. `ItemGroupEvents` became
-  `CreativeModeTabEvents`. Full list:
-  https://docs.fabricmc.net/develop/porting/26.1/fabric-api
+- Kotlin and Java compilation, plus remapping where required;
+- shared unit tests for Minecraft yaw/direction conversion;
+- bytecode checks that configured `@Inject` targets exist and their callback
+  arguments, return callbacks, and staticness match the target Minecraft API;
+- verification that the final jar contains every declared mixin and entrypoint.
 
-## Fabric API / Yarn build numbers to double-check
+These checks do not launch Minecraft or apply Mixins in a running client. Smoke-test
+menus, HUDs, name badges, and culling in-game before a release, including with other
+rendering mods if those combinations are supported.
 
-`stonecutter.properties.toml` entries marked `# verify` are best-known values for
-older releases, not independently confirmed against `fabricmc.net/develop` right
-now. If the first sync fails on a specific version with a "could not resolve"
-error, that's almost always a stale `deps.fabric_api` or `deps.yarn` string —
-fix it there, not in code.
+## Where compatibility lives
+
+Shared code stays under `src/main/{java,kotlin,resources}` so every version goes
+through Stonecutter's source processing. Do not move client classes back to an
+unconfigured `src/client` source tree.
+
+The Kotlin adapters in `com.endiq.client.compat` cover:
+
+- **`MinecraftTypes`**: compile-time Yarn/Mojang type aliases, not runtime stubs.
+- **`GuiContext`**: MatrixStack, DrawContext, and GuiGraphicsExtractor rendering;
+  texture, item, text, and matrix-stack differences.
+- **`ClientScreen`**: common GUI callbacks over legacy numeric input arguments and
+  newer key/mouse/character records. Character input is passed as a string so
+  record-based code points are not narrowed to a single UTF-16 character.
+- **`ClientCompat` / `ClientOptions`**: identifiers, text, FPS, chat, options,
+  resource packs, inventory, and platform helpers.
+- **`BrandingRenderer` / `CullingHooks`**: shared behavior called by version-specific
+  Java injection adapters.
+
+Java Mixins keep explicit version branches for their actual target classes and
+method signatures. Entity labels have distinct entity-based, render-state, and
+queued-rendering APIs. Render-state badge eligibility is captured per entity rather
+than inferred from a render-state object as if it were an entity.
+
+Resource processing removes legacy-only mixins from newer jars (and render-state
+mixins from older jars), and selects the correct Mixin Java compatibility level.
+Only `fabric.mod.json` is template-expanded: expanding a whole mixin configuration
+would incorrectly treat the `$` in nested class names as a template variable.
+
+When adding a target, adapt the real API instead of dropping the target, disabling
+required injectors, or suppressing compilation failures. The bytecode checks are
+intended to catch injection mistakes that otherwise survive Java compilation.

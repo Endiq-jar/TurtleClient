@@ -1,7 +1,6 @@
 package com.endiq.client.modules.impl.hud
+import com.endiq.client.compat.*
 import com.endiq.client.modules.Module
-import net.minecraft.client.MinecraftClient
-import net.minecraft.util.math.Direction
 class DirectionHudModule : Module("Direction HUD", "Shows facing direction", Category.HUD) {
     val textColor   = color("Text Color", r=255, g=255, b=255)
     val bgColor     = color("Background", r=0, g=0, b=0, a=120)
@@ -19,7 +18,7 @@ class DirectionHudModule : Module("Direction HUD", "Shows facing direction", Cat
     val westColor   = color("West Color", r=255, g=170, b=0)
     fun getText(): String {
         val p = MinecraftClient.getInstance().player ?: return "Dir: N/A"
-        val dir = Direction.fromHorizontalDegrees(p.yaw.toDouble()).getName().uppercase()
+        val dir = horizontalDirection(p.yaw)
         return if (showArrow.value) "$dir ${getArrow(p.yaw)}" else dir
     }
     private fun getArrow(yaw: Float) = when {

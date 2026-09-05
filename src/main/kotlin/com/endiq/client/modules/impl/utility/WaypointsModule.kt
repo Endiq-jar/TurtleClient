@@ -1,6 +1,6 @@
 package com.endiq.client.modules.impl.utility
+import com.endiq.client.compat.*
 import com.endiq.client.modules.Module
-import net.minecraft.util.math.BlockPos
 class WaypointsModule : Module("Waypoints", "Set waypoints with labels", Category.UTILITY) {
     val showLabels  = bool("Show Labels", default=true)
     val showDist    = bool("Show Distance", default=true)

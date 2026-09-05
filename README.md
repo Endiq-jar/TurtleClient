@@ -1,15 +1,15 @@
 # 🐢 TurtleClient — Fabric, multi-version
 
-A custom Minecraft client mod built with Fabric + Kotlin, targeting 1.17.1
-through 26.2 via [Stonecutter](https://stonecutter.kikugie.dev/). See
-`MIGRATION_NOTES.md` for the version ladder, toolchain split at 26.1, and
-known API differences that still need per-module fixes.
+A custom Minecraft client mod built with Fabric + Kotlin for eight Minecraft
+targets, from 1.18.2 through 26.2, via [Stonecutter](https://stonecutter.kikugie.dev/).
+See [MIGRATION_NOTES.md](MIGRATION_NOTES.md) for the exact version matrix,
+Java toolchains, compatibility adapters, and validation checks.
 
 Quick reference:
 
 ```
-./gradlew "1.21.4:build"       # build one version
-./gradlew chiseledBuild        # build every version
+./gradlew 1.21.4:buildAndCollect  # build, check, and collect one version
+./gradlew 1.21.4:check            # run tests and packaged-jar verification
 ```
 
 ## Features
@@ -66,10 +66,10 @@ First build downloads ~500MB (Minecraft + Fabric). Takes 5–15 min.
 1. Open the folder in IntelliJ IDEA
 2. Let Gradle sync
 3. Run the **Minecraft Client** config to test
-4. `./gradlew build` → JAR in `build/libs/`
+4. `./gradlew 1.21.4:buildAndCollect` → JARs in `build/libs/1.21.4/`
 
 ## Install
 
-Drop `turtle-client-1.0.0.jar` into `.minecraft/mods/` alongside:
+Drop the non-sources TurtleClient jar for your Minecraft version into `.minecraft/mods/` alongside:
 - `fabric-api-*.jar`
 - `fabric-language-kotlin-*.jar`

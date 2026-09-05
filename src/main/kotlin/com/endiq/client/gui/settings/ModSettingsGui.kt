@@ -1,22 +1,17 @@
 package com.endiq.client.gui.settings
 
+import com.endiq.client.compat.*
 import com.endiq.client.modules.Module
 import com.endiq.client.modules.BoolSetting
 import com.endiq.client.modules.SliderSetting
 import com.endiq.client.modules.ColorSetting
 import com.endiq.client.modules.DropdownSetting
-import net.minecraft.client.MinecraftClient
-import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.gui.screen.Screen
-import net.minecraft.client.render.RenderLayer
-import net.minecraft.text.Text
-import net.minecraft.util.Identifier
 import org.lwjgl.glfw.GLFW
 
 class ModSettingsGui(
     private val mod: Module,
     private val parent: Screen
-) : Screen(Text.literal("${mod.name} Settings")) {
+) : ClientScreen("${mod.name} Settings") {
 
     private val W = 310
     private val H = 300
@@ -40,7 +35,7 @@ class ModSettingsGui(
     private val GREEN  = 0xFF3D9970.toInt()
     private val ACCENT = 0xFF5B9BD5.toInt()
     private val ORANGE = 0xFFFF8C00.toInt()
-    private val LOGO   = Identifier.of("turtle-client", "textures/loading_icon.png")
+    private val LOGO   = identifier("turtle-client", "textures/loading_icon.png")
 
     override fun init() {
         sx = (width  - W) / 2
@@ -50,7 +45,7 @@ class ModSettingsGui(
         keyName = getKeyName(mod.key)
     }
 
-    override fun render(ctx: DrawContext, mx: Int, my: Int, delta: Float) {
+    override fun renderGui(ctx: GuiContext, mx: Int, my: Int, delta: Float) {
         ctx.fill(0, 0, width, height, 0x88000000.toInt())
 
         // Window
@@ -60,7 +55,7 @@ class ModSettingsGui(
 
         // Logo
         try {
-            ctx.drawTexture(RenderLayer::getGuiTextured, LOGO, sx + 4, sy + 3, 0f, 0f, 22, 22, 22, 22, -1)
+            ctx.drawTexture(LOGO, sx + 4, sy + 3, 22, 22)
         } catch (_: Exception) {}
 
         // Title
@@ -175,10 +170,10 @@ class ModSettingsGui(
             if (isBinding) "ESC to cancel" else "Click to set",
             sx + W - 70, kbY + 12, LGRAY)
 
-        super.render(ctx, mx, my, delta)
+        super.renderGui(ctx, mx, my, delta)
     }
 
-    override fun mouseClicked(mx: Double, my: Double, btn: Int): Boolean {
+    override fun onMouseClicked(mx: Double, my: Double, btn: Int): Boolean {
         val imx = mx.toInt(); val imy = my.toInt()
 
         // If waiting for key, cancel on click
@@ -246,10 +241,10 @@ class ModSettingsGui(
             }
         }
 
-        return super.mouseClicked(mx, my, btn)
+        return super.onMouseClicked(mx, my, btn)
     }
 
-    override fun keyPressed(keyCode: Int, scan: Int, mods: Int): Boolean {
+    override fun onKeyPressed(keyCode: Int, scan: Int, mods: Int): Boolean {
         if (waitingForKey) {
             if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
                 waitingForKey = false
@@ -263,23 +258,22 @@ class ModSettingsGui(
         if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
             MinecraftClient.getInstance().setScreen(parent); return true
         }
-        return super.keyPressed(keyCode, scan, mods)
+        return super.onKeyPressed(keyCode, scan, mods)
     }
 
-    override fun mouseDragged(mx: Double, my: Double, btn: Int, dx: Double, dy: Double): Boolean {
+    override fun onMouseDragged(mx: Double, my: Double, btn: Int, dx: Double, dy: Double): Boolean {
         draggingSlider?.let { s ->
             val pct = (mx.toInt() - draggingTrackX).toFloat() / draggingTrackW
             s.value = (s.min + pct * (s.max - s.min)).coerceIn(s.min, s.max)
         }
-        return super.mouseDragged(mx, my, btn, dx, dy)
+        return super.onMouseDragged(mx, my, btn, dx, dy)
     }
 
-    override fun mouseReleased(mx: Double, my: Double, btn: Int): Boolean {
+    override fun onMouseReleased(mx: Double, my: Double, btn: Int): Boolean {
         draggingSlider = null
-        return super.mouseReleased(mx, my, btn)
+        return super.onMouseReleased(mx, my, btn)
     }
 
-    override fun shouldPause() = false
 
     private fun getKeyName(keyCode: Int): String = when (keyCode) {
         GLFW.GLFW_KEY_UNKNOWN -> "None"

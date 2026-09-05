@@ -1,6 +1,6 @@
 package com.endiq.client.modules.impl.hud
+import com.endiq.client.compat.*
 import com.endiq.client.modules.Module
-import net.minecraft.client.MinecraftClient
 class ServerAddressModule : Module("Server Address", "Shows server address on HUD", Category.HUD) {
     val textColor  = color("Text Color", r=255, g=255, b=255)
     val bgColor    = color("Background", r=0, g=0, b=0, a=120)
@@ -15,6 +15,6 @@ class ServerAddressModule : Module("Server Address", "Shows server address on HU
     val shadow     = bool("Text Shadow", default=true)
     val style      = dropdown("Style", options=arrayOf("Full Address", "IP Only", "Custom"), default=0)
     val customText = bool("Custom Text", default=false)
-    fun getText() = "Server: ${MinecraftClient.getInstance().currentServerEntry?.address ?: "Singleplayer"}"
+    fun getText() = "Server: ${serverAddress() ?: "Singleplayer"}"
     init { enable() }
 }

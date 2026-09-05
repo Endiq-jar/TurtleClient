@@ -1,100 +1,87 @@
 package com.endiq.client.mixin;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.SplashOverlay;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.util.Identifier;
+import com.endiq.client.compat.BrandingRenderer;
+import com.endiq.client.compat.ClientScreen;
+import com.endiq.client.compat.GuiContext;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-public class ExampleClientMixin {
+//? if >=26.1 {
+/*import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.LoadingOverlay;
+import net.minecraft.server.packs.resources.ReloadInstance;
+*///?} else {
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.SplashOverlay;
+import net.minecraft.resource.ResourceReload;
+//?}
+//? if >=26.1 {
+/*// GuiGraphicsExtractor is imported above.
+*///?} else if >=1.20 {
+import net.minecraft.client.gui.DrawContext;
+//?} else {
+/*import net.minecraft.client.util.math.MatrixStack;
+*///?}
 
-    // ── 1. Replace Mojang loading screen with turtle loading_icon ────
+public class ExampleClientMixin {
+//? if >=26.1 {
+/*    @Mixin(LoadingOverlay.class)
+*///?} else {
     @Mixin(SplashOverlay.class)
+//?}
     public static class SplashMixin {
-        private static final Identifier LOADING = Identifier.of("turtle-client", "textures/loading_icon.png");
+//? if >=26.1 {
+/*        @Shadow @Final private ReloadInstance reload;
+
+        @Inject(method = "extractRenderState", at = @At("TAIL"))
+        private void turtleClient$renderSplash(GuiGraphicsExtractor nativeCtx, int mx, int my, float delta, CallbackInfo ci) {
+            BrandingRenderer.renderSplash(new GuiContext(nativeCtx), reload.getActualProgress());
+        }
+*///?} else if >=1.20 {
+        @Shadow @Final private ResourceReload reload;
 
         @Inject(method = "render", at = @At("TAIL"))
-        private void onRender(DrawContext ctx, int mouseX, int mouseY, float delta, CallbackInfo ci) {
-            MinecraftClient client = MinecraftClient.getInstance();
-            int sw = ctx.getScaledWindowWidth();
-            int sh = ctx.getScaledWindowHeight();
-            int cx = sw / 2;
-            int cy = sh / 2;
-
-            // Cover Mojang screen with dark bg
-            ctx.fill(0, 0, sw, sh, 0xFF0A0A0F);
-
-            // Pulse ring
-            double t = System.currentTimeMillis() / 1000.0;
-            int ring = (int)(72 + Math.sin(t * 2.0) * 4);
-            int ra   = Math.min(180, Math.max(0, (int)((Math.sin(t * 2.0) * 0.4 + 0.5) * 140)));
-            int teal = (ra << 24) | 0x002EBFA5;
-            ctx.fill(cx - ring, cy - ring, cx + ring, cy - ring + 2, teal);
-            ctx.fill(cx - ring, cy + ring - 2, cx + ring, cy + ring, teal);
-            ctx.fill(cx - ring, cy - ring, cx - ring + 2, cy + ring, teal);
-            ctx.fill(cx + ring - 2, cy - ring, cx + ring, cy + ring, teal);
-
-            // Shadow
-            ctx.fill(cx - 44, cy - 39, cx + 44, cy + 49, 0x44000000);
-
-            // Turtle loading icon 88x88
-            try {
-                ctx.drawTexture(RenderLayer::getGuiTextured, LOADING, cx - 44, cy - 44, 0f, 0f, 88, 88, 88, 88, -1);
-            } catch (Exception ignored) {}
-
-            // Progress bar
-            float progress = (float)((System.currentTimeMillis() % 3000) / 3000.0);
-            try {
-                var f = SplashOverlay.class.getDeclaredField("reload");
-                f.setAccessible(true);
-                var reload = f.get(this);
-                if (reload != null) {
-                    for (var m : reload.getClass().getMethods()) {
-                        if (m.getName().equals("getProgress") || m.getName().equals("progress")) {
-                            progress = Math.min(1f, (float)m.invoke(reload));
-                            break;
-                        }
-                    }
-                }
-            } catch (Exception ignored) {}
-
-            int barW = 160; int barX = cx - barW / 2; int barY = cy + 58;
-            ctx.fill(barX, barY, barX + barW, barY + 4, 0xFF1A1A1A);
-            ctx.fill(barX, barY, barX + (int)(barW * progress), barY + 4, 0xFF2EBFA5);
-
-            String txt = "TurtleClient v1.0";
-            ctx.drawTextWithShadow(client.textRenderer, txt,
-                cx - client.textRenderer.getWidth(txt) / 2, cy + 68, 0xFFFFFFFF);
+        private void turtleClient$renderSplash(DrawContext nativeCtx, int mx, int my, float delta, CallbackInfo ci) {
+            BrandingRenderer.renderSplash(new GuiContext(nativeCtx), reload.getProgress());
         }
+//?} else {
+/*        @Shadow @Final private ResourceReload reload;
+
+        @Inject(method = "render", at = @At("TAIL"))
+        private void turtleClient$renderSplash(MatrixStack nativeCtx, int mx, int my, float delta, CallbackInfo ci) {
+            BrandingRenderer.renderSplash(new GuiContext(nativeCtx), reload.getProgress());
+        }
+*///?}
     }
 
-    // ── 2. Draw turtle_logo bottom-right on every Screen ─────────────
     @Mixin(Screen.class)
     public static class ScreenMixin {
-        private static final Identifier LOGO = Identifier.of("turtle-client", "turtle_logo.png");
-
+//? if >=26.1 {
+/*        @Inject(method = "extractRenderState", at = @At("TAIL"))
+        private void turtleClient$renderWatermark(GuiGraphicsExtractor nativeCtx, int mx, int my, float delta, CallbackInfo ci) {
+*///?} else if >=1.20 {
         @Inject(method = "render", at = @At("TAIL"))
-        private void onRender(DrawContext ctx, int mouseX, int mouseY, float delta, CallbackInfo ci) {
-            try {
-                int sw = ctx.getScaledWindowWidth();
-                int sh = ctx.getScaledWindowHeight();
-                // Draw 48x16 turtle logo bottom-right at ~70% opacity
-                ctx.drawTexture(RenderLayer::getGuiTextured, LOGO, sw - 52, sh - 18, 0f, 0f, 48, 16, 48, 16, 0xB2FFFFFF);
-            } catch (Exception ignored) {}
+        private void turtleClient$renderWatermark(DrawContext nativeCtx, int mx, int my, float delta, CallbackInfo ci) {
+//?} else {
+/*        @Inject(method = "render", at = @At("TAIL"))
+        private void turtleClient$renderWatermark(MatrixStack nativeCtx, int mx, int my, float delta, CallbackInfo ci) {
+*///?}
+            BrandingRenderer.renderWatermark(new GuiContext(nativeCtx));
         }
 
-        // Cancel blur for ClickGui and ModSettingsGui
+        // These screens draw their own background; don't overlay vanilla blur.
+//? if >=26.1 {
+/*        @Inject(method = "extractBackground", at = @At("HEAD"), cancellable = true)
+*///?} else {
         @Inject(method = "renderBackground", at = @At("HEAD"), cancellable = true)
-        private void cancelBlur(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
-            String name = ((Screen)(Object)this).getClass().getSimpleName();
-            if (name.equals("ClickGui") || name.equals("ModSettingsGui")) {
-                ci.cancel();
-            }
+//?}
+        private void turtleClient$cancelBackground(CallbackInfo ci) {
+            if ((Object) this instanceof ClientScreen) ci.cancel();
         }
     }
 }

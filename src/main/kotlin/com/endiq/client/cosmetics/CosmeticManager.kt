@@ -1,6 +1,6 @@
 package com.endiq.client.cosmetics
 
-import net.minecraft.client.MinecraftClient
+import com.endiq.client.compat.*
 import java.io.File
 
 // Registry + equip-state for custom cosmetics.

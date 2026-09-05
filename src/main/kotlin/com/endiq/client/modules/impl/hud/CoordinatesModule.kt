@@ -1,6 +1,6 @@
 package com.endiq.client.modules.impl.hud
+import com.endiq.client.compat.*
 import com.endiq.client.modules.Module
-import net.minecraft.client.MinecraftClient
 import kotlin.math.floor
 class CoordinatesModule : Module("Coordinates", "Shows XYZ position", Category.HUD) {
     val textColor  = color("Text Color", r=255, g=255, b=255)
