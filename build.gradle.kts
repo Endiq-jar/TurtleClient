@@ -262,8 +262,8 @@ tasks.test {
 
 tasks.check { dependsOn(verifyModJar) }
 
-// Builds every version and collects the jars into build/libs/<mc-version>/
-// Run from Termux/CI with: ./gradlew chiseledBuild
+// Builds and checks this version, then collects its jars into build/libs/<mc-version>/.
+// Run from Termux/CI with, for example: ./gradlew 1.21.4:buildAndCollect
 tasks.register<Copy>("buildAndCollect") {
     group = "build"
     description = "Builds this version's jar and copies it to build/libs/{mc version}/"
@@ -279,16 +279,5 @@ publishing {
         register<MavenPublication>("mavenJava") {
             from(components["java"])
         }
-    }
-}
-
-// Temporary CI diagnostics while validating the multi-version migration.
-if (System.getenv("GITHUB_ACTIONS") == "true") {
-    if (!rootProject.extra.has("turtleClient.problemMatchers")) {
-        rootProject.extra["turtleClient.problemMatchers"] = true
-        logger.lifecycle("::add-matcher::${rootProject.file(".github/problem-matchers.json")}")
-    }
-    if (sc.current.version == "26.2") {
-        apply(from = rootProject.file(".github/inspect-api.init.gradle"))
     }
 }

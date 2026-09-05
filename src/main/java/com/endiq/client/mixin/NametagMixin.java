@@ -53,7 +53,10 @@ public class NametagMixin {
         ((BadgeRenderState) state).turtleClient$setBadge(ClientCompatKt.isLocalPlayer(entity));
     }
 
-    @Inject(method = "submitNameTag", at = @At("TAIL"))
+    // Select the four-argument entrypoint, not its offset-taking overload.
+    @Inject(method = "submitNameDisplay(Lnet/minecraft/client/renderer/entity/state/EntityRenderState;"
+        + "Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;"
+        + "Lnet/minecraft/client/renderer/state/level/CameraRenderState;)V", at = @At("TAIL"))
     private void turtleClient$renderBadge(EntityRenderState state, PoseStack matrices,
                                          SubmitNodeCollector queue, CameraRenderState camera, CallbackInfo ci) {
         if (!((BadgeRenderState) state).turtleClient$hasBadge() || state.nameTag == null || state.nameTagAttachment == null) return;
