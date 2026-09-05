@@ -1,6 +1,6 @@
 package com.endiq.client.modules.impl.hud
+import com.endiq.client.compat.*
 import com.endiq.client.modules.Module
-import net.minecraft.client.MinecraftClient
 class FpsModule : Module("FPS Counter", "Shows frames per second", Category.HUD) {
     val textColor   = color("Text Color", r=255, g=255, b=255)
     val bgColor     = color("Background Color", r=0, g=0, b=0, a=120)
@@ -23,7 +23,7 @@ class FpsModule : Module("FPS Counter", "Shows frames per second", Category.HUD)
     val warnColor   = color("Warn Color", r=224, g=82, b=82)
     val alignment   = dropdown("Alignment", options=arrayOf("Left", "Center", "Right"), default=0)
     fun getText(): String {
-        val fps = MinecraftClient.getInstance().currentFps
+        val fps = clientFps()
         return when(label.selected) {
             1 -> "$fps fps"; 2 -> "$fps FPS"; 3 -> "Frames: $fps"
             else -> "FPS: $fps"

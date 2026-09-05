@@ -1,8 +1,8 @@
 package com.endiq.client.modules.impl.performance
 
+import com.endiq.client.compat.*
 import com.endiq.client.modules.Module
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
-import net.minecraft.client.MinecraftClient
 
 // Flips vanilla's VSync option on once FPS comfortably clears a threshold
 // (caps GPU/battery usage once frames are cheap to spare) and back off below
@@ -29,12 +29,12 @@ class AdaptiveVsyncModule : Module(
     }
 
     override fun onEnable() {
-        original = MinecraftClient.getInstance().options.enableVsync.value
+        original = ClientOptions.vsync
         ticksSinceCheck = 0
     }
 
     override fun onDisable() {
-        MinecraftClient.getInstance().options.enableVsync.value = original
+        ClientOptions.vsync = original
     }
 
     private fun onTick() {
@@ -45,8 +45,8 @@ class AdaptiveVsyncModule : Module(
         ticksSinceCheck = 0
 
         val client = MinecraftClient.getInstance()
-        val shouldVsync = client.currentFps >= threshold.value
-        val o = client.options
-        if (o.enableVsync.value != shouldVsync) o.enableVsync.value = shouldVsync
+        val shouldVsync = clientFps() >= threshold.value
+        val o = ClientOptions
+        if (o.vsync != shouldVsync) o.vsync = shouldVsync
     }
 }

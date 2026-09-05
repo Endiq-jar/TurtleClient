@@ -1,6 +1,6 @@
 package com.endiq.client.modules.impl.hud
+import com.endiq.client.compat.*
 import com.endiq.client.modules.Module
-import net.minecraft.client.MinecraftClient
 import kotlin.math.sqrt
 class SpeedHudModule : Module("Speedometer", "Shows movement speed", Category.HUD) {
     val textColor   = color("Text Color", r=255, g=255, b=255)

@@ -1,20 +1,8 @@
 package com.endiq.client.gui
 
+import com.endiq.client.compat.*
 import com.endiq.client.modules.Module
 import com.endiq.client.modules.ModuleManager
-import com.mojang.blaze3d.systems.RenderSystem
-import net.minecraft.SharedConstants
-import net.minecraft.client.MinecraftClient
-import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.gui.screen.Screen
-import net.minecraft.client.gui.screen.multiplayer.MultiplayerScreen
-import net.minecraft.client.gui.screen.option.ControlsOptionsScreen
-import net.minecraft.client.gui.screen.option.OptionsScreen
-import net.minecraft.client.gui.screen.world.SelectWorldScreen
-import net.minecraft.client.render.RenderLayer
-import net.minecraft.text.Text
-import net.minecraft.util.Identifier
-import net.minecraft.util.Util
 import java.net.URI
 import kotlin.math.sqrt
 
@@ -27,7 +15,7 @@ import kotlin.math.sqrt
  * menu doesn't depend on shipping matching button art per theme -- only the
  * logo, panorama, and small icon glyphs are textures.
  */
-class CustomTitleScreen : Screen(Text.literal("Turtle Client")) {
+class CustomTitleScreen : ClientScreen("Turtle Client") {
 
     // ── Palette (Turtle Client slate-blue identity) ──────────────────
     private val COL_BG        = 0xE60D1117.toInt()
@@ -41,7 +29,7 @@ class CustomTitleScreen : Screen(Text.literal("Turtle Client")) {
     private val COL_DANGER    = 0xFFF85149.toInt()
     private val COL_ONLINE    = 0xFF3FB950.toInt()
 
-    private fun id(path: String) = Identifier.of("turtle-client", "textures/gui/menu/$path")
+    private fun id(path: String) = identifier("turtle-client", "textures/gui/menu/$path")
     private val LOGO = id("logo.png")
     private fun icon(name: String) = id("icons/icon_$name.png")
 
@@ -156,29 +144,21 @@ class CustomTitleScreen : Screen(Text.literal("Turtle Client")) {
         try {
             val dir = MinecraftClient.getInstance().runDirectory.resolve("screenshots")
             dir.mkdirs()
-            Util.getOperatingSystem().open(dir)
+            openPath(dir)
         } catch (ignored: Exception) {}
     }
 
     private fun openLink(url: String) {
         try {
-            Util.getOperatingSystem().open(URI.create(url))
+            openUri(URI.create(url))
         } catch (ignored: Exception) {}
     }
 
     // ── Render ────────────────────────────────────────────────────────
-    override fun render(ctx: DrawContext, mx: Int, my: Int, delta: Float) {
+    override fun renderGui(ctx: GuiContext, mx: Int, my: Int, delta: Float) {
         drawPanorama(ctx)
 
-        //? if >=1.21.4 {
-        try {
-            ctx.drawTexture(RenderLayer::getGuiTextured, LOGO, logoX, logoY, 0f, 0f, logoSize, logoSize, logoSize, logoSize, -1)
-        } catch (ignored: Exception) {}
-        //?} else {
-        /*try {
-            ctx.drawTexture(LOGO, logoX, logoY, 0f, 0f, logoSize, logoSize, logoSize, logoSize)
-        } catch (ignored: Exception) {}
-        *///?}
+        try { ctx.drawTexture(LOGO, logoX, logoY, logoSize, logoSize) } catch (_: Exception) {}
         val title = "TURTLE CLIENT"
         ctx.drawTextWithShadow(textRenderer, title, width / 2 - textRenderer.getWidth(title) / 2, logoY + logoSize + 6, COL_TEXT)
 
@@ -188,7 +168,7 @@ class CustomTitleScreen : Screen(Text.literal("Turtle Client")) {
 
         drawAccountPill(ctx)
 
-        val mcVersion = try { SharedConstants.getGameVersion().name } catch (e: Exception) { "?" }
+        val mcVersion = try { gameVersion() } catch (e: Exception) { "?" }
         val ver = "Turtle Client 1.0.0 (fabric/$mcVersion)"
         ctx.drawTextWithShadow(textRenderer, ver, width / 2 - textRenderer.getWidth(ver) / 2, footerY, COL_TEXT_DIM)
 
@@ -201,11 +181,11 @@ class CustomTitleScreen : Screen(Text.literal("Turtle Client")) {
         for (b in iconButtons) if (hovered(mx, my, b.x, b.y, b.size, b.size)) drawTooltip(ctx, b.label, mx, my)
         for (q in quickToggles) if (hovered(mx, my, q.x, q.y, q.size, q.size)) drawTooltip(ctx, "${q.module.name} (${if (q.module.enabled) "on" else "off"})", mx, my)
 
-        super.render(ctx, mx, my, delta)
+        super.renderGui(ctx, mx, my, delta)
     }
 
-    private fun drawAccountPill(ctx: DrawContext) {
-        val name = MinecraftClient.getInstance().session?.username ?: "Player"
+    private fun drawAccountPill(ctx: GuiContext) {
+        val name = playerName()
         val pillH = 34
         val avatarSize = 24
         val textW = textRenderer.getWidth(name)
@@ -220,7 +200,7 @@ class CustomTitleScreen : Screen(Text.literal("Turtle Client")) {
         ctx.drawTextWithShadow(textRenderer, name, px + 12 + avatarSize, py + pillH / 2 - 4, COL_TEXT)
     }
 
-    private fun drawNavButton(ctx: DrawContext, b: NavButton, mx: Int, my: Int) {
+    private fun drawNavButton(ctx: GuiContext, b: NavButton, mx: Int, my: Int) {
         val hov = hovered(mx, my, b.x, b.y, b.w, b.h)
         val bg = when {
             b.label == "Store" -> if (hov) COL_ACCENT else COL_PRIMARY
@@ -232,25 +212,13 @@ class CustomTitleScreen : Screen(Text.literal("Turtle Client")) {
         ctx.drawTextWithShadow(textRenderer, b.label, b.x + b.w / 2 - textRenderer.getWidth(b.label) / 2, b.y + b.h / 2 - 4, textCol)
     }
 
-    private fun drawIconButton(ctx: DrawContext, b: IconButton, mx: Int, my: Int) {
+    private fun drawIconButton(ctx: GuiContext, b: IconButton, mx: Int, my: Int) {
         val hov = hovered(mx, my, b.x, b.y, b.size, b.size)
         val color = if (hov) COL_ACCENT else b.tint
-        //? if >=1.21.4 {
-        try {
-            ctx.drawTexture(RenderLayer::getGuiTextured, b.texture, b.x, b.y, 0f, 0f, b.size, b.size, b.size, b.size, color)
-        } catch (ignored: Exception) {}
-        //?} else {
-        /*try {
-            val a = (color ushr 24 and 0xFF) / 255f; val r = (color ushr 16 and 0xFF) / 255f
-            val g = (color ushr 8 and 0xFF) / 255f; val bl = (color and 0xFF) / 255f
-            RenderSystem.setShaderColor(r, g, bl, a)
-            ctx.drawTexture(b.texture, b.x, b.y, 0f, 0f, b.size, b.size, b.size, b.size)
-            RenderSystem.setShaderColor(1f, 1f, 1f, 1f)
-        } catch (ignored: Exception) {}
-        *///?}
+        try { ctx.drawTexture(b.texture, b.x, b.y, b.size, b.size, color) } catch (_: Exception) {}
     }
 
-    private fun drawQuickToggle(ctx: DrawContext, q: QuickToggle, mx: Int, my: Int) {
+    private fun drawQuickToggle(ctx: GuiContext, q: QuickToggle, mx: Int, my: Int) {
         val hov = hovered(mx, my, q.x, q.y, q.size, q.size)
         val bg = if (hov) COL_PANEL_HI else COL_PANEL
         fillRounded(ctx, q.x, q.y, q.size, q.size, 6, bg)
@@ -260,7 +228,7 @@ class CustomTitleScreen : Screen(Text.literal("Turtle Client")) {
         if (q.module.enabled) fillCircle(ctx, q.x + q.size - 4, q.y + 4, 3, COL_ONLINE)
     }
 
-    private fun drawTooltip(ctx: DrawContext, text: String, mx: Int, my: Int) {
+    private fun drawTooltip(ctx: GuiContext, text: String, mx: Int, my: Int) {
         val w = textRenderer.getWidth(text) + 8
         val tx = (mx + 10).coerceAtMost(width - w - 4)
         val ty = my - 14
@@ -268,7 +236,7 @@ class CustomTitleScreen : Screen(Text.literal("Turtle Client")) {
         ctx.drawTextWithShadow(textRenderer, text, tx + 4, ty + 3, COL_TEXT)
     }
 
-    private fun drawPanorama(ctx: DrawContext) {
+    private fun drawPanorama(ctx: GuiContext) {
         ctx.fill(0, 0, width, height, COL_BG)
 
         val elapsed = (System.currentTimeMillis() - openedAt) / 1000.0
@@ -278,30 +246,13 @@ class CustomTitleScreen : Screen(Text.literal("Turtle Client")) {
         val nextIdx = (idx + 1) % panoFaces.size
         val frac = (totalT - Math.floor(totalT)).toFloat()
 
-        //? if >=1.21.4 {
-        try {
-            ctx.drawTexture(RenderLayer::getGuiTextured, panoFaces[idx], 0, 0, 0f, 0f, width, height, width, height, -1)
-        } catch (ignored: Exception) {}
-        //?} else {
-        /*try {
-            ctx.drawTexture(panoFaces[idx], 0, 0, 0f, 0f, width, height, width, height)
-        } catch (ignored: Exception) {}
-        *///?}
+        try { ctx.drawTexture(panoFaces[idx], 0, 0, width, height) } catch (_: Exception) {}
 
         if (frac > 0.02f) {
-            //? if >=1.21.4 {
             try {
                 val alpha = (frac.coerceIn(0f, 1f) * 255f).toInt()
-                val color = (alpha shl 24) or 0x00FFFFFF
-                ctx.drawTexture(RenderLayer::getGuiTextured, panoFaces[nextIdx], 0, 0, 0f, 0f, width, height, width, height, color)
-            } catch (ignored: Exception) {}
-            //?} else {
-            /*try {
-                RenderSystem.setShaderColor(1f, 1f, 1f, frac.coerceIn(0f, 1f))
-                ctx.drawTexture(panoFaces[nextIdx], 0, 0, 0f, 0f, width, height, width, height)
-                RenderSystem.setShaderColor(1f, 1f, 1f, 1f)
-            } catch (ignored: Exception) {}
-            *///?}
+                ctx.drawTexture(panoFaces[nextIdx], 0, 0, width, height, (alpha shl 24) or 0x00FFFFFF)
+            } catch (_: Exception) {}
         }
 
         // Darken for readability, slightly heavier than before to match the reference's near-black look.
@@ -309,7 +260,7 @@ class CustomTitleScreen : Screen(Text.literal("Turtle Client")) {
     }
 
     // ── Small drawing primitives (no texture dependency) ────────────
-    private fun fillRounded(ctx: DrawContext, x: Int, y: Int, w: Int, h: Int, r: Int, color: Int) {
+    private fun fillRounded(ctx: GuiContext, x: Int, y: Int, w: Int, h: Int, r: Int, color: Int) {
         val rad = r.coerceAtMost(minOf(w, h) / 2).coerceAtLeast(0)
         if (rad == 0) { ctx.fill(x, y, x + w, y + h, color); return }
         ctx.fill(x, y + rad, x + w, y + h - rad, color)
@@ -324,7 +275,7 @@ class CustomTitleScreen : Screen(Text.literal("Turtle Client")) {
         }
     }
 
-    private fun fillCircle(ctx: DrawContext, cx: Int, cy: Int, r: Int, color: Int) {
+    private fun fillCircle(ctx: GuiContext, cx: Int, cy: Int, r: Int, color: Int) {
         for (dy in -r..r) {
             val dx = sqrt((r * r - dy * dy).toDouble()).toInt()
             ctx.fill(cx - dx, cy + dy, cx + dx, cy + dy + 1, color)
@@ -335,13 +286,12 @@ class CustomTitleScreen : Screen(Text.literal("Turtle Client")) {
         mx in x..(x + w) && my in y..(y + h)
 
     // ── Input ─────────────────────────────────────────────────────────
-    override fun mouseClicked(mx: Double, my: Double, btn: Int): Boolean {
+    override fun onMouseClicked(mx: Double, my: Double, btn: Int): Boolean {
         val imx = mx.toInt(); val imy = my.toInt()
         for (b in navButtons) if (hovered(imx, imy, b.x, b.y, b.w, b.h)) { b.action(); return true }
         for (b in iconButtons) if (hovered(imx, imy, b.x, b.y, b.size, b.size)) { b.action(); return true }
         for (q in quickToggles) if (hovered(imx, imy, q.x, q.y, q.size, q.size)) { q.module.toggle(); return true }
-        return super.mouseClicked(mx, my, btn)
+        return super.onMouseClicked(mx, my, btn)
     }
 
-    override fun shouldPause() = false
 }

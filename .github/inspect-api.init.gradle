@@ -1,0 +1,38 @@
+// Temporary branch-only diagnostic; removed once the compatibility build is verified.
+def p = project
+    p.tasks.register('inspectMinecraftApi') {
+        doLast {
+            def cp = p.sourceSets.main.compileClasspath.asPath
+            def classes = [
+                'net.minecraft.client.gui.GuiGraphicsExtractor',
+                'net.minecraft.client.gui.screens.Screen',
+                'net.minecraft.client.input.MouseButtonEvent',
+                'net.minecraft.client.input.KeyEvent',
+                'net.minecraft.client.input.CharacterEvent',
+                'net.minecraft.client.Minecraft',
+                'net.minecraft.client.gui.Gui',
+                'net.minecraft.client.Camera',
+                'net.minecraft.client.renderer.GameRenderer',
+                'net.minecraft.client.Options',
+                'net.minecraft.client.multiplayer.ClientLevel',
+                'net.minecraft.client.renderer.entity.EntityRenderDispatcher',
+                'net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher',
+                'net.minecraft.client.renderer.entity.EntityRenderer',
+                'net.minecraft.client.renderer.entity.state.EntityRenderState',
+                'net.minecraft.client.renderer.LevelRenderer',
+                'net.minecraft.client.particle.ParticleEngine',
+                'net.minecraft.world.entity.LivingEntity',
+                'net.minecraft.world.entity.player.Player',
+                'net.minecraft.world.effect.MobEffect',
+                'net.minecraft.world.item.ItemStack',
+                'net.minecraft.util.Util'
+            ]
+            classes.each { name ->
+                def process = new ProcessBuilder(System.getenv('JAVA_HOME_25_X64') + '/bin/javap', '-public', '-classpath', cp, name).redirectErrorStream(true).start()
+                def text = process.inputStream.getText('UTF-8')
+                process.waitFor()
+                println "::notice title=API ${name}::" + text.replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
+            }
+        }
+    }
+tasks.named("compileKotlin") { dependsOn("inspectMinecraftApi") }

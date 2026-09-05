@@ -1,6 +1,6 @@
 package com.endiq.client.modules.impl.hud
+import com.endiq.client.compat.*
 import com.endiq.client.modules.Module
-import net.minecraft.client.MinecraftClient
 class PingModule : Module("Ping Display", "Shows server ping", Category.HUD) {
     val textColor   = color("Text Color", r=255, g=255, b=255)
     val bgColor     = color("Background", r=0, g=0, b=0, a=120)
@@ -18,9 +18,7 @@ class PingModule : Module("Ping Display", "Shows server ping", Category.HUD) {
     val style       = dropdown("Style", options=arrayOf("Ping: Xms", "X ms", "X ping"), default=0)
     val showBar     = bool("Show Signal Bar", default=false)
     fun getText(): String {
-        val mc = MinecraftClient.getInstance()
-        val uuid = mc.session.uuidOrNull ?: return "Ping: N/A"
-        val ping = mc.networkHandler?.getPlayerListEntry(uuid)?.latency ?: return "Ping: N/A"
+        val ping = clientPing() ?: return "Ping: N/A"
         return "Ping: ${ping}ms"
     }
     init { enable() }

@@ -1,6 +1,6 @@
 package com.endiq.client.modules.impl.render
+import com.endiq.client.compat.*
 import com.endiq.client.modules.Module
-import net.minecraft.client.MinecraftClient
 class ZoomModule : Module("Zoom", "Zooms camera (hold C)", Category.RENDER) {
     val zoomFov    = slider("Zoom FOV", default=10f, min=1f, max=45f)
     val smoothZoom = bool("Smooth Zoom", default=true)
@@ -18,12 +18,12 @@ class ZoomModule : Module("Zoom", "Zooms camera (hold C)", Category.RENDER) {
     var currentFov = 70f
     fun startZoom() {
         if (isZooming) return
-        val o = MinecraftClient.getInstance().options
-        orig = o.fov.value; o.fov.value = zoomFov.value.toInt(); isZooming = true; currentFov = zoomFov.value
+        val o = ClientOptions
+        orig = o.fov; o.fov = zoomFov.value.toInt(); isZooming = true; currentFov = zoomFov.value
     }
     fun stopZoom() {
         if (!isZooming) return
-        MinecraftClient.getInstance().options.fov.value = orig; isZooming = false
+        ClientOptions.fov = orig; isZooming = false
     }
     override fun onDisable() { stopZoom() }
     init { enable() }

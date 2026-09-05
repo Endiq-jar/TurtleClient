@@ -1,5 +1,6 @@
 package com.endiq.client.hud
 
+import com.endiq.client.compat.*
 import com.endiq.client.modules.ModuleManager
 import com.endiq.client.modules.impl.hud.*
 import com.endiq.client.modules.impl.pvp.*
@@ -7,13 +8,6 @@ import com.endiq.client.modules.impl.hud.ToggleSprintModule
 import com.endiq.client.modules.impl.render.*
 import com.endiq.client.modules.impl.utility.*
 import com.endiq.client.modules.impl.hypixel.*
-import net.minecraft.client.MinecraftClient
-import net.minecraft.client.gui.DrawContext
-//? if >=1.21 {
-import net.minecraft.client.render.RenderTickCounter
-//?}
-import net.minecraft.util.hit.BlockHitResult
-import net.minecraft.scoreboard.Team
 
 object HudRenderer {
     private val WHITE  = 0xFFFFFFFF.toInt()
@@ -48,8 +42,7 @@ object HudRenderer {
         // Pack Display
         mod<PackDisplayModule>("Pack Display")?.let {
             if (it.enabled) {
-                it.packName = client.resourcePackManager.enabledProfiles
-                    .toList().lastOrNull()?.displayName?.string ?: "Default"
+                it.packName = lastResourcePackName()
             }
         }
 
@@ -67,8 +60,7 @@ object HudRenderer {
         // Zoom
         mod<ZoomModule>("Zoom")?.let {
             if (it.enabled) {
-                val pressing = net.minecraft.client.util.InputUtil.isKeyPressed(
-                    client.window.handle, org.lwjgl.glfw.GLFW.GLFW_KEY_C)
+                val pressing = isKeyDown(org.lwjgl.glfw.GLFW.GLFW_KEY_C)
                 if (pressing) it.startZoom() else it.stopZoom()
             } else it.stopZoom()
         }
@@ -76,7 +68,7 @@ object HudRenderer {
         // AutoText
         mod<AutoTextModule>("Auto Text")?.let {
             if (it.enabled && it.pendingSend && !it.sent && player != null) {
-                player.networkHandler.sendChatMessage(it.message)
+                sendChatMessage(it.message)
                 it.sent = true; it.pendingSend = false
             }
         }
@@ -88,11 +80,7 @@ object HudRenderer {
         mod<HitColorModule>("Hit Color")?.let { it.tick() }
     }
 
-    //? if >=1.21 {
-    fun onHudRender(ctx: DrawContext, tickCounter: RenderTickCounter) {
-    //?} else {
-    /*fun onHudRender(ctx: DrawContext, tickDelta: Float) {
-    *///?}
+    fun onHudRender(ctx: GuiContext) {
         val client = MinecraftClient.getInstance() ?: return
         val player = client.player
         val tr = client.textRenderer
@@ -169,7 +157,7 @@ object HudRenderer {
                 var py = 2
                 for (e in player.statusEffects) {
                     val s = e.duration/20
-                    val lbl = "${e.effectType.value().name.string} ${s/60}:${"%02d".format(s%60)}"
+                    val lbl = "${effectName(e)} ${s/60}:${"%02d".format(s%60)}"
                     val w = tr.getWidth(lbl)+4
                     ctx.fill(sw-w-2, py, sw-2, py+10, BLACK)
                     ctx.drawTextWithShadow(tr, lbl, sw-w, py+1, WHITE)
@@ -261,7 +249,7 @@ object HudRenderer {
         mod<ArmorStatusModule>("Armor Status")?.let {
             if (it.enabled && player != null) {
                 var ax = 2; val ay = sh-68
-                for (stack in player.armorItems.toList().reversed()) {
+                for (stack in armorStacks(player)) {
                     if (stack.isEmpty) continue
                     ctx.drawItem(stack, ax, ay)
                     val pct = if (stack.maxDamage > 0) (stack.maxDamage-stack.damage)*100/stack.maxDamage else 100
@@ -316,10 +304,10 @@ object HudRenderer {
         // Team View
         mod<TeamViewModule>("Team View")?.let {
             if (it.enabled && player != null) {
-                val myTeam: Team? = player.scoreboardTeam
+                val myTeam = player.scoreboardTeam
                 if (myTeam != null) {
                     val mates = client.world?.entities
-                        ?.filterIsInstance<net.minecraft.entity.player.PlayerEntity>()
+                        ?.filterIsInstance<PlayerEntity>()
                         ?.filter { e -> e != player && e.scoreboardTeam == myTeam && player.distanceTo(e) < it.maxDist.value }
                         ?.sortedBy { e -> player.distanceTo(e) }?.take(it.maxPlayers.value.toInt()) ?: emptyList()
                     if (mates.isNotEmpty()) {
@@ -336,7 +324,7 @@ object HudRenderer {
         }
     }
 
-    private fun drawKey(ctx: DrawContext, label: String, x: Int, y: Int, pressed: Boolean) {
+    private fun drawKey(ctx: GuiContext, label: String, x: Int, y: Int, pressed: Boolean) {
         ctx.fill(x, y, x+12, y+12, if (pressed) 0xCC3D9970.toInt() else 0x88000000.toInt())
         ctx.drawTextWithShadow(MinecraftClient.getInstance().textRenderer, label,
             x+2, y+2, if (pressed) 0xFF000000.toInt() else WHITE)

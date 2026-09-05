@@ -1,18 +1,13 @@
 package com.endiq.client.gui
 
+import com.endiq.client.compat.*
 import com.endiq.client.cosmetics.CosmeticManager
 import com.endiq.client.cosmetics.CosmeticManager.CosmeticType
 import com.endiq.client.gui.settings.ModSettingsGui
 import com.endiq.client.modules.Module
 import com.endiq.client.modules.ModuleManager
-import net.minecraft.client.MinecraftClient
-import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.gui.screen.Screen
-import net.minecraft.client.render.RenderLayer
-import net.minecraft.text.Text
-import net.minecraft.util.Identifier
 
-class ClickGui : Screen(Text.literal("TurtleClient")) {
+class ClickGui : ClientScreen("TurtleClient") {
 
     // ── Layout ────────────────────────────────────────────────────────
     private val GW    = 580
@@ -56,7 +51,7 @@ class ClickGui : Screen(Text.literal("TurtleClient")) {
     private var cosScroll     = 0
     private var gx = 0; private var gy = 0
 
-    private val LOGO = Identifier.of("turtle-client", "textures/loading_icon.png")
+    private val LOGO = identifier("turtle-client", "textures/loading_icon.png")
     private val MOD_TABS = listOf(
         Module.Category.ALL, Module.Category.HUD, Module.Category.HYPIXEL,
         Module.Category.PVP, Module.Category.RENDER, Module.Category.MOVEMENT,
@@ -87,7 +82,7 @@ class ClickGui : Screen(Text.literal("TurtleClient")) {
     }
 
     // ═══════════════════════════════════════════════════════════════════
-    override fun render(ctx: DrawContext, mx: Int, my: Int, delta: Float) {
+    override fun renderGui(ctx: GuiContext, mx: Int, my: Int, delta: Float) {
         ctx.fill(0, 0, width, height, 0x99000000.toInt())
         ctx.fill(gx, gy, gx + GW, gy + GH, BG)
         drawTopBar(ctx)
@@ -95,19 +90,15 @@ class ClickGui : Screen(Text.literal("TurtleClient")) {
         drawRow2(ctx, mx, my)   // cosmetics tabs OR search
         if (showCosmetics) drawCosmetics(ctx, mx, my) else drawModGrid(ctx, mx, my)
         drawBottomBar(ctx, mx, my)
-        super.render(ctx, mx, my, delta)
+        super.renderGui(ctx, mx, my, delta)
     }
 
     // ── Topbar ────────────────────────────────────────────────────────
-    private fun drawTopBar(ctx: DrawContext) {
+    private fun drawTopBar(ctx: GuiContext) {
         ctx.fill(gx, gy, gx + GW, gy + TOPH, TOPBG)
         ctx.fill(gx, gy + TOPH - 1, gx + GW, gy + TOPH, RED)
         val ls = 22; val ly = gy + (TOPH - ls) / 2
-        //? if >=1.21.4 {
-        try { ctx.drawTexture(RenderLayer::getGuiTextured, LOGO, gx+4, ly, 0f,0f, ls,ls, ls,ls, -1) } catch(_:Exception){}
-        //?} else {
-        /*try { ctx.drawTexture(LOGO, gx+4, ly, 0f,0f, ls,ls, ls,ls) } catch(_:Exception){}
-        *///?}
+        try { ctx.drawTexture(LOGO, gx+4, ly, ls, ls) } catch (_: Exception) {}
         val t = if (showCosmetics) "TurtleClient  |  COSMETICS" else "TurtleClient  |  MOD MENU"
         ctx.drawTextWithShadow(textRenderer, t, gx+4+ls+4, gy+(TOPH-8)/2, WHITE)
         // close
@@ -116,7 +107,7 @@ class ClickGui : Screen(Text.literal("TurtleClient")) {
     }
 
     // ── Row 1: module category tabs ───────────────────────────────────
-    private fun drawRow1(ctx: DrawContext, mx: Int, my: Int) {
+    private fun drawRow1(ctx: GuiContext, mx: Int, my: Int) {
         val ry = gy + TOPH
         ctx.fill(gx, ry, gx+GW, ry+ROW1H, TAB1BG)
         ctx.fill(gx, ry+ROW1H-1, gx+GW, ry+ROW1H, 0xFF141414.toInt())
@@ -137,7 +128,7 @@ class ClickGui : Screen(Text.literal("TurtleClient")) {
     }
 
     // ── Row 2: cosmetics tab strip OR search bar ──────────────────────
-    private fun drawRow2(ctx: DrawContext, mx: Int, my: Int) {
+    private fun drawRow2(ctx: GuiContext, mx: Int, my: Int) {
         val ry = gy + TOPH + ROW1H
         ctx.fill(gx, ry, gx+GW, ry+ROW2H, TAB2BG)
         ctx.fill(gx, ry+ROW2H-1, gx+GW, ry+ROW2H, 0xFF111111.toInt())
@@ -182,7 +173,7 @@ class ClickGui : Screen(Text.literal("TurtleClient")) {
     }
 
     // ── Cosmetics content ─────────────────────────────────────────────
-    private fun drawCosmetics(ctx: DrawContext, mx: Int, my: Int) {
+    private fun drawCosmetics(ctx: GuiContext, mx: Int, my: Int) {
         val ct = contentTop(); val ch = contentH()
         val GRID_W = 368; val PREV_X = gx+GRID_W; val PREV_W = GW-GRID_W
         ctx.fill(PREV_X,ct,PREV_X+1,ct+ch,0xFF1A1A1A.toInt())
@@ -288,7 +279,7 @@ class ClickGui : Screen(Text.literal("TurtleClient")) {
     }
 
     // ── Mod grid ──────────────────────────────────────────────────────
-    private fun drawModGrid(ctx: DrawContext, mx: Int, my: Int) {
+    private fun drawModGrid(ctx: GuiContext, mx: Int, my: Int) {
         val ct=contentTop();val ch=contentH()
         ctx.enableScissor(gx,ct,gx+GW,ct+ch)
         getFiltered().forEachIndexed { i, mod ->
@@ -317,14 +308,14 @@ class ClickGui : Screen(Text.literal("TurtleClient")) {
     }
 
     // ── Bottom bar ────────────────────────────────────────────────────
-    private fun drawBottomBar(ctx: DrawContext, mx: Int, my: Int) {
+    private fun drawBottomBar(ctx: GuiContext, mx: Int, my: Int) {
         val bbY=gy+GH-BBH
         ctx.fill(gx,bbY,gx+GW,gy+GH,0xF20D0D0D.toInt())
         ctx.fill(gx,bbY,gx+GW,bbY+1,0xFF1A1A1A.toInt())
         val hint=if(showCosmetics)"Click: equip/unequip  |  ↺: reload  |  RShift: close"
                  else             "Left: toggle  |  Right: settings  |  RShift: close"
         ctx.drawTextWithShadow(textRenderer,hint,gx+6,bbY+5,GRAY)
-        val ver="v1.0  MC1.21.1";val vW=textRenderer.getWidth(ver)+10
+        val ver="v1.0  MC${gameVersion()}";val vW=textRenderer.getWidth(ver)+10
         ctx.fill(gx+GW-vW-2,bbY+2,gx+GW-2,gy+GH-2,0xFF1A1A1A.toInt())
         ctx.fill(gx+GW-vW-2,bbY+2,gx+GW-vW-1,gy+GH-2,RED)
         ctx.drawTextWithShadow(textRenderer,ver,gx+GW-vW+3,bbY+5,LGRAY)
@@ -333,7 +324,7 @@ class ClickGui : Screen(Text.literal("TurtleClient")) {
     // ═══════════════════════════════════════════════════════════════════
     // INPUT
     // ═══════════════════════════════════════════════════════════════════
-    override fun mouseClicked(mx: Double, my: Double, btn: Int): Boolean {
+    override fun onMouseClicked(mx: Double, my: Double, btn: Int): Boolean {
         val imx=mx.toInt();val imy=my.toInt()
         // Close
         if(imx in (gx+GW-16)..(gx+GW-4)&&imy in (gy+4)..(gy+TOPH-4)){MinecraftClient.getInstance().setScreen(null);return true}
@@ -377,7 +368,7 @@ class ClickGui : Screen(Text.literal("TurtleClient")) {
                     if(imx in cx..(cx+CCW)&&imy in cy..(cy+CCH)){if(CosmeticManager.isEquipped(entry))CosmeticManager.unequip(entry.type) else CosmeticManager.equip(entry);return true}
                 }
             }
-            return super.mouseClicked(mx,my,btn)
+            return super.onMouseClicked(mx,my,btn)
         }
         // Mod cards
         val ct=contentTop();val ch=contentH()
@@ -389,23 +380,22 @@ class ClickGui : Screen(Text.literal("TurtleClient")) {
                 when(btn){0->{mod.toggle();return true};1->{MinecraftClient.getInstance().setScreen(ModSettingsGui(mod,this));return true}}
             }
         }
-        return super.mouseClicked(mx,my,btn)
+        return super.onMouseClicked(mx,my,btn)
     }
 
-    override fun mouseScrolled(mx: Double, my: Double, h: Double, v: Double): Boolean {
+    override fun onMouseScrolled(mx: Double, my: Double, h: Double, v: Double): Boolean {
         if(showCosmetics){if(mx.toInt()<gx+368){val ms=cosMaxScroll();if(ms>0)cosScroll=(cosScroll-(v*18).toInt()).coerceIn(0,ms)};return true}
         val ms=maxScroll();if(ms>0)scroll=(scroll-(v*20).toInt()).coerceIn(0,ms);return true
     }
 
-    override fun keyPressed(kc: Int, sc: Int, mods: Int): Boolean {
+    override fun onKeyPressed(kc: Int, sc: Int, mods: Int): Boolean {
         if(!showCosmetics&&searchFocused){
             when(kc){org.lwjgl.glfw.GLFW.GLFW_KEY_BACKSPACE->{if(searchQuery.isNotEmpty()){searchQuery=searchQuery.dropLast(1);scroll=0};return true};org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE->{searchFocused=false;return true}}
             return true
         }
-        return super.keyPressed(kc,sc,mods)
+        return super.onKeyPressed(kc,sc,mods)
     }
-    override fun charTyped(c: Char, m: Int): Boolean {if(!showCosmetics&&searchFocused){searchQuery+=c;scroll=0;return true};return super.charTyped(c,m)}
-    override fun shouldPause()=false
+    override fun onCharTyped(c: String, m: Int): Boolean {if(!showCosmetics&&searchFocused){searchQuery+=c;scroll=0;return true};return super.onCharTyped(c,m)}
 
     private fun getIcon(n:String)=when(n){"FPS"->"FPS";"CPS"->"CPS";"Coordinates"->"XYZ";"Keystrokes"->"KEY";"Armor Status"->"ARM";"Armor Bar"->"BAR";"Attack Indicator"->"ATK";"Autohide HUD"->"HUD";"Block Indicator"->"BLK";"Block Overlay"->"OVR";"Boss Bar"->"BSS";"Crosshair"->" + ";"Hotbar"->"HOT";"Nametags"->"TAG";"Pack Display"->"PKG";"Ping"->"PNG";"Potion Status"->"POT";"Scoreboard"->"SCR";"Server Address"->"SRV";"Reach Display"->"RCH";"Speed HUD"->"SPD";"Memory HUD"->"MEM";"Clock HUD"->"CLK";"Direction HUD"->"DIR";"Hit Color"->"HIT";"PvP Info"->"PVP";"Team Circles"->"CRL";"Toggle Sprint"->"SPR";"Sprint"->">>>";"Freecam"->"CAM";"Animations"->"ANI";"Motion Blur"->"BLR";"NoWeather"->"SUN";"TimeChanger"->"TME";"Zoom"->"ZOM";"Auto Text"->"TXT";"Camera"->"PIC";"Chat"->"MSG";"Nick Hider"->"NCK";"Popup Events"->"POP";"Timers"->"TMR";"Waypoints"->"WPT";"UHC Overlay"->"UHC";"Hypixel Addons"->"HYP";"Skyblock Addons"->"SKY";"Tab Stat"->"TAB";"Net Graph"->"NET";"Combo Counter"->"CMB";"FOV Changer"->"FOV";"Full Bright"->"BRT";"Team View"->"TM";else->"MOD"}
 }

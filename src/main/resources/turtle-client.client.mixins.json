@@ -4,6 +4,8 @@
  "compatibilityLevel": "JAVA_21",
  "mixins": [],
  "client": [
+  "LegacyChatMixin",
+  "LegacyFpsAccessor",
   "ExampleClientMixin$SplashMixin",
   "ExampleClientMixin$ScreenMixin",
   "NametagMixin",

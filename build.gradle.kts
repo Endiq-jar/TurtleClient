@@ -102,14 +102,18 @@ tasks.processResources {
 
     filesMatching("fabric.mod.json") { expand(props) }
 
-    // NOTE: previously also ran expand("java" to "JAVA_${requiredJava.majorVersion}")
-    // over *.mixins.json, but that was a no-op for its intended purpose --
-    // compatibilityLevel is hardcoded ("JAVA_21") in both mixins.json files, not
-    // templated. All it did was make Gradle's Groovy-template expand() scan the
-    // WHOLE file for "$identifier"/"${...}" patterns, which matches Java's inner
-    // class syntax in mixin class names (e.g. "ExampleClientMixin$SplashMixin")
-    // and throws MissingPropertyException on any such name. Mixins.json is copied
-    // as-is now; nothing in it actually needs templating.
+    // Replace just the compatibility value, not Groovy-expand the whole JSON:
+    // nested mixin class names contain '$' (e.g. ExampleClientMixin$SplashMixin).
+    inputs.property("mixinJava", requiredJava.majorVersion)
+    filesMatching("*.mixins.json") {
+        filter { line ->
+            when {
+                sc.current.parsed >= "1.19" && line.contains("\"LegacyChatMixin\"") -> ""
+                sc.current.parsed >= "1.19.4" && line.contains("\"LegacyFpsAccessor\"") -> ""
+                else -> line.replace("\"JAVA_21\"", "\"JAVA_${requiredJava.majorVersion}\"")
+            }
+        }
+    }
 
     // Guard rail: verify every mixins.json fabric.mod.json expects is both PRESENT
     // in the packaged output and still valid JSON. A crash log from a 1.21.1 device
@@ -202,5 +206,13 @@ publishing {
         register<MavenPublication>("mavenJava") {
             from(components["java"])
         }
+    }
+}
+
+// Temporary CI diagnostics while validating the multi-version migration.
+if (System.getenv("GITHUB_ACTIONS") == "true") {
+    logger.lifecycle("::add-matcher::${rootProject.file(".github/problem-matchers.json")}")
+    if (sc.current.version == "26.2" && System.getenv("GITHUB_EVENT_NAME") == "workflow_dispatch") {
+        apply(from = rootProject.file(".github/inspect-api.init.gradle"))
     }
 }
