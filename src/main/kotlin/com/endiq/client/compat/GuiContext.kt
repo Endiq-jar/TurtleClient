@@ -64,11 +64,14 @@ class GuiContext(val native: NativeGuiContext) {
         val b = (color and 255) / 255f
         com.mojang.blaze3d.systems.RenderSystem.setShader { net.minecraft.client.render.GameRenderer.getPositionTexProgram() }
         com.mojang.blaze3d.systems.RenderSystem.setShaderTexture(0, texture)
+        com.mojang.blaze3d.systems.RenderSystem.enableBlend()
+        com.mojang.blaze3d.systems.RenderSystem.defaultBlendFunc()
         com.mojang.blaze3d.systems.RenderSystem.setShaderColor(r, g, b, a)
         try {
             net.minecraft.client.gui.DrawableHelper.drawTexture(native, x, y, 0f, 0f, width, height, width, height)
         } finally {
             com.mojang.blaze3d.systems.RenderSystem.setShaderColor(1f, 1f, 1f, 1f)
+            com.mojang.blaze3d.systems.RenderSystem.disableBlend()
         }
 *///?} else {
 /*        val a = (color ushr 24 and 255) / 255f
@@ -77,11 +80,14 @@ class GuiContext(val native: NativeGuiContext) {
         val b = (color and 255) / 255f
         com.mojang.blaze3d.systems.RenderSystem.setShader { net.minecraft.client.render.GameRenderer.getPositionTexShader() }
         com.mojang.blaze3d.systems.RenderSystem.setShaderTexture(0, texture)
+        com.mojang.blaze3d.systems.RenderSystem.enableBlend()
+        com.mojang.blaze3d.systems.RenderSystem.defaultBlendFunc()
         com.mojang.blaze3d.systems.RenderSystem.setShaderColor(r, g, b, a)
         try {
             net.minecraft.client.gui.DrawableHelper.drawTexture(native, x, y, 0f, 0f, width, height, width, height)
         } finally {
             com.mojang.blaze3d.systems.RenderSystem.setShaderColor(1f, 1f, 1f, 1f)
+            com.mojang.blaze3d.systems.RenderSystem.disableBlend()
         }
 *///?}
     }

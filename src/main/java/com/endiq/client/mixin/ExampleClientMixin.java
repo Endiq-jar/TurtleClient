@@ -71,7 +71,7 @@ public class ExampleClientMixin {
 /*        @Inject(method = "render", at = @At("TAIL"))
         private void turtleClient$renderWatermark(MatrixStack nativeCtx, int mx, int my, float delta, CallbackInfo ci) {
 *///?}
-            BrandingRenderer.renderWatermark(new GuiContext(nativeCtx));
+            if (!((Object) this instanceof ClientScreen)) BrandingRenderer.renderWatermark(new GuiContext(nativeCtx));
         }
 
         // These screens draw their own background; don't overlay vanilla blur.

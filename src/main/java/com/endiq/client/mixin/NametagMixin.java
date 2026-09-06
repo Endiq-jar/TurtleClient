@@ -45,7 +45,7 @@ import net.minecraft.client.render.RenderLayer;
 
 @Mixin(EntityRenderer.class)
 public class NametagMixin {
-    @Unique private static final Identifier turtleClient$badge = ClientCompatKt.identifier("turtle-client", "textures/loading_icon.png");
+    @Unique private static final Identifier turtleClient$badge = ClientCompatKt.identifier("turtle-client", "textures/gui/branding/badge.png");
 
 //? if >=26.1 {
 /*    @Inject(method = "extractRenderState", at = @At("TAIL"))

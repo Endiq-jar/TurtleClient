@@ -29,6 +29,13 @@ abstract class ClientScreen(title: String) : Screen(literalText(title)) {
     final override fun shouldPause() = false
 //?}
 
+    open fun closeGui() { MinecraftClient.getInstance().setScreen(null) }
+//? if >=26.1 {
+/*    final override fun onClose() = closeGui()
+*///?} else {
+    final override fun close() = closeGui()
+//?}
+
     open fun onMouseClicked(mx: Double, my: Double, button: Int) = false
     open fun onMouseReleased(mx: Double, my: Double, button: Int) = false
     open fun onMouseDragged(mx: Double, my: Double, button: Int, dx: Double, dy: Double) = false

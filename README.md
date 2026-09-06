@@ -21,7 +21,7 @@ Quick reference:
 - Keystrokes (WASD + Jump)
 - Armor Status with durability %
 - Potion Status
-- **Array List** top-right with accent bar (like Lunar)
+- **Array List** top-right with TurtleClient styling
 
 ### Movement
 - Auto Sprint
@@ -43,8 +43,10 @@ Quick reference:
 ## ClickGUI
 Press **Right Shift** in-game to open the GUI.
 - Left click a module to toggle it
-- Left click a panel header to collapse it
-- Middle-click drag a panel to move it
+- Right-click a module (or click its gear) to open settings
+- Use the mouse wheel or drag the scrollbar in modules, cosmetics, and settings
+- Page Up / Page Down and Home / End also scroll
+- Search or choose a category to filter modules; Escape returns to the previous screen
 
 ---
 
@@ -73,3 +75,8 @@ First build downloads ~500MB (Minecraft + Fabric). Takes 5–15 min.
 Drop the non-sources TurtleClient jar for your Minecraft version into `.minecraft/mods/` alongside:
 - `fabric-api-*.jar`
 - `fabric-language-kotlin-*.jar`
+
+## Artwork
+
+The menu uses original TurtleClient turtle branding and optimized coast/forest artwork.
+See [docs/ARTWORK.md](docs/ARTWORK.md) for texture budgets and generation details.
