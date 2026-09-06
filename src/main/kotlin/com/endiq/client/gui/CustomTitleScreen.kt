@@ -98,7 +98,7 @@ class CustomTitleScreen : ClientScreen("TurtleClient") {
     override fun onKeyPressed(key: Int, scancode: Int, modifiers: Int): Boolean {
         if (key == GLFW.GLFW_KEY_TAB || key == GLFW.GLFW_KEY_DOWN || key == GLFW.GLFW_KEY_UP) {
             val step = if (key == GLFW.GLFW_KEY_UP || modifiers and GLFW.GLFW_MOD_SHIFT != 0) -1 else 1
-            keyboardFocus = Math.floorMod(keyboardFocus + step, buttons.size)
+            keyboardFocus = if (keyboardFocus < 0 && step < 0) buttons.lastIndex else Math.floorMod(keyboardFocus + step, buttons.size)
             return true
         }
         if ((key == GLFW.GLFW_KEY_ENTER || key == GLFW.GLFW_KEY_KP_ENTER) && keyboardFocus >= 0) {

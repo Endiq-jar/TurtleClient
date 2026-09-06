@@ -16,7 +16,13 @@ fun centeredPanel(screenWidth: Int, screenHeight: Int, maxWidth: Int, maxHeight:
 }
 
 /** Reflow rather than scaling text or leaving a fixed-width menu off-screen. */
-data class UiGrid(val viewport: UiRect, val minimumCardWidth: Int = 132, val cardHeight: Int = 78, val gap: Int = 8, val maxColumns: Int = 4) {
+data class UiGrid(
+    val viewport: UiRect,
+    val minimumCardWidth: Int = 132,
+    val gap: Int = 8,
+    val cardHeight: Int = minOf(78, (viewport.height - gap * 2).coerceAtLeast(60)),
+    val maxColumns: Int = 4
+) {
     val columns = ((viewport.width - gap) / (minimumCardWidth + gap)).coerceIn(1, maxColumns)
     val cardWidth = ((viewport.width - gap * (columns + 1)) / columns).coerceAtLeast(1)
     fun contentHeight(count: Int) = if (count == 0) 0 else gap + ((count + columns - 1) / columns) * (cardHeight + gap)

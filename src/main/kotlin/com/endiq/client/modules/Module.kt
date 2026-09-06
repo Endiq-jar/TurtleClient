@@ -26,6 +26,13 @@ abstract class Module(
     protected fun dropdown(name: String, desc: String = "", vararg options: String, default: Int = 0) =
         DropdownSetting(name, desc, options.toList(), default).also { settings.add(it) }
 
+    /** Track releases even inside screens, without toggling while typing in a menu. */
+    fun updateKeyState(down: Boolean, allowToggle: Boolean) {
+        val pressed = down && !keyWasDown
+        keyWasDown = down
+        if (pressed && allowToggle) toggle()
+    }
+
     fun toggle() { enabled = !enabled; if (enabled) onEnable() else onDisable() }
     fun enable()  { if (!enabled) toggle() }
     fun disable() { if (enabled)  toggle() }

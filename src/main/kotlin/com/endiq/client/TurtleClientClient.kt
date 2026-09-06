@@ -41,14 +41,11 @@ object TurtleClientClient : ClientModInitializer {
 
         ClientTickEvents.END_CLIENT_TICK.register { client ->
             ModuleManager.modules.forEach { mod ->
-                val keyDown = isKeyDown(mod.key)
-                if (keyDown) {
-                    if (!mod.keyWasDown) { mod.toggle(); mod.keyWasDown = true }
-                } else {
-                    mod.keyWasDown = false
-                }
+                mod.updateKeyState(isKeyDown(mod.key), client.currentScreen == null)
             }
-            while (guiKey.wasPressed()) client.setScreen(ClickGui())
+            while (guiKey.wasPressed()) {
+                if (client.currentScreen == null) client.setScreen(ClickGui())
+            }
             HudRenderer.onTick()
         }
 

@@ -41,6 +41,14 @@ class UiGeometryTest {
         assertNull(grid.hit(22.0, grid.viewport.bottom + 1.0, 20, offset))
     }
 
+    @Test fun aCompleteCardFitsWhenSmallWindowsNeedTwoRowsOfTabs() {
+        val grid = UiGrid(UiRect(12, 128, 280, 76))
+        val first = grid.card(0, 0)
+        assertTrue(first.y >= grid.viewport.y)
+        assertTrue(first.bottom <= grid.viewport.bottom)
+        assertEquals(0, grid.hit(first.x + 4.0, first.bottom - 4.0, 1, 0))
+    }
+
     @Test fun backgroundCoversWithoutStretching() {
         for ((width, height) in listOf(320 to 240, 1920 to 1080, 3440 to 1440, 480 to 800)) {
             val rect = coverBounds(width, height, 1024, 576)

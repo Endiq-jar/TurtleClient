@@ -57,6 +57,8 @@ Rendering and hit testing share geometry and the same scroll offset, so clipped
 rows cannot be activated through headers or footers. Returning from settings keeps
 the module list's position. The settings footer/keybind controls remain fixed.
 Favorited modules remain reachable through the title menu's Favorites shortcut.
+Typing in a screen no longer fires module hotkeys; held keys must be released
+before they can toggle modules again after closing the screen.
 
 Cosmetics still use the existing local-file registry/equip state. This refresh does
 not implement in-world cosmetic meshes; the UI no longer presents a box-drawn fake

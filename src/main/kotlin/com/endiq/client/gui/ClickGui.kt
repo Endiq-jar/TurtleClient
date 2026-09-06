@@ -143,8 +143,9 @@ class ClickGui(private val parent: Screen? = null, initialCosmetics: Boolean = f
         if (module.isNew) Theme.label(ctx, textRenderer, "NEW", rect.x + 35, rect.y + 14, Theme.ACCENT)
         val settings = UiRect(rect.right - 29, rect.y + 7, 22, 22)
         iconButton(ctx, settings, "settings", mx, my)
-        Theme.label(ctx, textRenderer, module.name, rect.x + 10, rect.y + 34, Theme.TEXT, rect.width - 20)
-        Theme.label(ctx, textRenderer, module.description, rect.x + 10, rect.y + 47, Theme.MUTED, rect.width - 20)
+        val nameY = if (rect.height < 68) 30 else 34
+        Theme.label(ctx, textRenderer, module.name, rect.x + 10, rect.y + nameY, Theme.TEXT, rect.width - 20)
+        if (rect.height >= 78) Theme.label(ctx, textRenderer, module.description, rect.x + 10, rect.y + 47, Theme.MUTED, rect.width - 20)
         Theme.label(ctx, textRenderer, if (module.enabled) "Enabled" else "Disabled", rect.x + 10, rect.bottom - 15,
             if (module.enabled) Theme.ACCENT else Theme.SUBTLE, rect.width - 52)
         val switch = UiRect(rect.right - 38, rect.bottom - 21, 28, 13)
@@ -158,7 +159,7 @@ class ClickGui(private val parent: Screen? = null, initialCosmetics: Boolean = f
         val hover = viewport.contains(mx.toDouble(), my.toDouble()) && rect.contains(mx.toDouble(), my.toDouble())
         Theme.panel(ctx, rect, if (hover) Theme.HOVER else Theme.CARD, if (equipped) Theme.ACCENT else Theme.BORDER, 6)
         ctx.drawTexture(Theme.icon(entry.type.name.lowercase()), rect.x + 10, rect.y + 10, 22, 22, if (equipped) Theme.ACCENT else Theme.MUTED)
-        Theme.label(ctx, textRenderer, entry.name, rect.x + 10, rect.y + 40, Theme.TEXT, rect.width - 20)
+        Theme.label(ctx, textRenderer, entry.name, rect.x + 10, rect.y + if (rect.height < 68) 32 else 40, Theme.TEXT, rect.width - 20)
         Theme.label(ctx, textRenderer, if (equipped) "Equipped" else "Click to equip", rect.x + 10, rect.bottom - 16, if (equipped) Theme.ACCENT else Theme.SUBTLE, rect.width - 20)
     }
 
