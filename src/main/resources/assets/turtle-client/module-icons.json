@@ -1,0 +1,317 @@
+{
+  "schema": 1,
+  "modules": [
+    {
+      "class": "FpsModule",
+      "key": "fps",
+      "label": "FPS Counter",
+      "texture": "textures/gui/modules/fps.png"
+    },
+    {
+      "class": "CpsModule",
+      "key": "cps",
+      "label": "CPS Counter",
+      "texture": "textures/gui/modules/cps.png"
+    },
+    {
+      "class": "CoordinatesModule",
+      "key": "coordinates",
+      "label": "Coordinates",
+      "texture": "textures/gui/modules/coordinates.png"
+    },
+    {
+      "class": "KeystrokesModule",
+      "key": "keystrokes",
+      "label": "Keystrokes",
+      "texture": "textures/gui/modules/keystrokes.png"
+    },
+    {
+      "class": "ArmorStatusModule",
+      "key": "armor-status",
+      "label": "Armor Status",
+      "texture": "textures/gui/modules/armor-status.png"
+    },
+    {
+      "class": "ArmorBarModule",
+      "key": "armor-bar",
+      "label": "Armor Bar",
+      "texture": "textures/gui/modules/armor-bar.png"
+    },
+    {
+      "class": "AttackIndicatorModule",
+      "key": "attack-indicator",
+      "label": "Attack Indicator",
+      "texture": "textures/gui/modules/attack-indicator.png"
+    },
+    {
+      "class": "AutoHideHudModule",
+      "key": "auto-hide-hud",
+      "label": "Auto Hide HUD",
+      "texture": "textures/gui/modules/auto-hide-hud.png"
+    },
+    {
+      "class": "BlockIndicatorModule",
+      "key": "block-indicator",
+      "label": "Block Indicator",
+      "texture": "textures/gui/modules/block-indicator.png"
+    },
+    {
+      "class": "BlockOverlayModule",
+      "key": "block-overlay",
+      "label": "Block Overlay",
+      "texture": "textures/gui/modules/block-overlay.png"
+    },
+    {
+      "class": "BossBarModule",
+      "key": "boss-bar",
+      "label": "Boss Bar",
+      "texture": "textures/gui/modules/boss-bar.png"
+    },
+    {
+      "class": "CrosshairModule",
+      "key": "crosshair",
+      "label": "Crosshair",
+      "texture": "textures/gui/modules/crosshair.png"
+    },
+    {
+      "class": "ScoreboardModule",
+      "key": "scoreboard",
+      "label": "Scoreboard",
+      "texture": "textures/gui/modules/scoreboard.png"
+    },
+    {
+      "class": "PackDisplayModule",
+      "key": "pack-display",
+      "label": "Pack Display",
+      "texture": "textures/gui/modules/pack-display.png"
+    },
+    {
+      "class": "PingModule",
+      "key": "ping",
+      "label": "Ping Display",
+      "texture": "textures/gui/modules/ping.png"
+    },
+    {
+      "class": "PotionStatusModule",
+      "key": "potion-status",
+      "label": "Potion Effects",
+      "texture": "textures/gui/modules/potion-status.png"
+    },
+    {
+      "class": "ServerAddressModule",
+      "key": "server-address",
+      "label": "Server Address",
+      "texture": "textures/gui/modules/server-address.png"
+    },
+    {
+      "class": "ReachDisplayModule",
+      "key": "reach-display",
+      "label": "Reach Display",
+      "texture": "textures/gui/modules/reach-display.png"
+    },
+    {
+      "class": "SpeedHudModule",
+      "key": "speed-hud",
+      "label": "Speedometer",
+      "texture": "textures/gui/modules/speed-hud.png"
+    },
+    {
+      "class": "MemoryHudModule",
+      "key": "memory-hud",
+      "label": "Memory Usage",
+      "texture": "textures/gui/modules/memory-hud.png"
+    },
+    {
+      "class": "ClockHudModule",
+      "key": "clock-hud",
+      "label": "Clock",
+      "texture": "textures/gui/modules/clock-hud.png"
+    },
+    {
+      "class": "DirectionHudModule",
+      "key": "direction-hud",
+      "label": "Direction HUD",
+      "texture": "textures/gui/modules/direction-hud.png"
+    },
+    {
+      "class": "ToggleSprintModule",
+      "key": "toggle-sprint",
+      "label": "Toggle Sprint",
+      "texture": "textures/gui/modules/toggle-sprint.png"
+    },
+    {
+      "class": "NetGraphModule",
+      "key": "net-graph",
+      "label": "Net Graph",
+      "texture": "textures/gui/modules/net-graph.png"
+    },
+    {
+      "class": "HitColorModule",
+      "key": "hit-color",
+      "label": "Hit Color",
+      "texture": "textures/gui/modules/hit-color.png"
+    },
+    {
+      "class": "PvpInfoModule",
+      "key": "pvp-info",
+      "label": "PvP Info",
+      "texture": "textures/gui/modules/pvp-info.png"
+    },
+    {
+      "class": "TeamCirclesModule",
+      "key": "team-circles",
+      "label": "Team Circles",
+      "texture": "textures/gui/modules/team-circles.png"
+    },
+    {
+      "class": "ComboCounterModule",
+      "key": "combo-counter",
+      "label": "Combo Counter",
+      "texture": "textures/gui/modules/combo-counter.png"
+    },
+    {
+      "class": "SprintModule",
+      "key": "sprint",
+      "label": "Sprint",
+      "texture": "textures/gui/modules/sprint.png"
+    },
+    {
+      "class": "FreecamModule",
+      "key": "freecam",
+      "label": "Freelook",
+      "texture": "textures/gui/modules/freecam.png"
+    },
+    {
+      "class": "AnimationsModule",
+      "key": "animations",
+      "label": "Animations",
+      "texture": "textures/gui/modules/animations.png"
+    },
+    {
+      "class": "MotionBlurModule",
+      "key": "motion-blur",
+      "label": "Motion Blur",
+      "texture": "textures/gui/modules/motion-blur.png"
+    },
+    {
+      "class": "NoWeatherModule",
+      "key": "no-weather",
+      "label": "Weather Changer",
+      "texture": "textures/gui/modules/no-weather.png"
+    },
+    {
+      "class": "TimeChangerModule",
+      "key": "time-changer",
+      "label": "Time Changer",
+      "texture": "textures/gui/modules/time-changer.png"
+    },
+    {
+      "class": "ZoomModule",
+      "key": "zoom",
+      "label": "Zoom",
+      "texture": "textures/gui/modules/zoom.png"
+    },
+    {
+      "class": "FovChangerModule",
+      "key": "fov-changer",
+      "label": "FOV Changer",
+      "texture": "textures/gui/modules/fov-changer.png"
+    },
+    {
+      "class": "FullBrightModule",
+      "key": "full-bright",
+      "label": "Full Bright",
+      "texture": "textures/gui/modules/full-bright.png"
+    },
+    {
+      "class": "CullingModule",
+      "key": "culling",
+      "label": "Culling",
+      "texture": "textures/gui/modules/culling.png"
+    },
+    {
+      "class": "AutoTextModule",
+      "key": "auto-text",
+      "label": "Auto Text",
+      "texture": "textures/gui/modules/auto-text.png"
+    },
+    {
+      "class": "CameraModule",
+      "key": "camera",
+      "label": "Camera",
+      "texture": "textures/gui/modules/camera.png"
+    },
+    {
+      "class": "ChatModule",
+      "key": "chat",
+      "label": "Chat",
+      "texture": "textures/gui/modules/chat.png"
+    },
+    {
+      "class": "NickHiderModule",
+      "key": "nick-hider",
+      "label": "Nick Hider",
+      "texture": "textures/gui/modules/nick-hider.png"
+    },
+    {
+      "class": "PopupEventsModule",
+      "key": "popup-events",
+      "label": "Popup Events",
+      "texture": "textures/gui/modules/popup-events.png"
+    },
+    {
+      "class": "TimersModule",
+      "key": "timers",
+      "label": "Stopwatch / Timer",
+      "texture": "textures/gui/modules/timers.png"
+    },
+    {
+      "class": "WaypointsModule",
+      "key": "waypoints",
+      "label": "Waypoints",
+      "texture": "textures/gui/modules/waypoints.png"
+    },
+    {
+      "class": "TeamViewModule",
+      "key": "team-view",
+      "label": "Team View",
+      "texture": "textures/gui/modules/team-view.png"
+    },
+    {
+      "class": "HypixelAddonsModule",
+      "key": "hypixel-addons",
+      "label": "Hypixel Addons",
+      "texture": "textures/gui/modules/hypixel-addons.png"
+    },
+    {
+      "class": "SkyblockAddonsModule",
+      "key": "skyblock-addons",
+      "label": "Skyblock Addons",
+      "texture": "textures/gui/modules/skyblock-addons.png"
+    },
+    {
+      "class": "TabStatModule",
+      "key": "tab-stat",
+      "label": "Tab Stat",
+      "texture": "textures/gui/modules/tab-stat.png"
+    },
+    {
+      "class": "UhcOverlayModule",
+      "key": "uhc-overlay",
+      "label": "UHC Overlay",
+      "texture": "textures/gui/modules/uhc-overlay.png"
+    },
+    {
+      "class": "DynamicRenderDistanceModule",
+      "key": "dynamic-render-distance",
+      "label": "Dynamic Render Distance",
+      "texture": "textures/gui/modules/dynamic-render-distance.png"
+    },
+    {
+      "class": "AdaptiveVsyncModule",
+      "key": "adaptive-vsync",
+      "label": "Adaptive VSync",
+      "texture": "textures/gui/modules/adaptive-vsync.png"
+    }
+  ]
+}

@@ -5,23 +5,28 @@ import kotlin.math.sqrt
 
 /** Small reusable primitives; no screenshot-sized button textures or per-frame image decoding. */
 object TurtleTheme {
-    val BACKGROUND = 0xFF0B1418.toInt()
-    val PANEL = 0xFA101C20.toInt()
-    val CARD = 0xFF16262A.toInt()
-    val HOVER = 0xFF20373A.toInt()
-    val BORDER = 0xFF2A4143.toInt()
-    val ACCENT = 0xFF86E8BC.toInt()
-    val ACTIVE = 0xFF245547.toInt()
-    val TEXT = 0xFFF0F7F4.toInt()
-    val MUTED = 0xFF9BB4AF.toInt()
-    val SUBTLE = 0xFF708B87.toInt()
-    val DANGER = 0xFFEE9D92.toInt()
+    val BACKGROUND = 0xFF0E1611.toInt()
+    val PANEL = 0xFA151F19.toInt()
+    val CARD = 0xFF18221D.toInt()
+    val HOVER = 0xFF213128.toInt()
+    val BORDER = 0xFF344239.toInt()
+    val ACCENT = 0xFF96CCA9.toInt()
+    val ACTIVE = 0xFF263F30.toInt()
+    val TEXT = 0xFFE7EEE9.toInt()
+    val MUTED = 0xFFA6B5AA.toInt()
+    val SUBTLE = 0xFF748779.toInt()
+    val DANGER = 0xFFE49B8C.toInt()
     val LOGO = identifier("turtle-client", "textures/gui/branding/turtle.png")
     val WORDMARK = identifier("turtle-client", "textures/gui/branding/wordmark.png")
     val COAST = identifier("turtle-client", "textures/gui/backgrounds/coast.png")
     val FOREST = identifier("turtle-client", "textures/gui/backgrounds/forest.png")
     private val icons = mutableMapOf<String, Identifier>()
     fun icon(name: String) = icons.getOrPut(name) { identifier("turtle-client", "textures/gui/icons/$name.png") }
+
+    private val moduleTextures = mutableMapOf<Class<*>, Identifier>()
+    fun moduleIcon(module: com.endiq.client.modules.Module): Identifier = moduleTextures.getOrPut(module.javaClass) {
+        identifier("turtle-client", ModuleIcons.path(module.javaClass.simpleName, module.category.name.lowercase(java.util.Locale.ROOT)))
+    }
 
     fun rounded(ctx: GuiContext, rect: UiRect, color: Int, radius: Int = 5) {
         if (rect.width <= 0 || rect.height <= 0) return
@@ -63,7 +68,7 @@ object TurtleTheme {
     }
 
     fun label(ctx: GuiContext, font: TextRenderer, text: String, x: Int, y: Int, color: Int = TEXT, maxWidth: Int = Int.MAX_VALUE) {
-        ctx.drawTextWithShadow(font, fit(font, text, maxWidth), x, y, color)
+        ctx.drawText(font, fit(font, text, maxWidth), x, y, color, false)
     }
 
     fun button(ctx: GuiContext, font: TextRenderer, rect: UiRect, text: String, hovered: Boolean, primary: Boolean = false,
@@ -106,7 +111,7 @@ object TurtleTheme {
         try {
             ctx.drawTexture(texture, bounds.x, bounds.y, bounds.width, bounds.height)
         } finally { ctx.disableScissor() }
-        ctx.fill(0, 0, width, height, 0x48071114)
+        ctx.fill(0, 0, width, height, 0x280B140E)
     }
 }
 

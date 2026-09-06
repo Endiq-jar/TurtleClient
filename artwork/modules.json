@@ -1,0 +1,265 @@
+{
+  "schema": 1,
+  "modules": [
+    {
+      "class": "FpsModule",
+      "key": "fps",
+      "label": "FPS Counter"
+    },
+    {
+      "class": "CpsModule",
+      "key": "cps",
+      "label": "CPS Counter"
+    },
+    {
+      "class": "CoordinatesModule",
+      "key": "coordinates",
+      "label": "Coordinates"
+    },
+    {
+      "class": "KeystrokesModule",
+      "key": "keystrokes",
+      "label": "Keystrokes"
+    },
+    {
+      "class": "ArmorStatusModule",
+      "key": "armor-status",
+      "label": "Armor Status"
+    },
+    {
+      "class": "ArmorBarModule",
+      "key": "armor-bar",
+      "label": "Armor Bar"
+    },
+    {
+      "class": "AttackIndicatorModule",
+      "key": "attack-indicator",
+      "label": "Attack Indicator"
+    },
+    {
+      "class": "AutoHideHudModule",
+      "key": "auto-hide-hud",
+      "label": "Auto Hide HUD"
+    },
+    {
+      "class": "BlockIndicatorModule",
+      "key": "block-indicator",
+      "label": "Block Indicator"
+    },
+    {
+      "class": "BlockOverlayModule",
+      "key": "block-overlay",
+      "label": "Block Overlay"
+    },
+    {
+      "class": "BossBarModule",
+      "key": "boss-bar",
+      "label": "Boss Bar"
+    },
+    {
+      "class": "CrosshairModule",
+      "key": "crosshair",
+      "label": "Crosshair"
+    },
+    {
+      "class": "ScoreboardModule",
+      "key": "scoreboard",
+      "label": "Scoreboard"
+    },
+    {
+      "class": "PackDisplayModule",
+      "key": "pack-display",
+      "label": "Pack Display"
+    },
+    {
+      "class": "PingModule",
+      "key": "ping",
+      "label": "Ping Display"
+    },
+    {
+      "class": "PotionStatusModule",
+      "key": "potion-status",
+      "label": "Potion Effects"
+    },
+    {
+      "class": "ServerAddressModule",
+      "key": "server-address",
+      "label": "Server Address"
+    },
+    {
+      "class": "ReachDisplayModule",
+      "key": "reach-display",
+      "label": "Reach Display"
+    },
+    {
+      "class": "SpeedHudModule",
+      "key": "speed-hud",
+      "label": "Speedometer"
+    },
+    {
+      "class": "MemoryHudModule",
+      "key": "memory-hud",
+      "label": "Memory Usage"
+    },
+    {
+      "class": "ClockHudModule",
+      "key": "clock-hud",
+      "label": "Clock"
+    },
+    {
+      "class": "DirectionHudModule",
+      "key": "direction-hud",
+      "label": "Direction HUD"
+    },
+    {
+      "class": "ToggleSprintModule",
+      "key": "toggle-sprint",
+      "label": "Toggle Sprint"
+    },
+    {
+      "class": "NetGraphModule",
+      "key": "net-graph",
+      "label": "Net Graph"
+    },
+    {
+      "class": "HitColorModule",
+      "key": "hit-color",
+      "label": "Hit Color"
+    },
+    {
+      "class": "PvpInfoModule",
+      "key": "pvp-info",
+      "label": "PvP Info"
+    },
+    {
+      "class": "TeamCirclesModule",
+      "key": "team-circles",
+      "label": "Team Circles"
+    },
+    {
+      "class": "ComboCounterModule",
+      "key": "combo-counter",
+      "label": "Combo Counter"
+    },
+    {
+      "class": "SprintModule",
+      "key": "sprint",
+      "label": "Sprint"
+    },
+    {
+      "class": "FreecamModule",
+      "key": "freecam",
+      "label": "Freelook"
+    },
+    {
+      "class": "AnimationsModule",
+      "key": "animations",
+      "label": "Animations"
+    },
+    {
+      "class": "MotionBlurModule",
+      "key": "motion-blur",
+      "label": "Motion Blur"
+    },
+    {
+      "class": "NoWeatherModule",
+      "key": "no-weather",
+      "label": "Weather Changer"
+    },
+    {
+      "class": "TimeChangerModule",
+      "key": "time-changer",
+      "label": "Time Changer"
+    },
+    {
+      "class": "ZoomModule",
+      "key": "zoom",
+      "label": "Zoom"
+    },
+    {
+      "class": "FovChangerModule",
+      "key": "fov-changer",
+      "label": "FOV Changer"
+    },
+    {
+      "class": "FullBrightModule",
+      "key": "full-bright",
+      "label": "Full Bright"
+    },
+    {
+      "class": "CullingModule",
+      "key": "culling",
+      "label": "Culling"
+    },
+    {
+      "class": "AutoTextModule",
+      "key": "auto-text",
+      "label": "Auto Text"
+    },
+    {
+      "class": "CameraModule",
+      "key": "camera",
+      "label": "Camera"
+    },
+    {
+      "class": "ChatModule",
+      "key": "chat",
+      "label": "Chat"
+    },
+    {
+      "class": "NickHiderModule",
+      "key": "nick-hider",
+      "label": "Nick Hider"
+    },
+    {
+      "class": "PopupEventsModule",
+      "key": "popup-events",
+      "label": "Popup Events"
+    },
+    {
+      "class": "TimersModule",
+      "key": "timers",
+      "label": "Stopwatch / Timer"
+    },
+    {
+      "class": "WaypointsModule",
+      "key": "waypoints",
+      "label": "Waypoints"
+    },
+    {
+      "class": "TeamViewModule",
+      "key": "team-view",
+      "label": "Team View"
+    },
+    {
+      "class": "HypixelAddonsModule",
+      "key": "hypixel-addons",
+      "label": "Hypixel Addons"
+    },
+    {
+      "class": "SkyblockAddonsModule",
+      "key": "skyblock-addons",
+      "label": "Skyblock Addons"
+    },
+    {
+      "class": "TabStatModule",
+      "key": "tab-stat",
+      "label": "Tab Stat"
+    },
+    {
+      "class": "UhcOverlayModule",
+      "key": "uhc-overlay",
+      "label": "UHC Overlay"
+    },
+    {
+      "class": "DynamicRenderDistanceModule",
+      "key": "dynamic-render-distance",
+      "label": "Dynamic Render Distance"
+    },
+    {
+      "class": "AdaptiveVsyncModule",
+      "key": "adaptive-vsync",
+      "label": "Adaptive VSync"
+    }
+  ]
+}

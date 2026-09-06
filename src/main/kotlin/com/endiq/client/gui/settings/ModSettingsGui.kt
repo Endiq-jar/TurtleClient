@@ -58,7 +58,7 @@ class ModSettingsGui(private val mod: Module, private val parent: Screen) : Clie
         super.renderGui(ctx, mx, my, delta)
         ctx.fill(0, 0, width, height, 0xB8071013.toInt())
         Theme.panel(ctx, panel)
-        ctx.drawTexture(Theme.LOGO, panel.x + 10, panel.y + 9, 25, 25)
+        ctx.drawTexture(Theme.moduleIcon(mod), panel.x + 10, panel.y + 9, 25, 25, Theme.ACCENT)
         Theme.label(ctx, textRenderer, mod.name, panel.x + 43, panel.y + 12, Theme.TEXT, panel.width - 84)
         Theme.label(ctx, textRenderer, "MODULE SETTINGS", panel.x + 43, panel.y + 25, Theme.SUBTLE, panel.width - 84)
         if (closeButton.contains(mx.toDouble(), my.toDouble())) Theme.rounded(ctx, closeButton, Theme.HOVER)

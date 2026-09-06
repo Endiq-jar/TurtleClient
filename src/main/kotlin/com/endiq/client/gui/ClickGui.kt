@@ -89,7 +89,7 @@ class ClickGui(private val parent: Screen? = null, initialCosmetics: Boolean = f
 
     override fun renderGui(ctx: GuiContext, mx: Int, my: Int, delta: Float) {
         super.renderGui(ctx, mx, my, delta)
-        ctx.fill(0, 0, width, height, 0xB0071013.toInt())
+        ctx.fill(0, 0, width, height, 0xB00A120D.toInt())
         Theme.panel(ctx, UiRect(panel.x - 3, panel.y + 4, panel.width + 6, panel.height), 0x55000000, 0x11000000, 10)
         Theme.panel(ctx, panel)
         ctx.drawTexture(Theme.LOGO, panel.x + 9, panel.y + 8, 25, 25)
@@ -135,6 +135,11 @@ class ClickGui(private val parent: Screen? = null, initialCosmetics: Boolean = f
         val reserved = textRenderer.getWidth(footer) + 20
         Theme.label(ctx, textRenderer, hint, panel.x + 10, panel.bottom - 15, Theme.MUTED, panel.width - reserved - 20)
         Theme.label(ctx, textRenderer, footer, panel.right - reserved + 8, panel.bottom - 15, Theme.SUBTLE)
+        if (!cosmetics && viewport.contains(mx.toDouble(), my.toDouble())) {
+            grid.hit(mx.toDouble(), my.toDouble(), modules.size, scroll.pixels)?.let { index ->
+                Theme.tooltip(ctx, textRenderer, com.endiq.client.modules.ModulePresentation.note(modules[index]), mx, my, width, height)
+            }
+        }
         if (cosmetics && toolsButton.contains(mx.toDouble(),my.toDouble())) {
             val labels=listOf("Reload custom PNGs","Open cosmetic folder","Unequip all cosmetics")
             labels.getOrNull((mx-toolsButton.x)/30)?.let { Theme.tooltip(ctx,textRenderer,it,mx,my,width,height) }
@@ -145,14 +150,16 @@ class ClickGui(private val parent: Screen? = null, initialCosmetics: Boolean = f
         if (rect.bottom <= viewport.y || rect.y >= viewport.bottom) return
         val hover = viewport.contains(mx.toDouble(), my.toDouble()) && rect.contains(mx.toDouble(), my.toDouble())
         Theme.panel(ctx, rect, if (hover) Theme.HOVER else Theme.CARD, if (module.enabled) Theme.ACTIVE else Theme.BORDER, 6)
-        val categoryIcon = if (module.category == Module.Category.ALL) "grid" else module.category.name.lowercase()
-        ctx.drawTexture(Theme.icon(categoryIcon), rect.x + 10, rect.y + 9, 18, 18, if (module.enabled) Theme.ACCENT else Theme.MUTED)
-        if (module.isNew) Theme.label(ctx, textRenderer, "NEW", rect.x + 35, rect.y + 14, Theme.ACCENT)
+        val iconSize = if (rect.height < 68) 18 else 24
+        val iconBounds = UiRect(rect.x + 9, rect.y + if (rect.height < 68) 5 else 8, iconSize + 6, iconSize + 6)
+        Theme.rounded(ctx, iconBounds, if (module.enabled) Theme.ACTIVE else Theme.BACKGROUND, 5)
+        ctx.drawTexture(Theme.moduleIcon(module), iconBounds.x + 3, iconBounds.y + 3, iconSize, iconSize,
+            if (module.unavailableReason != null) Theme.SUBTLE else if (module.enabled) Theme.ACCENT else Theme.MUTED)
+        if (module.isNew) Theme.label(ctx, textRenderer, "NEW", rect.x + 47, rect.y + 16, Theme.ACCENT)
         val settings = UiRect(rect.right - 29, rect.y + 7, 22, 22)
         iconButton(ctx, settings, "settings", mx, my)
-        val nameY = if (rect.height < 68) 30 else 34
+        val nameY = if (rect.height < 68) 31 else 43
         Theme.label(ctx, textRenderer, module.name, rect.x + 10, rect.y + nameY, Theme.TEXT, rect.width - 20)
-        if (rect.height >= 78) Theme.label(ctx, textRenderer, module.description, rect.x + 10, rect.y + 47, Theme.MUTED, rect.width - 20)
         Theme.label(ctx, textRenderer, if(module.unavailableReason!=null)"Unavailable" else if (module.enabled) "Enabled" else "Disabled", rect.x + 10, rect.bottom - 15,
             if (module.enabled) Theme.ACCENT else Theme.SUBTLE, rect.width - 52)
         val switch = UiRect(rect.right - 38, rect.bottom - 21, 28, 13)

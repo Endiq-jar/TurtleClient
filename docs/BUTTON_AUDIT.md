@@ -4,6 +4,8 @@ The repair is not just replacement artwork. Source-level checks found missing ha
 
 | Area | Finding | Change |
 |---|---|---|
+| Startup/resource loading | Generated-looking presentation; status implied world generation | Flat vector identity, actual resource percentage, per-overlay smoothing and font-independent captions; vanilla lifecycle retained |
+| Built-in module identity | All cards reused category icons | 52 dedicated SVG pictograms, mapped by stable class and used in cards/settings; registration/wiring tests |
 | Title account pill | Decorative only | Account screen, offline profiles, Microsoft device flow and disconnected session switching |
 | Title navigation | No account-permission gate/error feedback | Multiplayer permission check; folder failures are visible |
 | Cosmetics | Registry/equip flags only | Six textured player-layer meshes, 18 built-ins, persistent selection, bounded custom PNG uploads |
@@ -37,6 +39,8 @@ Armor icons/bar, keystrokes, potion status and UHC currently use their basic fix
 
 Automated tests cover action dispatch, scrolling, editable text, settings persistence/bounds, CPS expiry, clock behavior, PNG bounds, six mesh types, authentication transitions and version-specific bytecode contracts. **Minecraft has not been launched in the build sandbox.** Manually verify:
 
+- [ ] Cold startup and repeated F3+T/resource-pack reloads: progress, captions, completion/error handling and overlay removal.
+- [ ] All 52 module icons in cards/settings, including muted unavailable entries and small GUI scales.
 - [ ] All title actions and account restrictions on a normal and offline launcher account.
 - [ ] Account cancel/expiry, app setup, approved Microsoft sign-in, switch/restore and signed multiplayer chat.
 - [ ] Screen resize/GUI scale, fractional wheel input, dragging and keyboard navigation.

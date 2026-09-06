@@ -64,7 +64,7 @@ class CustomTitleScreen : ClientScreen("TurtleClient") {
         ctx.drawTexture(Theme.icon("account"),account.x+5,account.y+4,14,14,Theme.ACCENT)
         Theme.label(ctx, textRenderer, name, account.x + 23, account.y + 7, Theme.TEXT)
         if(account.contains(mx.toDouble(),my.toDouble()))Theme.tooltip(ctx,textRenderer,"Manage and switch accounts",mx,my,width,height)
-        Theme.panel(ctx, card, 0xEC101C20.toInt(), 0xCC36514A.toInt(), 9)
+        Theme.panel(ctx, card, Theme.PANEL, Theme.BORDER, 8)
         if (compact) {
             val brandX = card.x + (card.width - 168) / 2
             ctx.drawTexture(Theme.LOGO, brandX, card.y + 13, 30, 30)
@@ -81,10 +81,6 @@ class CustomTitleScreen : ClientScreen("TurtleClient") {
         Theme.button(ctx, textRenderer, sceneButton, if (forest) "Scene: Forest" else "Scene: Coast", sceneButton.contains(mx.toDouble(), my.toDouble()))
         favoritesButton?.let { Theme.button(ctx, textRenderer, it, "Favorites", it.contains(mx.toDouble(), my.toDouble())) }
         if(feedback.isNotEmpty())Theme.label(ctx,textRenderer,feedback,card.x,card.bottom+8,Theme.DANGER,card.width)
-        if (width >= 680) {
-            val line = "YOUR WORLD. YOUR PACE."
-            Theme.label(ctx, textRenderer, line, card.right + 32, card.bottom - 18, Theme.TEXT, width - card.right - 48)
-        }
         val footer = "Fabric  /  Minecraft $version"
         if (width > 390 && (favoritesButton == null || width >= 560)) Theme.label(ctx, textRenderer, footer, (width - textRenderer.getWidth(footer)) / 2, height - 23, Theme.MUTED)
     }

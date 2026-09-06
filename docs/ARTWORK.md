@@ -1,96 +1,104 @@
-# TurtleClient visual refresh
+# TurtleClient — vector interface redesign
 
-![TurtleClient artwork preview](turtle-ui-preview.jpg)
+![Loading screen and module artwork design reference](turtle-interface-preview.png)
 
-## Original identity
+The previous image-model artwork has been replaced in the runtime resources.
+The new direction is **flat, code-authored SVG artwork**, not another generated
+image atlas: consistent monoline pictograms, matte button surfaces, a geometric
+turtle mark, outlined typography and quiet, limited-palette landscapes.
 
-The turtle emblem and both landscape masters were generated specifically for
-TurtleClient. No Lunar Client logos, branded panorama screenshots, screenshot-sized
-button images, or modified Mojang/title atlases remain in the menu resources.
-The vanilla title atlas overrides were removed; the client renders its own brand
-through its existing loading/menu hooks instead.
+This describes the design technique, not a claim that a human illustrator made
+these files. The editable shapes are included in [`artwork/`](../artwork/).
 
-- **Turtle emblem:** mint, jade, and deep-green shell; transparent PNGs at 256px
-  (menu/loading), 128px (mod icon), and 64px (in-world name badge).
-- **Wordmark:** clean typeset lettering, 512 × 96, with transparency. It is typeset
-  during preparation using Pillow's bundled Aileron font, not generated lettering;
-  no additional font binary or runtime font renderer is bundled.
-- **Coast / Forest:** two original 1024 × 576 backgrounds, with no baked branding
-  or interface. The renderer uses aspect-preserving cover/crop, not stretched
-  square cubemap faces. Only one scene is drawn per frame.
-- **Icons:** a coherent set of antialiased 32px monochrome glyphs, tinted by the UI.
-  Controls no longer depend on unsupported emoji or large image-backed buttons.
+## Loading screen
 
-## Initial UI-only optimization
+`BrandingRenderer` paints the startup/resource-reload overlay with:
 
-`scripts/prepare_ui_assets.py` requires Python and Pillow >= 10. Pass a directory
-containing `emblem-master.png`, `coast-master.png`, and `forest-master.png`. Large
-masters are intentionally kept outside the repository and are not included in jars.
-The runtime PNGs are the deliverables and are checked into the repository.
+- a neutral charcoal/forest palette and an original flat turtle mark;
+- a restrained contour motif on larger GUI sizes;
+- a real resource percentage and time-based progress smoothing;
+- a fresh progress state for each overlay, including repeated **F3+T** reloads;
+- no invented stages, ETA, or automatic progress while Minecraft is stalled;
+- small pre-outlined caption and digit textures, so loading does not read a font
+  renderer whose resources are still being reloaded.
 
-The script strips metadata, removes the emblem's background/matte fringe, resizes
-with Lanczos filtering, uses a dithered 256-color palette for the backgrounds, and
-writes maximum-compression PNGs. Minecraft texture metadata enables linear
-filtering and edge clamping. The manifest at
-`assets/turtle-client/ui-assets.json` records dimensions, sizes, and SHA-256 hashes.
+The mixin still paints at **TAIL**. Minecraft retains ownership of its reload
+completion callback, exceptions and overlay removal; rendering is not cancelled.
+This redesign covers the **startup/resource-loading overlay**, not world-generation
+chunk maps or server connection screens.
 
-Compared with the previous bundled PNG set:
+`LoadingLayout` adapts to GUI-scaled dimensions and suppresses corner chrome on
+small windows. The mark, wordmark, progress track and status have separate bounds.
 
-- Compressed PNG data is approximately **two-thirds smaller**.
-- Total decoded RGBA pixel storage falls from **20.3 MiB to 5.1 MiB** (about **75%
-  less**). This is an image-pixel budget, not a claim about total Minecraft VRAM.
-- Each background is capped at 400 KB; all new UI PNGs together stay below 900 KB.
+## A distinct icon for every built-in module
 
-`UiAssetsTest` checks image readability, hashes, dimensions, transparency, required
-paths, filtering metadata, and these budgets in every Minecraft build target.
+All **52 registered modules**, including entries labelled Unavailable, now have
+their own pictogram. The library cards and settings headers use the same resolver.
+FPS has a monitor/graph, CPS a mouse, coordinates axes, ping a wireless signal,
+speed a gauge, memory a RAM stick, the timer a stopwatch, and so on. They no longer
+all reuse their category's icon.
 
-## Interface and input
+- SVG grid: **24 × 24**, normally a **1.65-unit** rounded stroke.
+- Runtime icons: **32 × 32 RGBA**, with transparent margins and tintable linework.
+- Cached identifiers; no SVG parsing or PNG decoding in the render loop.
+- `ModuleIcons.kt` maps stable class identities, not displayed/translated names.
+- A bytecode-based test enumerates actual registrations and requires a unique,
+  present icon for each one. Cards and settings wiring are tested too.
 
-`TurtleTheme` supplies consistent colors, rounded panels, typography fitting, and
-shared artwork. Buttons use small generated nine-slice skins; sliders and toggles use lightweight
-primitives. Images are cached by Minecraft's texture manager; no file decoding
-occurs in render loops.
+[See all 52 module icons](turtle-module-icons.png).
 
-`UiGrid` reflows columns to the GUI-scaled window. `ScrollState` retains fractional
-wheel movement, clamps to the actual content height, and supports dragging and
-keyboard paging. Modules, cosmetics, and settings use the same scroll model.
-Rendering and hit testing share geometry and the same scroll offset, so clipped
-rows cannot be activated through headers or footers. Returning from settings keeps
-the module list's position. The settings footer/keybind controls remain fixed.
-Favorited modules remain reachable through the title menu's Favorites shortcut.
-Typing in a screen no longer fires module hotkeys; held keys must be released
-before they can toggle modules again after closing the screen.
+Artwork does **not** change module availability. Incomplete prototypes remain
+Unavailable, as documented in [the control audit](BUTTON_AUDIT.md).
 
-The initial UI refresh only exposed registry/equip state. The extension below now
-adds six actual in-world mesh types; use third-person view to inspect them. The
-menu does not present a box-drawn fake player as a working 3D preview.
+## Other visual changes
 
-The included artwork preview is a design/asset preview, not an in-game screenshot.
+- Eight flat **128 × 32** nine-slice button states and a **64 × 64** panel skin.
+- A simplified original turtle emblem at 256/128/64 pixels.
+- A clean wordmark; DejaVu lettering is stored as SVG outlines. Its notice is in
+  `artwork/licenses/DejaVu.txt`. No font binary or custom in-game font engine ships.
+- Two flat **1024 × 576** coast/forest compositions, not synthetic screenshots.
+- Clean cosmetic-type previews and pixel-aligned Jade/Aurora/Ember materials.
+  Existing cosmetic IDs, UV layouts, meshes and saved selections are unchanged.
+- Menu labels no longer add a drop shadow; HUD shadow preferences still work.
 
-## Generated control/cosmetic extension
+## Rebuilding
 
-The original logo and landscapes are retained. Three further generated masters
-(icon atlas, blank button-state atlas, and Jade/Aurora/Ember material/crest atlas)
-were sliced with `scripts/prepare_controls_cosmetics.py`.
-
-Run the original preparation script **first**, then:
+No external image masters, image-generation service, system fonts or Cairo shared
+library are needed. The old master-slicing scripts are retired.
 
 ```sh
-python3 scripts/prepare_controls_cosmetics.py /path/to/v2-masters
+python3 -m pip install -r scripts/artwork-requirements.txt
+python3 scripts/prepare_vector_art.py
+python3 scripts/prepare_vector_art.py --check
+# Optional, labelled design-reference sheets (not game captures):
+python3 scripts/preview_vector_art.py
 ```
 
-Expected master names: `icon-atlas-master.png`, `button-atlas-master.png`,
-`cosmetic-material-master.png`. Masters are not runtime resources. The second
-script replaces the earlier procedural icons; running only the first script
-would revert them. Unwanted generated lettering was removed from the monitor
-icon. Buttons contain no baked-in text and are rendered in nine slices. Runtime
-icons are 32x32, button strips 128x32, material tiles 64x64 and capes 128x64.
+The exporter uses pinned Pillow/resvg versions, supersamples small linework,
+strips metadata, zeros transparent resampling fringes and compresses PNGs. The
+manifest records output dimensions/bytes/SHA-256 **and the source SVG hash**.
+SVGs and preview sheets stay outside the game jar.
 
-The combined manifest now covers **81 PNGs / 953,966 compressed bytes**, including
-18 model textures and 18 thumbnails. Including the retained 1×1 white primitive
-texture, the complete runtime PNG set is **82 files / 954,035 bytes**, or
-**6,168,580 bytes of base RGBA pixels** (about 5.88 MiB). World materials use nearest sampling;
-interface assets use linear filtering. The manifest contains actual dimensions,
-byte counts and SHA-256 hashes; tests enforce transparency where appropriate and
-a 1.2 MB compressed budget. These are file/decode budgets, not measured VRAM/FPS.
-The new [artwork sheet](turtle-controls-preview.jpg) is not a game screenshot.
+### Current budget
+
+- **139 prepared PNGs:** **177,667 compressed bytes**.
+- Including the retained 1 × 1 white primitive: **140 PNGs / 177,736 bytes**.
+- **7,065,348 bytes** of base RGBA pixels for all runtime PNGs (about **6.74 MiB**).
+- Roughly **81% less compressed PNG data** than the preceding 954,035-byte set,
+  despite adding 52 module icons and the loading assets.
+- The automated compressed budget is now **250 KB**, tightened from 1.2 MB.
+
+These are file/pixel budgets, **not measured FPS, total VRAM or GPU benchmarks**.
+
+## Validation boundary
+
+The PNGs and design sheets were inspected, and deterministic source/output checks
+run locally. The eight-version build checks cover PNGs, icon registration/wiring,
+loading bounds/progress, mixin contracts and packaged resources. **Minecraft has
+not been launched in this sandbox.** Cold startup, repeated resource reloads,
+resource-pack overrides, native fade/removal timing, GUI scales and actual GPU
+appearance still need in-game checks.
+
+Both sheets are explicitly **design references, not in-game screenshots**. Menus
+continue to use Minecraft's own text renderer; preview-sheet captions are typeset
+by the preparation script.

@@ -16,6 +16,8 @@ class UiAssetsTest {
         for (entry in assets) {
             val spec = entry.asJsonObject
             val name = spec["path"].asString
+            assertTrue(spec["source"].asString.startsWith("artwork/"), "Missing editable source: $name")
+            assertTrue(spec["sourceSha256"].asString.matches(Regex("[a-f0-9]{64}")), name)
             assertTrue(names.add(name), "Duplicate asset $name")
             val bytes = loader.getResourceAsStream(root + name)?.use { it.readBytes() } ?: fail("Missing $name")
             total += bytes.size
@@ -34,7 +36,7 @@ class UiAssetsTest {
             }
             assertNotNull(loader.getResource(root + name + ".mcmeta"), "Missing filtering metadata: $name")
         }
-        assertTrue(total < 1_200_000, "UI artwork exceeds the compressed size budget")
+        assertTrue(total < 250_000, "Vector artwork exceeds the compressed size budget")
         assertTrue(names.containsAll(listOf("icon.png", "textures/gui/branding/turtle.png", "textures/gui/branding/badge.png",
             "textures/gui/branding/wordmark.png", "textures/gui/backgrounds/coast.png", "textures/gui/backgrounds/forest.png")))
         for (name in listOf("grid", "hud", "pvp", "render", "movement", "utility", "hypixel", "performance", "search", "close", "settings",

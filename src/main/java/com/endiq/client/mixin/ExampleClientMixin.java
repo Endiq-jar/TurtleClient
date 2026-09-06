@@ -3,9 +3,11 @@ package com.endiq.client.mixin;
 import com.endiq.client.compat.BrandingRenderer;
 import com.endiq.client.compat.ClientScreen;
 import com.endiq.client.compat.GuiContext;
+import com.endiq.client.gui.components.LoadingProgress;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -35,26 +37,29 @@ public class ExampleClientMixin {
     @Mixin(SplashOverlay.class)
 //?}
     public static class SplashMixin {
+        // Per reload, not global: F3+T must start with a fresh progress state.
+        // Keep vanilla's completion callback, exception propagation and overlay removal.
+        @Unique private final LoadingProgress turtleClient$progress = new LoadingProgress();
 //? if >=26.1 {
 /*        @Shadow @Final private ReloadInstance reload;
 
         @Inject(method = "extractRenderState", at = @At("TAIL"))
         private void turtleClient$renderSplash(GuiGraphicsExtractor nativeCtx, int mx, int my, float delta, CallbackInfo ci) {
-            BrandingRenderer.renderSplash(new GuiContext(nativeCtx), reload.getActualProgress());
+            BrandingRenderer.renderSplash(new GuiContext(nativeCtx), turtleClient$progress.update(reload.getActualProgress(), System.nanoTime()));
         }
 *///?} else if >=1.20 {
         @Shadow @Final private ResourceReload reload;
 
         @Inject(method = "render", at = @At("TAIL"))
         private void turtleClient$renderSplash(DrawContext nativeCtx, int mx, int my, float delta, CallbackInfo ci) {
-            BrandingRenderer.renderSplash(new GuiContext(nativeCtx), reload.getProgress());
+            BrandingRenderer.renderSplash(new GuiContext(nativeCtx), turtleClient$progress.update(reload.getProgress(), System.nanoTime()));
         }
 //?} else {
 /*        @Shadow @Final private ResourceReload reload;
 
         @Inject(method = "render", at = @At("TAIL"))
         private void turtleClient$renderSplash(MatrixStack nativeCtx, int mx, int my, float delta, CallbackInfo ci) {
-            BrandingRenderer.renderSplash(new GuiContext(nativeCtx), reload.getProgress());
+            BrandingRenderer.renderSplash(new GuiContext(nativeCtx), turtleClient$progress.update(reload.getProgress(), System.nanoTime()));
         }
 *///?}
     }
