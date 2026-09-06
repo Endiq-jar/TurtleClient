@@ -87,6 +87,7 @@ class ClickGui(private val parent: Screen? = null, initialCosmetics: Boolean = f
     private fun updateBounds() = scroll.update(grid.contentHeight(if (cosmetics) entries.size else modules.size), viewport.height)
 
     override fun renderGui(ctx: GuiContext, mx: Int, my: Int, delta: Float) {
+        super.renderGui(ctx, mx, my, delta)
         ctx.fill(0, 0, width, height, 0xB0071013.toInt())
         Theme.panel(ctx, UiRect(panel.x - 3, panel.y + 4, panel.width + 6, panel.height), 0x55000000, 0x11000000, 10)
         Theme.panel(ctx, panel)
@@ -131,7 +132,6 @@ class ClickGui(private val parent: Screen? = null, initialCosmetics: Boolean = f
         val reserved = textRenderer.getWidth(footer) + 20
         Theme.label(ctx, textRenderer, hint, panel.x + 10, panel.bottom - 15, Theme.MUTED, panel.width - reserved - 20)
         Theme.label(ctx, textRenderer, footer, panel.right - reserved + 8, panel.bottom - 15, Theme.SUBTLE)
-        super.renderGui(ctx, mx, my, delta)
     }
 
     private fun drawModule(ctx: GuiContext, module: Module, rect: UiRect, mx: Int, my: Int) {

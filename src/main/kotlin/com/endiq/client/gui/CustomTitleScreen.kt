@@ -50,6 +50,7 @@ class CustomTitleScreen : ClientScreen("TurtleClient") {
     }
 
     override fun renderGui(ctx: GuiContext, mx: Int, my: Int, delta: Float) {
+        super.renderGui(ctx, mx, my, delta)
         Theme.backdrop(ctx, width, height, if (forest) Theme.FOREST else Theme.COAST)
         // Minimal corner chrome, not a row of overlapping unlabeled glyphs.
         ctx.drawTexture(Theme.LOGO, 12, 10, 18, 18)
@@ -80,7 +81,6 @@ class CustomTitleScreen : ClientScreen("TurtleClient") {
         }
         val footer = "Fabric  /  Minecraft $version"
         if (width > 390 && (favoritesButton == null || width >= 560)) Theme.label(ctx, textRenderer, footer, (width - textRenderer.getWidth(footer)) / 2, height - 23, Theme.MUTED)
-        super.renderGui(ctx, mx, my, delta)
     }
 
     override fun onMouseClicked(mx: Double, my: Double, button: Int): Boolean {

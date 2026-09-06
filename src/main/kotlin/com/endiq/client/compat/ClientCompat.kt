@@ -158,6 +158,7 @@ val MinecraftClient.world get() = level
 val MinecraftClient.textRenderer get() = font
 val MinecraftClient.runDirectory get() = gameDirectory
 val MinecraftClient.crosshairTarget get() = hitResult
+val MinecraftClient.currentScreen get() = gui.screen()
 fun MinecraftClient.setScreen(screen: Screen?) = gui.setScreen(screen)
 fun MinecraftClient.scheduleStop() = stop()
 fun TextRenderer.getWidth(text: String) = width(text)

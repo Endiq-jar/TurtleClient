@@ -29,6 +29,14 @@ abstract class ClientScreen(title: String) : Screen(literalText(title)) {
     final override fun shouldPause() = false
 //?}
 
+    // These screens draw their own backdrop/dimmer. Newer Screen wrappers would
+    // otherwise add a second panorama/blur pass before extracting our interface.
+//? if >=26.1 {
+/*    final override fun extractBackground(ctx: NativeGuiContext, mx: Int, my: Int, delta: Float) {}
+*///?} else if >=1.20.5 {
+    final override fun renderBackground(ctx: NativeGuiContext, mx: Int, my: Int, delta: Float) {}
+//?}
+
     open fun closeGui() { MinecraftClient.getInstance().setScreen(null) }
 //? if >=26.1 {
 /*    final override fun onClose() = closeGui()

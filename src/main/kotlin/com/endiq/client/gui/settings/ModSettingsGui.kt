@@ -53,6 +53,7 @@ class ModSettingsGui(private val mod: Module, private val parent: Screen) : Clie
     }
 
     override fun renderGui(ctx: GuiContext, mx: Int, my: Int, delta: Float) {
+        super.renderGui(ctx, mx, my, delta)
         ctx.fill(0, 0, width, height, 0xB8071013.toInt())
         Theme.panel(ctx, panel)
         ctx.drawTexture(Theme.LOGO, panel.x + 10, panel.y + 9, 25, 25)
@@ -81,7 +82,6 @@ class ModSettingsGui(private val mod: Module, private val parent: Screen) : Clie
         Theme.button(ctx, textRenderer, clearButton, "Clear", clearButton.contains(mx.toDouble(), my.toDouble()))
         Theme.label(ctx, textRenderer, if (waitingForKey) "Escape: cancel  /  Delete: clear" else "Wheel / drag to scroll  /  Escape: back",
             panel.x + 10, panel.bottom - 12, Theme.SUBTLE, panel.width - 20)
-        super.renderGui(ctx, mx, my, delta)
     }
 
     private fun drawSetting(ctx: GuiContext, setting: Setting, rect: UiRect) {
