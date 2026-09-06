@@ -23,33 +23,23 @@ Quick reference:
 ./gradlew 1.21.4:check            # run tests and packaged-jar verification
 ```
 
-## Features
+## Features and current scope
 
-### HUD (top-left + array list)
-- FPS Display
-- CPS Display
-- Coordinates (XYZ)
-- Keystrokes (WASD + Jump)
-- Armor Status with durability %
-- Potion Status
-- **Array List** top-right with TurtleClient styling
+- **HUD:** FPS, CPS, ping/history, coordinates, speed, memory, clock, direction,
+  server/resource-pack labels, crosshair, attack cooldown, attack-distance readout
+  and combo counter. Nearby-player and scoreboard-team tables have layout/filter controls.
+- **Basic fixed-layout overlays:** keystrokes, armor, potion status and UHC readouts.
+- **Visual controls:** FOV, hold-to-zoom with scroll adjustment, full-bright lightmap,
+  and the existing culling/adaptive view-distance/VSync controls.
+- **Utility:** timer start/pause/reset, clean PNG screenshots, session waypoints,
+  opt-in Auto Text, popup notifications and forward auto-sprint.
+- **Cosmetics/accounts:** the six cosmetic categories and account modes described above.
 
-### Movement
-- Auto Sprint
-- Speed (potion effect)
-- NoFall
-
-### Combat
-- KillAura (range configurable)
-- Reach
-
-### Render
-- Fullbright
-- NoWeather
-- TimeChanger
-
-### Utility
-- Freecam
+The old README advertised KillAura, NoFall, a movement-speed potion, working
+weather/time controls and freecam. Those are **not implemented features in this
+checkout**. Reach Display reports attack distance; it does not extend attack reach.
+Twelve incomplete legacy prototypes are marked **Unavailable**. See the
+[control audit](docs/BUTTON_AUDIT.md) for the precise limits and manual checks.
 
 ## ClickGUI
 Press **Right Shift** in-game to open the GUI.
@@ -72,7 +62,9 @@ cd ~/turtle-client
 bash build-termux.sh
 ```
 
-First build downloads ~500MB (Minecraft + Fabric). Takes 5–15 min.
+The Termux helper is legacy and has not been validated for the full matrix.
+Use compatible JDKs (17/21/25) and the target-specific Gradle commands above;
+first builds require substantial dependency/toolchain downloads.
 
 ## Building on PC (IntelliJ)
 
