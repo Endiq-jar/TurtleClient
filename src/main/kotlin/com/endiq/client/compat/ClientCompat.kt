@@ -169,6 +169,7 @@ val net.minecraft.client.Options.backKey get() = keyDown
 val net.minecraft.client.Options.leftKey get() = keyLeft
 val net.minecraft.client.Options.rightKey get() = keyRight
 val net.minecraft.client.Options.jumpKey get() = keyJump
+val net.minecraft.client.Options.sneakKey get() = keyShift
 val ClientWorld.entities: Iterable<Entity> get() = entitiesForRendering()
 val Entity.uuid: java.util.UUID get() = getUUID()
 val Entity.velocity: Vec3d get() = deltaMovement

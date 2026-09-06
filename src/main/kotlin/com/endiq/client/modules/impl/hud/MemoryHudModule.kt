@@ -15,10 +15,16 @@ class MemoryHudModule : Module("Memory Usage", "Shows RAM usage", Category.HUD) 
     val shadow      = bool("Text Shadow", default=true)
     val showMax     = bool("Show Max", default=true)
     val barWidth    = slider("Bar Width", default=60f, min=20f, max=200f)
-    fun getText(): String {
-        val rt = Runtime.getRuntime()
-        val used = (rt.totalMemory() - rt.freeMemory()) / 1048576
-        val max = rt.maxMemory() / 1048576
-        return "RAM: ${used}/${max}MB"
+    fun usedBytes()=Runtime.getRuntime().let { it.totalMemory()-it.freeMemory() }
+    fun maxBytes()=Runtime.getRuntime().maxMemory().coerceAtLeast(1)
+    fun fraction()=(usedBytes().toDouble()/maxBytes()).coerceIn(0.0,1.0)
+    fun getText(used:Long=usedBytes(),max:Long=maxBytes()):String {
+        val safeMax=max.coerceAtLeast(1);val safeUsed=used.coerceIn(0,safeMax)
+        fun amount(value:Long)=when(unit.selected) {
+            1->java.lang.String.format(java.util.Locale.ROOT,"%.2f",value/1073741824.0)
+            2->java.lang.String.format(java.util.Locale.ROOT,"%.1f",value*100.0/safeMax)
+            else->(value/1048576).toString()
+        }
+        return "RAM: ${amount(safeUsed)}${if(showMax.value)"/${amount(safeMax)}" else ""} ${unit.value}"
     }
 }

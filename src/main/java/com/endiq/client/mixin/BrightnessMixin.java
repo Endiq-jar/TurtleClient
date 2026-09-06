@@ -7,8 +7,8 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 //? if >=26.1 {
 /*import net.minecraft.client.Minecraft;
 import net.minecraft.client.OptionInstance;
-import net.minecraft.client.renderer.LightTexture;
-@Mixin(LightTexture.class)
+import net.minecraft.client.renderer.LightmapRenderStateExtractor;
+@Mixin(LightmapRenderStateExtractor.class)
 *///?} else {
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.LightmapTextureManager;
@@ -21,7 +21,7 @@ import net.minecraft.client.option.SimpleOption;
 //?}
 public class BrightnessMixin {
 //? if >=26.1 {
-/*    @Redirect(method="updateLightTexture",at=@At(value="INVOKE",target="Lnet/minecraft/client/OptionInstance;get()Ljava/lang/Object;"))
+/*    @Redirect(method="extract",at=@At(value="INVOKE",target="Lnet/minecraft/client/OptionInstance;get()Ljava/lang/Object;"))
     private Object turtleClient$brightness(OptionInstance<?> option) {
         return option==Minecraft.getInstance().options.gamma() ? GameplayControls.gamma((Double)option.get()) : option.get();
     }

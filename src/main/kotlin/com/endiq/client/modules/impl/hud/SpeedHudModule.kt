@@ -19,11 +19,13 @@ class SpeedHudModule : Module("Speedometer", "Shows movement speed", Category.HU
     val shadow      = bool("Text Shadow", default=true)
     val includeVert = bool("Include Vertical Speed", default=false)
     fun getText(): String {
-        val p = MinecraftClient.getInstance().player ?: return "Speed: 0.00"
-        val h = sqrt(p.velocity.x * p.velocity.x + p.velocity.z * p.velocity.z)
-        val v = if (includeVert.value) sqrt(h * h + p.velocity.y * p.velocity.y) else h
-        val fmt = "%.${precision.value.toInt()}f"
-        val converted = when(unit.selected) { 1 -> v * 3.6; 2 -> v * 2.237; else -> v }
-        return "Speed: ${fmt.format(converted)} ${unit.value}"
+        val p = MinecraftClient.getInstance().player ?: return "Speed: N/A"
+        return formatVelocity(p.velocity.x,p.velocity.y,p.velocity.z)
+    }
+    /** Minecraft velocity is blocks/tick, not blocks/second. */
+    fun formatVelocity(x:Double,y:Double,z:Double):String {
+        val bps=sqrt(x*x+z*z+if(includeVert.value)y*y else 0.0)*20.0
+        val converted=when(unit.selected) { 1->bps*3.6;2->bps*2.2369362921;else->bps }
+        return "Speed: ${java.lang.String.format(java.util.Locale.ROOT,"%.${precision.value.toInt().coerceIn(0,4)}f",converted)} ${unit.value}"
     }
 }

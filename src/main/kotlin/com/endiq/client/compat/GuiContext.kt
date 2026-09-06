@@ -14,6 +14,8 @@ class GuiContext(val native: NativeGuiContext) {
     }
 
     fun drawText(font:TextRenderer,text:String,x:Int,y:Int,color:Int,shadow:Boolean) {
+        // Old fonts interpret tiny alpha as an unspecified/opaque RGB color.
+        if(color ushr 24<4)return
         if(shadow) { drawTextWithShadow(font,text,x,y,color);return }
 //? if >=26.1 {
 /*        native.text(font,text,x,y,color,false)
@@ -25,6 +27,7 @@ class GuiContext(val native: NativeGuiContext) {
     }
 
     fun drawTextWithShadow(font: TextRenderer, text: String, x: Int, y: Int, color: Int) {
+        if(color ushr 24<4)return
 //? if >=26.1 {
 /*        native.text(font, text, x, y, color, true)
 *///?} else if >=1.20 {

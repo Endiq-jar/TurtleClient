@@ -46,7 +46,8 @@ object HudRenderer {
 
         // Sprint
         mod<com.endiq.client.modules.impl.movement.SprintModule>()?.let {
-            if (it.enabled && player != null && player.forwardSpeed > 0f && !player.isSprinting)
+            if (it.enabled && player != null && player.forwardSpeed > it.minSpeed.value && !player.isSprinting &&
+                (!it.cancelSneak.value || !client.options.sneakKey.isPressed) && player.hungerManager.foodLevel>6)
                 player.isSprinting = true
         }
 
@@ -68,6 +69,7 @@ object HudRenderer {
 
         // Hit Color flash decay
         mod<HitColorModule>()?.let { it.tick() }
+        mod<ComboCounterModule>()?.tick()
     }
 
     fun onHudRender(ctx: GuiContext) {
@@ -92,6 +94,8 @@ object HudRenderer {
         }
         mod<WaypointsModule>()?.let { if(it.enabled)HudStyles.text(ctx,it,it.visibleText(),sw-160,60) }
         mod<ZoomModule>()?.let { if(it.showFovNum.value && it.isZooming)ctx.drawTextWithShadow(tr,"Zoom ${"%.1f".format(it.currentFov)}",sw/2-28,sh-58,WHITE) }
+
+        mod<PopupEventsModule>()?.let { NotificationsRenderer.render(ctx,it) }
 
         // AutoHide check
         mod<AutoHideHudModule>()?.let {
@@ -122,25 +126,43 @@ object HudRenderer {
         val reach = mod<ReachDisplayModule>()
         if (reach?.enabled == true && reach.lastReach > 0) left(reach,reach.getText())
 
-        // Block overlay below crosshair
-        mod<BlockOverlayModule>()?.let {
-            if (it.enabled && blockInd?.blockName?.isNotEmpty() == true) {
-                val n = blockInd.blockName; val bw = tr.getWidth(n) + 8
-                val bx = sw/2 - bw/2; val by = sh/2 + 20
-                ctx.fill(bx, by, bx+bw, by+12, BLACK)
-                ctx.drawTextWithShadow(tr, n, bx+4, by+2, WHITE)
+        // Independently sample the target: this must not depend on Block Indicator being enabled.
+        mod<BlockOverlayModule>()?.let { overlay ->
+            val hit=client.crosshairTarget
+            if(overlay.enabled && hit is BlockHitResult) {
+                val name=client.world?.getBlockState(hit.blockPos)?.block?.name?.string.orEmpty()
+                if(name.isNotEmpty()) {
+                    val pos=hit.blockPos;val coords="${pos.x}, ${pos.y}, ${pos.z}"
+                    val lines=when(overlay.style.selected) { 1->listOf("$name ($coords)");2->listOf(name,"Position: $coords");else->listOf(name) }
+                    val scale=overlay.scale.value;val pad=overlay.bgPadding.value.toInt()
+                    val width=lines.maxOf { tr.getWidth(it) };val height=lines.size*10
+                    val x=(sw/2f+overlay.posOffsetX.value-width*scale/2).coerceIn(0f,(sw-width*scale).coerceAtLeast(0f))
+                    val y=(sh/2f+overlay.posOffsetY.value).coerceIn(0f,(sh-height*scale).coerceAtLeast(0f))
+                    ctx.transformed(x,y,scale) {
+                        if(overlay.showBg.value)ctx.fill(-pad,-pad,width+pad,height+pad-2,overlay.bgColor.toArgb())
+                        lines.forEachIndexed { i,line->ctx.drawText(tr,line,0,i*10,overlay.textColor.toArgb(),overlay.shadow.value) }
+                    }
+                }
             }
         }
 
-        CrosshairRenderer.draw(ctx)
-
-        // Attack indicator
+        // Attack cooldown bar; only the implemented bar controls are advertised.
         mod<AttackIndicatorModule>()?.let {
-            if (it.enabled && player != null) {
-                val c = player.getAttackCooldownProgress(0f)
-                val bx = sw/2-20; val by = sh/2+14
-                ctx.fill(bx, by, bx+40, by+3, BLACK)
-                ctx.fill(bx, by, bx+(c*40).toInt(), by+3, if (c>=1f) GREEN else RED)
+            if(it.enabled && player!=null) {
+                val c=player.getAttackCooldownProgress(0f).coerceIn(0f,1f)
+                if(!it.onlyInCombat.value || c<1f) {
+                    val scale=it.scale.value;val w=it.barWidth.value.toInt();val h=it.barHeight.value.toInt()
+                    val x=(sw*it.posX.value/100f-w*scale/2).coerceIn(0f,(sw-w*scale).coerceAtLeast(0f))
+                    val y=(sh*it.posY.value/100f).coerceIn(0f,(sh-(h+12)*scale).coerceAtLeast(0f))
+                    val color=if(c>=1f)it.readyColor.toArgb() else it.chargeColor.toArgb()
+                    ctx.transformed(x,y,scale) {
+                        if(it.outline.value)ctx.fill(-1,-1,w+1,h+1,WHITE)
+                        val alpha=(it.bgColor.a*it.bgAlpha.value/255f).toInt().coerceIn(0,255)
+                        ctx.fill(0,0,w,h,(alpha shl 24) or (it.bgColor.toArgb() and 0xFFFFFF))
+                        ctx.fill(0,0,(c*w).toInt(),h,color)
+                        if(it.showPercent.value)ctx.drawText(tr,"${(c*100).toInt()}%",0,h+2,color,it.shadow.value)
+                    }
+                }
             }
         }
 
@@ -177,22 +199,27 @@ object HudRenderer {
             }
         }
 
-        // PvP Info
-        mod<PvpInfoModule>()?.let {
-            if (it.enabled && player != null) {
-                val nearby = com.endiq.client.modules.impl.render.EntityCache
-                    .playersWithin(it.maxDist.value.toDouble())
-                    .filter { e -> e != player }
-                    .sortedBy { e -> player.distanceTo(e) }
-                    .take(it.maxPlayers.value.toInt())
-                if (nearby.isNotEmpty()) {
-                    var py = 60
-                    ctx.drawTextWithShadow(tr, "Nearby:", 2, py, RED); py += 10
-                    for (e in nearby) {
-                        ctx.drawTextWithShadow(tr,
-                            "${e.name.string} ${"%.0f".format(e.health)}hp ${"%.1f".format(player.distanceTo(e))}m",
-                            2, py, WHITE); py += 10
+        // Nearby-player table honors its filters, fields and layout controls.
+        mod<PvpInfoModule>()?.let { info ->
+            if(info.enabled && player!=null) {
+                val candidates=com.endiq.client.modules.impl.render.EntityCache.playersWithin(info.maxDist.value.toDouble())
+                    .filter { e->e!=player && (!info.showOnlyEnemy.value || player.scoreboardTeam==null || e.scoreboardTeam!=player.scoreboardTeam) }
+                val nearby=when(info.sortBy.selected) {
+                    1->candidates.sortedBy { it.health }
+                    2->candidates.sortedBy { it.name.string }
+                    else->candidates.sortedBy { player.distanceTo(it) }
+                }.take(info.maxPlayers.value.toInt())
+                if(nearby.isNotEmpty()) {
+                    val rows=nearby.map { e->buildList {
+                        if(info.showName.value)add(e.name.string)
+                        if(info.showHealth.value)add("${"%.0f".format(e.health)}hp")
+                        if(info.showDist.value)add("${"%.1f".format(player.distanceTo(e))}m")
+                        if(info.showArmor.value)add("Armor ${e.armor}")
+                    }.joinToString(" ") }
+                    val colors=listOf(info.headerColor.toArgb())+nearby.map { e->
+                        if(info.colorHealth.value)when { e.health<8f->RED;e.health<16f->YELLOW;else->GREEN } else info.textColor.toArgb()
                     }
+                    HudStyles.text(ctx,info,(listOf("Nearby:")+rows).joinToString("\n"),lineColors=colors)
                 }
             }
         }
@@ -206,22 +233,6 @@ object HudRenderer {
                 ctx.transformed(x,y,scale) {
                     if(timer.showBg.value)ctx.fill(-4,-3,tr.getWidth(label)+4,11,timer.bgColor.toArgb())
                     ctx.drawText(tr,label,0,0,if(timer.finished)timer.alertColor.toArgb() else timer.textColor.toArgb(),timer.shadow.value)
-                }
-            }
-        }
-
-        // Popup events
-        mod<PopupEventsModule>()?.let {
-            if (it.enabled) {
-                it.popups.removeAll { p -> p.ticks <= 0 }
-                it.popups.forEach { p -> p.ticks-- }
-                var py = 26
-                for (p in it.popups) {
-                    val a = (p.ticks.coerceAtMost(15)*14).coerceIn(0, 210)
-                    val w = tr.getWidth(p.msg)+10
-                    ctx.fill(sw/2-w/2, py, sw/2+w/2, py+12, (a shl 24) or 0x111111)
-                    ctx.drawTextWithShadow(tr, p.msg, sw/2-tr.getWidth(p.msg)/2, py+2, WHITE)
-                    py += 14
                 }
             }
         }
@@ -279,9 +290,12 @@ object HudRenderer {
             if (it.enabled && it.combo > 1 && !it.isExpired()) {
                 val cx = (sw * it.posX.value / 100f).toInt()
                 val cy = (sh * it.posY.value / 100f).toInt()
-                val pop = if (it.lastPopTicks > 0) { it.lastPopTicks--; 2 } else 0
-                val lbl = "${it.combo}x COMBO"
-                ctx.drawTextWithShadow(tr, lbl, cx - tr.getWidth(lbl) / 2, cy - pop, it.comboColor.toArgb())
+                val pop=if(it.lastPopTicks>0 && it.shakeOnHit.value)2 else 0
+                val number="${it.combo}x";val label=" COMBO";val width=tr.getWidth(number+label);val scale=it.scale.value
+                ctx.transformed((cx-width*scale/2).coerceAtLeast(0f),(cy-pop).toFloat(),scale) {
+                    ctx.drawText(tr,number,0,0,it.comboColor.toArgb(),it.shadow.value)
+                    ctx.drawText(tr,label,tr.getWidth(number),0,it.textColor.toArgb(),it.shadow.value)
+                }
             }
         }
 
@@ -315,13 +329,9 @@ object HudRenderer {
                         ?.filter { e -> e != player && e.scoreboardTeam == myTeam && player.distanceTo(e) < it.maxDist.value }
                         ?.sortedBy { e -> player.distanceTo(e) }?.take(it.maxPlayers.value.toInt()) ?: emptyList()
                     if (mates.isNotEmpty()) {
-                        val tx = (sw * it.posX.value / 100f).toInt()
-                        var ty = (sh * it.posY.value / 100f).toInt()
-                        ctx.drawTextWithShadow(tr, "Team:", tx, ty, it.headerColor.toArgb()); ty += 10
-                        for (m in mates) {
-                            ctx.drawTextWithShadow(tr, "${m.name.string} ${"%.0f".format(player.distanceTo(m))}m",
-                                tx, ty, it.textColor.toArgb()); ty += 10
-                        }
+                        val rows=mates.map { m->"${m.name.string} ${"%.0f".format(player.distanceTo(m))}m" }
+                        HudStyles.text(ctx,it,(listOf("Team:")+rows).joinToString("\n"),
+                            lineColors=listOf(it.headerColor.toArgb())+rows.map { _->it.textColor.toArgb() })
                     }
                 }
             }

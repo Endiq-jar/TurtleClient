@@ -13,8 +13,18 @@ class ServerAddressModule : Module("Server Address", "Shows server address on HU
     val posX       = slider("Position X", default=2f, min=0f, max=100f, suffix="%")
     val posY       = slider("Position Y", default=42f, min=0f, max=100f, suffix="%")
     val shadow     = bool("Text Shadow", default=true)
-    val style      = dropdown("Style", options=arrayOf("Full Address", "IP Only", "Custom"), default=0)
-    val customText = bool("Custom Text", default=false)
-    fun getText() = "Server: ${serverAddress() ?: "Singleplayer"}"
+    val style      = dropdown("Style", options=arrayOf("Full Address", "Host Only", "Custom"), default=0)
+    val customText = text("Custom Text", default="My server", limit=64)
+    fun getText(address:String?=serverAddress()):String {
+        if(address==null && !showOnSP.value)return ""
+        val full=address ?: "Singleplayer"
+        val host=when {
+            full.startsWith("[") && ']' in full->full.substringBefore(']')+"]"
+            full.count { it==':' }==1->full.substringBeforeLast(':')
+            else->full
+        }
+        val value=when(style.selected) { 2->customText.value;1->host;else->if(showPort.value)full else host }
+        return (if(showLabel.value)"Server: " else "")+value
+    }
     init { enable() }
 }

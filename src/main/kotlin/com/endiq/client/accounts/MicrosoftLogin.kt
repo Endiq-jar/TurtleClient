@@ -94,6 +94,7 @@ class MicrosoftLogin(
         }
         cancel.check()
         val claim=xsts.json["DisplayClaims"].asJsonObject["xui"].asJsonArray[0].asJsonObject
+        val minecraftTokenRequestedAt=now()
         val minecraft=post("https://api.minecraftservices.com/authentication/login_with_xbox",JsonObject().apply {
             addProperty("identityToken","XBL3.0 x=${claim["uhs"].asString};${xsts.json["Token"].asString}")
         })
@@ -115,7 +116,7 @@ class MicrosoftLogin(
         require(name.matches(Regex("[A-Za-z0-9_]{3,16}")))
         cancel.check()
         return AccountCredentials(AccountProfile(id,name,AccountProfile.Kind.MICROSOFT),access,
-            now()+minecraft.json["expires_in"].asLong.coerceIn(1,86400)*1000,claim.get("xid")?.asString,clientId)
+            minecraftTokenRequestedAt+minecraft.json["expires_in"].asLong.coerceIn(1,86400)*1000,claim.get("xid")?.asString,clientId)
     }
     class OfficialTransport : Transport {
         private val client=HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(15)).followRedirects(HttpClient.Redirect.NEVER).build()

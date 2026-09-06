@@ -35,7 +35,8 @@ typealias GameAccountType = net.minecraft.client.session.Session.AccountType
  * Field discovery uses JVM types/signatures, never unmapped Yarn string names.
  */
 object SessionBridge {
-    class Prepared internal constructor(internal val updates: List<Pair<Field,Any?>>,val profile:AccountProfile) : AutoCloseable {
+    class Prepared internal constructor(internal val updates: List<Pair<Field,Any?>>,val profile:AccountProfile,private val expiresAt:Long) : AutoCloseable {
+        fun usable(now:Long=System.currentTimeMillis())=profile.kind!=AccountProfile.Kind.MICROSOFT || now+30_000<expiresAt
         override fun close() { updates.mapNotNull { it.second as? AutoCloseable }.distinct().forEach { runCatching { it.close() } } }
         override fun toString() = "Prepared account switch (redacted)"
     }
@@ -151,13 +152,14 @@ object SessionBridge {
                 field.type.declaredMethods.any { m -> Modifier.isStatic(m.modifiers) && m.returnType==field.type && m.parameterTypes.any(dependency) }
             if(requiresAccount)throw AccountProblem("This game version could not rebuild an account service. The current account is unchanged.")
         }
-            return Prepared(changes.toList(),credentials.profile)
+            return Prepared(changes.toList(),credentials.profile,credentials.expiresAt)
         } catch(error:Exception) {
             changes.values.filterIsInstance<AutoCloseable>().distinct().forEach { runCatching { it.close() } }
             throw error
         }
     }
     fun commit(prepared:Prepared) {
+        if(!prepared.usable())throw AccountProblem("This sign-in expired while preparing. Sign in again; the current account is unchanged.")
         val mc=MinecraftClient.getInstance()
         if(mc.world!=null)throw AccountProblem("Disconnect from your world before switching accounts.")
         val old=prepared.updates.map { (field,_) -> field to field.get(mc) }

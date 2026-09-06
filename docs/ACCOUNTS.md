@@ -5,7 +5,7 @@ Open **the name/account button at the top right of the title screen**.
 - **Launcher account:** kept available for switching back during this run.
 - **Add offline:** creates a local profile with Minecraft's deterministic offline UUID. This is for singleplayer and offline-mode servers; it does not authenticate to online-mode servers, Realms, or grant a Minecraft license.
 - **Microsoft:** uses Microsoft's device-code page in your browser. TurtleClient never asks for your Microsoft password. A Java entitlement and Minecraft profile must both be verified before the account is added.
-- Select a profile, then **Use account**. You must be disconnected. No account is switched while a world is open, after the account screen closes, or after a cancelled request.
+- Select a profile, then **Use account**. You must be disconnected. No account is switched while a world is open, after the account screen closes, or after a cancelled request. Token expiry is checked again immediately before the session transaction.
 - **Remove:** forgets metadata and the in-memory sign-in. First switch away from an active account. The original launcher entry cannot be deleted.
 
 ## Microsoft application setup (required)

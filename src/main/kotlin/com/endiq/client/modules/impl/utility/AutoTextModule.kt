@@ -11,8 +11,8 @@ class AutoTextModule : Module("Auto Text","Configurable, opt-in join messages an
     val repeatDelay=slider("Repeat Delay",default=60f,min=5f,max=300f,suffix="s")
     val whisper=bool("Send As Whisper",default=false)
     val whisperTarget=text("Whisper Target",default="",limit=16)
-    private var nextSend=Long.MAX_VALUE
-    fun joined() { nextSend=if(enabled && onJoinMsg.value)System.currentTimeMillis()+(delay.value*1000).toLong() else Long.MAX_VALUE }
+    private val schedule=AutoTextSchedule()
+    fun joined() { schedule.joined(enabled && onJoinMsg.value,(delay.value*1000).toLong()) }
     fun send():String {
         if(MinecraftClient.getInstance().player==null)return "Join a world before sending a message."
         val content=message.value.trim();if(content.isEmpty())return "Enter a message first."
@@ -21,11 +21,9 @@ class AutoTextModule : Module("Auto Text","Configurable, opt-in join messages an
         return "Message sent."
     }
     fun tick() {
-        if(!enabled || MinecraftClient.getInstance().player==null)return
-        val now=System.currentTimeMillis()
-        if(now>=nextSend) { send();nextSend=if(repeatMsg.value)now+(repeatDelay.value*1000).toLong() else Long.MAX_VALUE }
+        if(!enabled || MinecraftClient.getInstance().player==null) { schedule.reset();return }
+        if(schedule.due(onJoinMsg.value,repeatMsg.value,(repeatDelay.value*1000).toLong()))send()
     }
-    override fun onDisable() { nextSend=Long.MAX_VALUE }
-    override fun onEnable() { if(repeatMsg.value)nextSend=System.currentTimeMillis()+(repeatDelay.value*1000).toLong() }
+    override fun onDisable() { schedule.reset() }
     init { action("Send now","Join a world before sending.",{MinecraftClient.getInstance().player!=null}) { send() } }
 }
