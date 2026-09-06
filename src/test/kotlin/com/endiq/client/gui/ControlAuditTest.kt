@@ -1,5 +1,7 @@
 package com.endiq.client.gui
 
+import com.endiq.client.accounts.AccountCredentials
+import com.endiq.client.accounts.AccountSelection
 import com.endiq.client.accounts.AccountProblem
 import com.endiq.client.accounts.AccountProfile
 import com.endiq.client.compat.SessionBridge
@@ -80,6 +82,18 @@ class ControlAuditTest {
         time=4000;assertTrue(module.visible().isEmpty())
         module.add("x".repeat(1000));assertEquals(240,module.visible().single().msg.length)
         module.disable();assertTrue(module.visible().isEmpty())
+    }
+    @Test fun savedMetadataAndExpiredSignInsNeverShadowTheLauncherProfile() {
+        val id=UUID.randomUUID()
+        val original=AccountProfile(id,"Turtle",AccountProfile.Kind.LAUNCHER)
+        val saved=original.copy(kind=AccountProfile.Kind.MICROSOFT)
+        val launcher=AccountCredentials(original,"launcher-placeholder",Long.MAX_VALUE)
+        val expired=AccountCredentials(saved,"expired-placeholder",0)
+        assertEquals(listOf(original),AccountSelection.rows(listOf(saved),original))
+        assertSame(launcher,AccountSelection.credentials(original,launcher,mapOf(id to expired),100_000))
+        assertNull(AccountSelection.credentials(saved,launcher,mapOf(id to expired),100_000))
+        val fresh=AccountCredentials(saved,"fresh-placeholder",200_000)
+        assertSame(fresh,AccountSelection.credentials(original,launcher,mapOf(id to fresh),100_000))
     }
     @Test fun signInExpiryIsRecheckedBeforeAnySessionMutation() {
         val profile=AccountProfile(UUID.randomUUID(),"Turtle",AccountProfile.Kind.MICROSOFT)

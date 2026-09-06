@@ -21,7 +21,7 @@ through its existing loading/menu hooks instead.
 - **Icons:** a coherent set of antialiased 32px monochrome glyphs, tinted by the UI.
   Controls no longer depend on unsupported emoji or large image-backed buttons.
 
-## Optimization
+## Initial UI-only optimization
 
 `scripts/prepare_ui_assets.py` requires Python and Pillow >= 10. Pass a directory
 containing `emblem-master.png`, `coast-master.png`, and `forest-master.png`. Large
@@ -47,8 +47,9 @@ paths, filtering metadata, and these budgets in every Minecraft build target.
 ## Interface and input
 
 `TurtleTheme` supplies consistent colors, rounded panels, typography fitting, and
-shared artwork. Widgets are drawn procedurally and images are cached by Minecraft's
-texture manager; no file decoding occurs in render loops.
+shared artwork. Buttons use small generated nine-slice skins; sliders and toggles use lightweight
+primitives. Images are cached by Minecraft's texture manager; no file decoding
+occurs in render loops.
 
 `UiGrid` reflows columns to the GUI-scaled window. `ScrollState` retains fractional
 wheel movement, clamps to the actual content height, and supports dragging and
@@ -60,9 +61,9 @@ Favorited modules remain reachable through the title menu's Favorites shortcut.
 Typing in a screen no longer fires module hotkeys; held keys must be released
 before they can toggle modules again after closing the screen.
 
-Cosmetics still use the existing local-file registry/equip state. This refresh does
-not implement in-world cosmetic meshes; the UI no longer presents a box-drawn fake
-player as a working 3D preview.
+The initial UI refresh only exposed registry/equip state. The extension below now
+adds six actual in-world mesh types; use third-person view to inspect them. The
+menu does not present a box-drawn fake player as a working 3D preview.
 
 The included artwork preview is a design/asset preview, not an in-game screenshot.
 
@@ -86,7 +87,9 @@ icon. Buttons contain no baked-in text and are rendered in nine slices. Runtime
 icons are 32x32, button strips 128x32, material tiles 64x64 and capes 128x64.
 
 The combined manifest now covers **81 PNGs / 953,966 compressed bytes**, including
-18 model textures and 18 thumbnails. World materials use nearest sampling;
+18 model textures and 18 thumbnails. Including the retained 1×1 white primitive
+texture, the complete runtime PNG set is **82 files / 954,035 bytes**, or
+**6,168,580 bytes of base RGBA pixels** (about 5.88 MiB). World materials use nearest sampling;
 interface assets use linear filtering. The manifest contains actual dimensions,
 byte counts and SHA-256 hashes; tests enforce transparency where appropriate and
 a 1.2 MB compressed budget. These are file/decode budgets, not measured VRAM/FPS.

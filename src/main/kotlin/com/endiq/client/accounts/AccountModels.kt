@@ -21,3 +21,17 @@ class AccountCredentials(val profile: AccountProfile, private val token: String,
     override fun toString() = "AccountCredentials(redacted)"
 }
 class AccountProblem(message: String) : Exception(message)
+
+/** A saved Microsoft row must never hide the session supplied by the launcher. */
+object AccountSelection {
+    fun rows(saved:List<AccountProfile>,launcher:AccountProfile)=
+        (listOf(launcher)+saved).distinctBy { it.id }
+
+    fun credentials(profile:AccountProfile,launcher:AccountCredentials,cached:Map<UUID,AccountCredentials>,
+                    now:Long=System.currentTimeMillis()):AccountCredentials? = when {
+        profile.kind==AccountProfile.Kind.LAUNCHER && profile.id==launcher.profile.id ->
+            cached[profile.id]?.takeIf { it.usable(now) } ?: launcher
+        profile.kind==AccountProfile.Kind.OFFLINE -> AccountCredentials(profile,"0",Long.MAX_VALUE)
+        else -> cached[profile.id]?.takeIf { it.usable(now) }
+    }
+}

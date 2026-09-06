@@ -32,7 +32,7 @@ object Accounts {
         launcher=SessionBridge.launcher();active=launcher.profile
         runCatching { repository.load() }.onFailure { message="Account list could not be loaded. The launcher account is still available." }
     }
-    fun profiles():List<AccountProfile> { initialize();return (repository.profiles+launcher.profile).distinctBy { it.id } }
+    fun profiles():List<AccountProfile> { initialize();return AccountSelection.rows(repository.profiles,launcher.profile) }
     fun ready(profile:AccountProfile)=when(profile.kind) {
         AccountProfile.Kind.OFFLINE -> true
         AccountProfile.Kind.LAUNCHER -> true
@@ -78,10 +78,8 @@ object Accounts {
         if(busy)return
         if(!ready(profile)) { message="Sign in to this Microsoft account again before switching.";return }
         if(MinecraftClient.getInstance().world!=null) { message="Disconnect from your world before switching accounts.";return }
-        val value=credentials[profile.id] ?: when {
-            profile.id==launcher.profile.id -> launcher
-            profile.kind==AccountProfile.Kind.OFFLINE -> AccountCredentials(profile,"0",Long.MAX_VALUE)
-            else -> { message="Sign in to this Microsoft account again. Tokens are not saved to disk.";return }
+        val value=AccountSelection.credentials(profile,launcher,credentials) ?: run {
+            message="Sign in to this Microsoft account again. Tokens are not saved to disk.";return
         }
         val id=generation.incrementAndGet();busy=true;message="Preparing account services..."
         task=workers.submit {
@@ -91,7 +89,7 @@ object Accounts {
                     if(id!=generation.get() || MinecraftClient.getInstance().currentScreen !is com.endiq.client.gui.AccountsScreen) {
                         prepared.close();if(id==generation.get())busy=false;return@execute
                     }
-                    try { SessionBridge.commit(prepared);active=profile;message="Active account: ${profile.name}${if(profile.kind==AccountProfile.Kind.OFFLINE)" (offline)" else ""}" }
+                    try { SessionBridge.commit(prepared);active=profile.copy(name=value.profile.name);message="Active account: ${value.profile.name}${if(profile.kind==AccountProfile.Kind.OFFLINE)" (offline)" else ""}" }
                     catch(error:Exception) { prepared.close();message=if(error is AccountProblem)error.message.orEmpty() else "Switch failed; the current account was kept." }
                     finally { busy=false }
                 }
