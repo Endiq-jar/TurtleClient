@@ -1,24 +1,22 @@
 package com.endiq.client.mixin;
 
-import com.endiq.client.gui.CustomTitleScreen;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.TitleScreen;
+import com.endiq.client.compat.BrandingRenderer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-// Whenever vanilla is about to set up a TitleScreen (game launch, disconnect,
-// "Back to menu" from Realms, etc.), swap it out for our custom one instead.
+//? if >=26.1 {
+/*import net.minecraft.client.gui.screens.TitleScreen;
+*///?} else {
+import net.minecraft.client.gui.screen.TitleScreen;
+//?}
+
 @Mixin(TitleScreen.class)
 public class TitleScreenMixin {
-
     @Inject(method = "init", at = @At("HEAD"), cancellable = true)
-    private void turtle$replaceWithCustomMenu(CallbackInfo ci) {
-        MinecraftClient client = MinecraftClient.getInstance();
-        if (!(client.currentScreen instanceof CustomTitleScreen)) {
-            client.setScreen(new CustomTitleScreen());
-        }
+    private void turtleClient$replaceTitleScreen(CallbackInfo ci) {
+        BrandingRenderer.showTitleScreen();
         ci.cancel();
     }
 }

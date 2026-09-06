@@ -9,74 +9,63 @@ import com.endiq.client.modules.impl.pvp.ComboCounterModule
 import com.endiq.client.modules.impl.pvp.HitColorModule
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
+//? if >=1.19 {
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
+//?}
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents
 //? if >=1.21.8 {
 /*import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry
-import net.minecraft.util.Identifier
 *///?} else {
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback
 //?}
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback
-import net.minecraft.client.MinecraftClient
-import net.minecraft.client.option.KeyBinding
-import net.minecraft.client.util.InputUtil
-import net.minecraft.util.ActionResult
-import org.lwjgl.glfw.GLFW
+import com.endiq.client.compat.*
+
 
 object TurtleClientClient : ClientModInitializer {
 
     override fun onInitializeClient() {
         ModuleManager.init()
+        CosmeticFeature.register()
+        net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents.CLIENT_STARTED.register {
+            com.endiq.client.cosmetics.CosmeticManager.initialize()
+            com.endiq.client.accounts.Accounts.initialize()
+            com.endiq.client.config.ModulePreferences.initialize()
+        }
+        net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents.CLIENT_STOPPING.register {
+            com.endiq.client.config.ModulePreferences.save()
+            com.endiq.client.accounts.Accounts.shutdown()
+        }
 
-        // Fabric's old HudRenderCallback (DrawContext-based) was replaced by
-        // HudElementRegistry in 1.21.6, which itself moved package and switched
-        // from PoseStack to Matrix3x2fStack in 1.21.8. HudRenderer.onHudRender
-        // needs a matching overload on the >=1.21.8 branch -- see MIGRATION_NOTES.md.
+        // The callback's second argument changed from tick delta to a tracker;
+        // the HUD does not consume it, so adapt only the native drawing context.
         //? if >=1.21.8 {
-        /*HudElementRegistry.addLast(Identifier.of("turtle-client", "hud"), HudRenderer::onHudRender)
+        /*HudElementRegistry.addLast(identifier("turtle-client", "hud")) { ctx, _ ->
+            HudRenderer.onHudRender(GuiContext(ctx))
+        }
         *///?} else {
-        HudRenderCallback.EVENT.register(HudRenderer::onHudRender)
+        HudRenderCallback.EVENT.register { ctx, _ -> HudRenderer.onHudRender(GuiContext(ctx)) }
         //?}
 
-        // KeyBinding categories became a structured KeyBinding.Category record in
-        // 1.21.9 (replacing the old plain translation-key String) -- see Fabric's
-        // 1.21.9 changelog. InputUtil.isKeyPressed switched from a raw GLFW long
-        // handle to the Window object in the same release.
-        //? if >=1.21.9 {
-        /*val guiKey = KeyBindingHelper.registerKeyBinding(
-            KeyBinding("key.turtle-client.gui", InputUtil.Type.KEYSYM,
-                GLFW.GLFW_KEY_RIGHT_SHIFT, KeyBinding.Category.create(net.minecraft.util.Identifier.of("turtle-client", "general")))
-        )
-        *///?} else {
-        val guiKey = KeyBindingHelper.registerKeyBinding(
-            KeyBinding("key.turtle-client.gui", InputUtil.Type.KEYSYM,
-                GLFW.GLFW_KEY_RIGHT_SHIFT, "TurtleClient")
-        )
-        //?}
+        val guiKey = registerGuiKey()
 
         ClientTickEvents.END_CLIENT_TICK.register { client ->
             ModuleManager.modules.forEach { mod ->
-                //? if >=1.21.9 {
-                /*val keyDown = mod.key != GLFW.GLFW_KEY_UNKNOWN && InputUtil.isKeyPressed(client.window, mod.key)
-                *///?} else {
-                val keyDown = mod.key != GLFW.GLFW_KEY_UNKNOWN && InputUtil.isKeyPressed(client.window.handle, mod.key)
-                //?}
-                if (keyDown) {
-                    if (!mod.keyWasDown) { mod.toggle(); mod.keyWasDown = true }
-                } else {
-                    mod.keyWasDown = false
-                }
+                mod.updateKeyState(isKeyDown(mod.key), client.currentScreen == null)
             }
-            while (guiKey.wasPressed()) client.setScreen(ClickGui())
+            while (guiKey.wasPressed()) {
+                if (client.currentScreen == null) client.setScreen(ClickGui())
+            }
             HudRenderer.onTick()
+            com.endiq.client.config.ModulePreferences.tick()
         }
 
         // Local attack detection -- drives Combo Counter and Hit Color flash.
         // Fires client-side when the player swings on an entity; not authoritative
         // damage confirmation, but the same approximation other PvP clients use for HUD feedback.
         AttackEntityCallback.EVENT.register { player, _world, _hand, entity, _hitResult ->
+            if(player !== MinecraftClient.getInstance().player)return@register ActionResult.PASS
+            ModuleManager.get<com.endiq.client.modules.impl.hud.ReachDisplayModule>()?.takeIf { it.enabled }?.let { it.lastReach=player.distanceTo(entity).toDouble() }
             val combo = ModuleManager.getByName("Combo Counter") as? ComboCounterModule
             if (combo?.enabled == true) combo.registerHit(entity.uuid)
 
@@ -88,16 +77,32 @@ object TurtleClientClient : ClientModInitializer {
 
         ClientPlayConnectionEvents.JOIN.register { _handler, _sender, _client ->
             val m = ModuleManager.getByName("Auto Text") as? AutoTextModule
-            m?.let { it.sent = false; it.pendingSend = true }
+            m?.joined()
+            ModuleManager.get<com.endiq.client.modules.impl.utility.PopupEventsModule>()?.let {
+                if(it.onJoin.value)it.add("Joined ${serverAddress() ?: "singleplayer"}.")
+            }
         }
 
-        ClientReceiveMessageEvents.GAME.register { msg, _ ->
-            val m = ModuleManager.getByName("Hypixel Addons") as? HypixelAddonsModule
-            if (m?.enabled == true) {
-                val t = msg.string
-                if (t.contains("Game Over") || t.contains("Winner") || t.contains("Game ended"))
-                    MinecraftClient.getInstance().player?.networkHandler?.sendChatMessage("/gg")
-            }
+        // 1.18.2 predates Fabric's receive-message event. LegacyChatMixin
+        // forwards its game messages to the same handler instead.
+        //? if >=1.19 {
+        ClientReceiveMessageEvents.GAME.register { msg, _ -> onGameMessage(msg.string) }
+        //?}
+    }
+
+    private var lastGgAt=0L
+    @JvmStatic
+    fun onGameMessage(message: String) {
+        ModuleManager.get<com.endiq.client.modules.impl.utility.PopupEventsModule>()?.let { if(it.onMessage.value)it.add(message) }
+        val host=serverAddress()?.substringBefore(':')?.lowercase(java.util.Locale.ROOT) ?: ""
+        if(host!="hypixel.net" && !host.endsWith(".hypixel.net"))return
+        val now=System.currentTimeMillis()
+        if(now-lastGgAt<5000)return
+        val module = ModuleManager.getByName("Hypixel Addons") as? HypixelAddonsModule
+        if (module?.enabled == true && module.autoGg.value &&
+            (message.contains("Game Over") || message.contains("Winner") || message.contains("Game ended"))) {
+            lastGgAt=now
+            sendChatMessage("/gg")
         }
     }
 }

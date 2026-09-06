@@ -1,8 +1,8 @@
 package com.endiq.client.modules.impl.performance
 
+import com.endiq.client.compat.*
 import com.endiq.client.modules.Module
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
-import net.minecraft.client.MinecraftClient
 
 // Scales view (render) distance -- and optionally simulation distance -- down
 // when FPS falls under a target, back up when there's headroom. Lets low-end
@@ -42,16 +42,16 @@ class DynamicRenderDistanceModule : Module(
     }
 
     override fun onEnable() {
-        val o = MinecraftClient.getInstance().options
-        originalView = o.viewDistance.value
-        originalSim = o.simulationDistance.value
+        val o = ClientOptions
+        originalView = o.viewDistance
+        originalSim = o.simulationDistance
         ticksSinceAdjust = 0
     }
 
     override fun onDisable() {
-        val o = MinecraftClient.getInstance().options
-        if (originalView >= 0) o.viewDistance.value = originalView
-        if (originalSim >= 0) o.simulationDistance.value = originalSim
+        val o = ClientOptions
+        if (originalView >= 0) o.viewDistance = originalView
+        if (originalSim >= 0) o.simulationDistance = originalSim
         originalView = -1
         originalSim = -1
     }
@@ -66,13 +66,13 @@ class DynamicRenderDistanceModule : Module(
 
         val client = MinecraftClient.getInstance()
         if (client.world == null) return // no session active (e.g. main menu)
-        val fps = client.currentFps
-        val o = client.options
+        val fps = clientFps()
+        val o = ClientOptions
 
         val lo = minView.value.toInt().coerceAtLeast(2)
         val hi = maxView.value.toInt().coerceAtLeast(lo)
         val delta = stepSize.value.toInt().coerceAtLeast(1)
-        val current = o.viewDistance.value.coerceIn(lo, hi)
+        val current = o.viewDistance.coerceIn(lo, hi)
 
         val newView = when {
             fps < targetFps.value - tolerance.value -> (current - delta).coerceIn(lo, hi)
@@ -80,9 +80,9 @@ class DynamicRenderDistanceModule : Module(
             else -> current
         }
 
-        if (newView != o.viewDistance.value) {
-            o.viewDistance.value = newView
-            if (scaleSimulation.value) o.simulationDistance.value = newView
+        if (newView != o.viewDistance) {
+            o.viewDistance = newView
+            if (scaleSimulation.value) o.simulationDistance = newView
         }
     }
 }

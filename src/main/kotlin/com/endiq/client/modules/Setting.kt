@@ -10,3 +10,6 @@ class ColorSetting(name: String, desc: String = "", var r: Int = 255, var g: Int
 class DropdownSetting(name: String, desc: String = "", val options: List<String>, var selected: Int = 0) : Setting(name, desc) {
     val value get() = options[selected]
 }
+
+class TextSetting(name:String,desc:String="",var value:String,val limit:Int=256):Setting(name,desc)
+class ActionSetting(name:String,desc:String="",val available:()->Boolean={true},val action:()->String):Setting(name,desc)

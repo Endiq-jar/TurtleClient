@@ -1,7 +1,6 @@
 package com.endiq.client.modules.impl.hud
+import com.endiq.client.compat.*
 import com.endiq.client.modules.Module
-import net.minecraft.client.MinecraftClient
-import net.minecraft.util.math.Direction
 class DirectionHudModule : Module("Direction HUD", "Shows facing direction", Category.HUD) {
     val textColor   = color("Text Color", r=255, g=255, b=255)
     val bgColor     = color("Background", r=0, g=0, b=0, a=120)
@@ -17,13 +16,18 @@ class DirectionHudModule : Module("Direction HUD", "Shows facing direction", Cat
     val southColor  = color("South Color", r=255, g=85, b=85)
     val eastColor   = color("East Color", r=85, g=85, b=255)
     val westColor   = color("West Color", r=255, g=170, b=0)
-    fun getText(): String {
-        val p = MinecraftClient.getInstance().player ?: return "Dir: N/A"
-        val dir = Direction.fromHorizontalDegrees(p.yaw.toDouble()).getName().uppercase()
-        return if (showArrow.value) "$dir ${getArrow(p.yaw)}" else dir
-    }
-    private fun getArrow(yaw: Float) = when {
-        yaw >= -45 && yaw < 45 -> "↑"; yaw >= 45 && yaw < 135 -> "→"
-        yaw >= -135 && yaw < -45 -> "←"; else -> "↓"
+    fun getText(yaw:Float?=MinecraftClient.getInstance().player?.yaw):String {
+        if(yaw==null)return "Dir: N/A"
+        val angle=((yaw%360f)+360f)%360f
+        val sector=(kotlin.math.floor(angle/45.0+.5).toInt())%8
+        val names=arrayOf("S","SW","W","NW","N","NE","E","SE")
+        val degrees=java.lang.String.format(java.util.Locale.ROOT,"%.0f°",angle)
+        val label=when(style.selected) {
+            1->"${names[(sector+7)%8]} · [${names[sector]}] · ${names[(sector+1)%8]}"
+            2->degrees
+            else->names[sector]
+        }
+        val arrow=if(showArrow.value)" "+arrayOf("↓","↙","←","↖","↑","↗","→","↘")[sector] else ""
+        return label+arrow+if(showDegrees.value && style.selected!=2)" $degrees" else ""
     }
 }

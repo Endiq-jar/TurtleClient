@@ -48,6 +48,7 @@ object ModuleManager {
     }
 
     private fun register(m: Module) = modules.add(m)
+    inline fun <reified T:Module> get():T?=modules.filterIsInstance<T>().firstOrNull()
     fun getByName(name: String) = modules.firstOrNull { it.name.equals(name, true) }
     fun getEnabled() = modules.filter { it.enabled }
     fun getByCategory(cat: Module.Category) =

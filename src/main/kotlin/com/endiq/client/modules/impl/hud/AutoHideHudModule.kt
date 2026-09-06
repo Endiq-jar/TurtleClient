@@ -1,6 +1,6 @@
 package com.endiq.client.modules.impl.hud
 import com.endiq.client.modules.Module
-class AutoHideHudModule : Module("Auto Hide HUD", "Hides HUD when still", Category.HUD) {
+class AutoHideHudModule : Module("Auto Hide HUD", "Hides Turtle overlays when still (not vanilla HUD)", Category.HUD) {
     val hideDelay    = slider("Hide Delay", default=3f, min=0.5f, max=10f, suffix="s")
     val fadeTime     = slider("Fade Time", default=0.5f, min=0f, max=2f, suffix="s")
     val hideOnSneak  = bool("Hide When Sneaking", default=false)
@@ -17,4 +17,5 @@ class AutoHideHudModule : Module("Auto Hide HUD", "Hides HUD when still", Catego
     var hideTimer = 0
     fun tick(moving: Boolean) { if (moving) hideTimer = (hideDelay.value * 20).toInt() else if (hideTimer > 0) hideTimer-- }
     fun shouldShow() = !enabled || hideTimer > 0
+    override fun onEnable() { hideTimer=(hideDelay.value*20).toInt() }
 }

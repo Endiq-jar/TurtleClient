@@ -1,411 +1,307 @@
 package com.endiq.client.gui
 
+import com.endiq.client.compat.*
 import com.endiq.client.cosmetics.CosmeticManager
 import com.endiq.client.cosmetics.CosmeticManager.CosmeticType
+import com.endiq.client.gui.components.*
+import com.endiq.client.gui.components.TurtleTheme as Theme
 import com.endiq.client.gui.settings.ModSettingsGui
 import com.endiq.client.modules.Module
 import com.endiq.client.modules.ModuleManager
-import net.minecraft.client.MinecraftClient
-import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.gui.screen.Screen
-import net.minecraft.client.render.RenderLayer
-import net.minecraft.text.Text
-import net.minecraft.util.Identifier
+import org.lwjgl.glfw.GLFW
 
-class ClickGui : Screen(Text.literal("TurtleClient")) {
-
-    // ── Layout ────────────────────────────────────────────────────────
-    private val GW    = 580
-    private val GH    = 360
-    private val TOPH  = 30        // topbar
-    private val ROW1H = 22        // module category tabs row
-    private val ROW2H = 22        // cosmetics / search row
-    private val BBH   = 18        // bottom bar
-    private val CW    = 138
-    private val CH    = 80
-    private val PAD   = 5
-    private val COLS  = 4
-    private val CCW   = 86
-    private val CCH   = 70
-    private val CCOLS = 4
-
-    // ── Colours ───────────────────────────────────────────────────────
-    private val BG     = 0xF2111111.toInt()
-    private val TOPBG  = 0xF2181818.toInt()
-    private val TAB1BG = 0xF21C1C1C.toInt()
-    private val TAB2BG = 0xF2161616.toInt()
-    private val CARD   = 0xF2202020.toInt()
-    private val CARDH  = 0xF22A2A2A.toInt()
-    private val CARDEQ = 0xF2172D21.toInt()
-    private val ON     = 0xFF3D9970.toInt()
-    private val OFF    = 0xFF333333.toInt()
-    private val RED    = 0xFFE05252.toInt()
-    private val WHITE  = 0xFFFFFFFF.toInt()
-    private val GRAY   = 0xFF666666.toInt()
-    private val LGRAY  = 0xFF999999.toInt()
-    private val PURPLE = 0xFF9B59B6.toInt()
-    private val PURPLH = 0xFFCC88FF.toInt()
-
-    // ── State ─────────────────────────────────────────────────────────
-    private var modTab        = Module.Category.ALL
-    private var showCosmetics = false
-    private var cosTab        = CosmeticType.CAPE
-    private var searchQuery   = ""
+class ClickGui(private val parent: Screen? = null, initialCosmetics: Boolean = false, private var favoritesOnly: Boolean = false) : ClientScreen("TurtleClient") {
+    private var category = Module.Category.ALL
+    private var cosmeticType = CosmeticType.CAPE
+    private var cosmetics = initialCosmetics
+    private var query = ""
+    private var feedback=""
     private var searchFocused = false
-    private var scroll        = 0
-    private var cosScroll     = 0
-    private var gx = 0; private var gy = 0
-
-    private val LOGO = Identifier.of("turtle-client", "textures/loading_icon.png")
-    private val MOD_TABS = listOf(
-        Module.Category.ALL, Module.Category.HUD, Module.Category.HYPIXEL,
-        Module.Category.PVP, Module.Category.RENDER, Module.Category.MOVEMENT,
-        Module.Category.UTILITY, Module.Category.PERFORMANCE
-    )
-    private val COS_TYPES = CosmeticType.values().toList()
-
-    // content area starts below topbar + row1 + row2
-    private fun contentTop() = gy + TOPH + ROW1H + ROW2H
-    private fun contentH()   = GH - TOPH - ROW1H - ROW2H - BBH
-
-    private fun getFiltered() = ModuleManager.getByCategory(modTab)
-        .let { if (searchQuery.isEmpty()) it else it.filter { m -> m.name.contains(searchQuery, true) } }
-
-    private fun maxScroll(): Int {
-        val rows = (getFiltered().size + COLS - 1) / COLS
-        return ((rows * (CH + PAD) + PAD) - contentH()).coerceAtLeast(0)
-    }
-    private fun cosMaxScroll(): Int {
-        val rows = (CosmeticManager.getByType(cosTab).size + CCOLS - 1) / CCOLS
-        return ((rows * (CCH + PAD) + PAD) - contentH()).coerceAtLeast(0)
-    }
+    private val moduleScroll = ScrollState()
+    private val cosmeticScroll = ScrollState()
+    private val scroll get() = if (cosmetics) cosmeticScroll else moduleScroll
+    private var modules = emptyList<Module>()
+    private var entries = emptyList<CosmeticManager.CosmeticEntry>()
+    private var panel = UiRect(0, 0, 1, 1)
+    private var viewport = panel
+    private var track = panel
+    private var searchBox = panel
+    private var toolsButton = panel
+    private var modsButton = panel
+    private var cosmeticsButton = panel
+    private var closeButton = panel
+    private var sidebar: UiRect? = null
+    private var grid = UiGrid(panel)
+    private val tabs = mutableListOf<Pair<UiRect, Int>>()
+    private val categories = listOf(Module.Category.ALL, Module.Category.HUD, Module.Category.PVP,
+        Module.Category.RENDER, Module.Category.MOVEMENT, Module.Category.UTILITY,
+        Module.Category.HYPIXEL, Module.Category.PERFORMANCE)
+    private val types = CosmeticType.values().toList()
+    private val version = gameVersion()
 
     override fun init() {
-        gx = (width - GW) / 2; gy = (height - GH) / 2
-        scroll = 0; cosScroll = 0
+        moduleScroll.endDrag(); cosmeticScroll.endDrag()
         CosmeticManager.reload()
+        refreshItems()
+        layout() // Preserve scroll when returning from settings; only clamp after a resize.
     }
 
-    // ═══════════════════════════════════════════════════════════════════
-    override fun render(ctx: DrawContext, mx: Int, my: Int, delta: Float) {
-        ctx.fill(0, 0, width, height, 0x99000000.toInt())
-        ctx.fill(gx, gy, gx + GW, gy + GH, BG)
-        drawTopBar(ctx)
-        drawRow1(ctx, mx, my)   // module tabs
-        drawRow2(ctx, mx, my)   // cosmetics tabs OR search
-        if (showCosmetics) drawCosmetics(ctx, mx, my) else drawModGrid(ctx, mx, my)
-        drawBottomBar(ctx, mx, my)
-        super.render(ctx, mx, my, delta)
+    private fun tabLabel(index: Int): String = if (cosmetics) types[index].displayName else when (categories[index]) {
+        Module.Category.ALL -> if (favoritesOnly) "Favorites" else "All"
+        Module.Category.MOVEMENT -> "Move"
+        Module.Category.PERFORMANCE -> "Perf"
+        else -> categories[index].displayName
     }
 
-    // ── Topbar ────────────────────────────────────────────────────────
-    private fun drawTopBar(ctx: DrawContext) {
-        ctx.fill(gx, gy, gx + GW, gy + TOPH, TOPBG)
-        ctx.fill(gx, gy + TOPH - 1, gx + GW, gy + TOPH, RED)
-        val ls = 22; val ly = gy + (TOPH - ls) / 2
-        //? if >=1.21.4 {
-        try { ctx.drawTexture(RenderLayer::getGuiTextured, LOGO, gx+4, ly, 0f,0f, ls,ls, ls,ls, -1) } catch(_:Exception){}
-        //?} else {
-        /*try { ctx.drawTexture(LOGO, gx+4, ly, 0f,0f, ls,ls, ls,ls) } catch(_:Exception){}
-        *///?}
-        val t = if (showCosmetics) "TurtleClient  |  COSMETICS" else "TurtleClient  |  MOD MENU"
-        ctx.drawTextWithShadow(textRenderer, t, gx+4+ls+4, gy+(TOPH-8)/2, WHITE)
-        // close
-        ctx.fill(gx+GW-16, gy+4, gx+GW-4, gy+TOPH-4, 0xFFAA2222.toInt())
-        ctx.drawTextWithShadow(textRenderer, "X", gx+GW-12, gy+(TOPH-8)/2, WHITE)
+    private fun refreshItems() {
+        modules = ModuleManager.getByCategory(category).filter { it.name.contains(query, true) && (!favoritesOnly || it.favorited) }
+        entries = CosmeticManager.getByType(cosmeticType).filter { it.name.contains(query, true) }
     }
 
-    // ── Row 1: module category tabs ───────────────────────────────────
-    private fun drawRow1(ctx: DrawContext, mx: Int, my: Int) {
-        val ry = gy + TOPH
-        ctx.fill(gx, ry, gx+GW, ry+ROW1H, TAB1BG)
-        ctx.fill(gx, ry+ROW1H-1, gx+GW, ry+ROW1H, 0xFF141414.toInt())
-        var tx = gx + 4
-        val ty = ry + 3; val th = ROW1H - 6
-        for (t in MOD_TABS) {
-            val lbl = t.displayName
-            val tw  = textRenderer.getWidth(lbl) + 8
-            val sel = !showCosmetics && modTab == t
-            val hov = mx in tx..(tx+tw) && my in ty..(ty+th)
-            when {
-                sel  -> { ctx.fill(tx,ty,tx+tw,ty+th,RED);                ctx.drawTextWithShadow(textRenderer,lbl,tx+4,ty+4,WHITE) }
-                hov  -> { ctx.fill(tx,ty,tx+tw,ty+th,0xFF2A2A2A.toInt()); ctx.drawTextWithShadow(textRenderer,lbl,tx+4,ty+4,WHITE) }
-                else ->   ctx.drawTextWithShadow(textRenderer,lbl,tx+4,ty+4,LGRAY)
+    private fun layout() {
+        panel = centeredPanel(width, height, 680, 430)
+        closeButton = UiRect(panel.right - 29, panel.y + 8, 21, 22)
+        cosmeticsButton = UiRect(closeButton.x - 77, closeButton.y, 72, 22)
+        modsButton = UiRect(cosmeticsButton.x - 47, closeButton.y, 42, 22)
+        var x = panel.x + 8
+        var y = panel.y + 40
+        tabs.clear()
+        for (i in 0 until if (cosmetics) types.size else categories.size) {
+            val w = textRenderer.getWidth(tabLabel(i)) + 14
+            if (x + w > panel.right - 8 && x > panel.x + 8) { x = panel.x + 8; y += 22 }
+            tabs.add(UiRect(x, y, w, 19) to i)
+            x += w + 4
+        }
+        val toolsY = y + 26
+        toolsButton = UiRect(panel.right - 92, toolsY, 84, 22)
+        searchBox = UiRect(panel.x + 8, toolsY, toolsButton.x - panel.x - 14, 22)
+        val top = toolsY + 28
+        val bottom = panel.bottom - 24
+        val sidebarWidth = if (cosmetics && panel.width >= 520) 142 else 0
+        sidebar = if (sidebarWidth > 0) UiRect(panel.right - sidebarWidth - 8, top, sidebarWidth, (bottom - top).coerceAtLeast(1)) else null
+        track = UiRect((sidebar?.x ?: (panel.right - 3)) - 8, top + 4, 6, (bottom - top - 8).coerceAtLeast(1))
+        viewport = UiRect(panel.x + 1, top, (track.x - panel.x - 3).coerceAtLeast(1), (bottom - top).coerceAtLeast(1))
+        grid = UiGrid(viewport, minimumCardWidth = if (cosmetics) 116 else 132)
+        updateBounds()
+    }
+
+    private fun updateBounds() = scroll.update(grid.contentHeight(if (cosmetics) entries.size else modules.size), viewport.height)
+
+    override fun renderGui(ctx: GuiContext, mx: Int, my: Int, delta: Float) {
+        super.renderGui(ctx, mx, my, delta)
+        ctx.fill(0, 0, width, height, 0xB00A120D.toInt())
+        Theme.panel(ctx, UiRect(panel.x - 3, panel.y + 4, panel.width + 6, panel.height), 0x55000000, 0x11000000, 10)
+        Theme.panel(ctx, panel)
+        ctx.drawTexture(Theme.LOGO, panel.x + 9, panel.y + 8, 25, 25)
+        if (modsButton.x - panel.x > 135) {
+            ctx.drawTexture(Theme.WORDMARK, panel.x + 40, panel.y + 12, 96, 18)
+        } else Theme.label(ctx, textRenderer, "TURTLE", panel.x + 39, panel.y + 15, Theme.TEXT, modsButton.x - panel.x - 44)
+        Theme.button(ctx, textRenderer, modsButton, "Mods", modsButton.contains(mx.toDouble(), my.toDouble()), !cosmetics)
+        Theme.button(ctx, textRenderer, cosmeticsButton, "Cosmetics", cosmeticsButton.contains(mx.toDouble(), my.toDouble()), cosmetics)
+        iconButton(ctx, closeButton, "close", mx, my)
+        for ((rect, index) in tabs) {
+            val selected = if (cosmetics) types[index] == cosmeticType else categories[index] == category
+            if (selected || rect.contains(mx.toDouble(), my.toDouble())) Theme.rounded(ctx, rect, if (selected) Theme.ACTIVE else Theme.CARD, 4)
+            Theme.label(ctx, textRenderer, tabLabel(index), rect.x + 7, rect.y + 6, if (selected) Theme.ACCENT else Theme.MUTED)
+        }
+        Theme.panel(ctx, searchBox, Theme.BACKGROUND, if (searchFocused) Theme.ACCENT else Theme.BORDER, 5)
+        ctx.drawTexture(Theme.icon("search"), searchBox.x + 6, searchBox.y + 4, 14, 14, Theme.MUTED)
+        val placeholder = if (cosmetics) "Search cosmetics" else "Search modules"
+        val caret = if (searchFocused && System.currentTimeMillis() / 500 % 2 == 0L) "_" else ""
+        Theme.label(ctx, textRenderer, if (query.isEmpty() && !searchFocused) placeholder else query + caret,
+            searchBox.x + 25, searchBox.y + 7, if (query.isEmpty()) Theme.MUTED else Theme.TEXT, searchBox.width - 44)
+        if (query.isNotEmpty()) ctx.drawTexture(Theme.icon("close"), searchBox.right - 18, searchBox.y + 5, 12, 12, Theme.MUTED)
+        if (cosmetics) {
+            for ((index,name) in listOf("refresh","folder","delete").withIndex()) iconButton(ctx,UiRect(toolsButton.x+index*30,toolsButton.y,24,22),name,mx,my)
+        }
+        else Theme.label(ctx, textRenderer, "${modules.size} modules", toolsButton.x + 4, toolsButton.y + 7, Theme.MUTED, toolsButton.width)
+
+        updateBounds()
+        ctx.enableScissor(viewport.x, viewport.y, viewport.right, viewport.bottom)
+        try {
+            if (cosmetics) entries.forEachIndexed { i, entry -> drawCosmetic(ctx, entry, grid.card(i, scroll.pixels), mx, my) }
+            else modules.forEachIndexed { i, module -> drawModule(ctx, module, grid.card(i, scroll.pixels), mx, my) }
+            if ((cosmetics && entries.isEmpty()) || (!cosmetics && modules.isEmpty())) {
+                val message = if (query.isNotEmpty()) "No matches. Try another search." else if (cosmetics) "No local ${cosmeticType.displayName.lowercase()} files yet." else "No modules in this category."
+                Theme.label(ctx, textRenderer, message, viewport.x + 12, viewport.y + 20, Theme.MUTED, viewport.width - 24)
+                if (cosmetics && query.isEmpty()) Theme.label(ctx, textRenderer, "Add PNGs to custom_cosmetics/${cosmeticType.folderName}", viewport.x + 12, viewport.y + 36, Theme.SUBTLE, viewport.width - 24)
             }
-            tx += tw + 3
+        } finally { ctx.disableScissor() }
+        Theme.scrollbar(ctx, scroll, track, mx, my)
+        sidebar?.let { drawCosmeticSummary(ctx, it, mx, my) }
+        ctx.fill(panel.x + 8, panel.bottom - 24, panel.right - 8, panel.bottom - 23, Theme.BORDER)
+        val hint = if (cosmetics) CosmeticManager.lastMessage else feedback.ifEmpty { "Right-click: settings  /  Wheel: scroll" }
+        val footer = "MC $version"
+        val reserved = textRenderer.getWidth(footer) + 20
+        Theme.label(ctx, textRenderer, hint, panel.x + 10, panel.bottom - 15, Theme.MUTED, panel.width - reserved - 20)
+        Theme.label(ctx, textRenderer, footer, panel.right - reserved + 8, panel.bottom - 15, Theme.SUBTLE)
+        if (!cosmetics && viewport.contains(mx.toDouble(), my.toDouble())) {
+            grid.hit(mx.toDouble(), my.toDouble(), modules.size, scroll.pixels)?.let { index ->
+                Theme.tooltip(ctx, textRenderer, com.endiq.client.modules.ModulePresentation.note(modules[index]), mx, my, width, height)
+            }
+        }
+        if (cosmetics && toolsButton.contains(mx.toDouble(),my.toDouble())) {
+            val labels=listOf("Reload custom PNGs","Open cosmetic folder","Unequip all cosmetics")
+            labels.getOrNull((mx-toolsButton.x)/30)?.let { Theme.tooltip(ctx,textRenderer,it,mx,my,width,height) }
         }
     }
 
-    // ── Row 2: cosmetics tab strip OR search bar ──────────────────────
-    private fun drawRow2(ctx: DrawContext, mx: Int, my: Int) {
-        val ry = gy + TOPH + ROW1H
-        ctx.fill(gx, ry, gx+GW, ry+ROW2H, TAB2BG)
-        ctx.fill(gx, ry+ROW2H-1, gx+GW, ry+ROW2H, 0xFF111111.toInt())
+    private fun drawModule(ctx: GuiContext, module: Module, rect: UiRect, mx: Int, my: Int) {
+        if (rect.bottom <= viewport.y || rect.y >= viewport.bottom) return
+        val hover = viewport.contains(mx.toDouble(), my.toDouble()) && rect.contains(mx.toDouble(), my.toDouble())
+        Theme.panel(ctx, rect, if (hover) Theme.HOVER else Theme.CARD, if (module.enabled) Theme.ACTIVE else Theme.BORDER, 6)
+        val iconSize = if (rect.height < 68) 18 else 24
+        val iconBounds = UiRect(rect.x + 9, rect.y + if (rect.height < 68) 5 else 8, iconSize + 6, iconSize + 6)
+        Theme.rounded(ctx, iconBounds, if (module.enabled) Theme.ACTIVE else Theme.BACKGROUND, 5)
+        ctx.drawTexture(Theme.moduleIcon(module), iconBounds.x + 3, iconBounds.y + 3, iconSize, iconSize,
+            if (module.unavailableReason != null) Theme.SUBTLE else if (module.enabled) Theme.ACCENT else Theme.MUTED)
+        if (module.isNew) Theme.label(ctx, textRenderer, "NEW", rect.x + 47, rect.y + 16, Theme.ACCENT)
+        val settings = UiRect(rect.right - 29, rect.y + 7, 22, 22)
+        iconButton(ctx, settings, "settings", mx, my)
+        val nameY = if (rect.height < 68) 31 else 43
+        Theme.label(ctx, textRenderer, module.name, rect.x + 10, rect.y + nameY, Theme.TEXT, rect.width - 20)
+        Theme.label(ctx, textRenderer, if(module.unavailableReason!=null)"Unavailable" else if (module.enabled) "Enabled" else "Disabled", rect.x + 10, rect.bottom - 15,
+            if (module.enabled) Theme.ACCENT else Theme.SUBTLE, rect.width - 52)
+        val switch = UiRect(rect.right - 38, rect.bottom - 21, 28, 13)
+        Theme.rounded(ctx, switch, if (module.enabled) Theme.ACTIVE else Theme.BACKGROUND, 6)
+        Theme.rounded(ctx, UiRect(switch.x + if (module.enabled) 16 else 3, switch.y + 2, 9, 9), if (module.enabled) Theme.ACCENT else Theme.SUBTLE, 4)
+    }
 
-        if (showCosmetics) {
-            // Cosmetic type tabs
-            var tx = gx + 4
-            val ty = ry + 3; val th = ROW2H - 6
-            for (ct in COS_TYPES) {
-                val lbl = "${ct.icon} ${ct.displayName}"
-                val tw  = textRenderer.getWidth(lbl) + 8
-                val sel = cosTab == ct
-                val hov = mx in tx..(tx+tw) && my in ty..(ty+th)
-                when {
-                    sel  -> { ctx.fill(tx,ty,tx+tw,ty+th,PURPLE);              ctx.drawTextWithShadow(textRenderer,lbl,tx+4,ty+4,WHITE) }
-                    hov  -> { ctx.fill(tx,ty,tx+tw,ty+th,0xFF221A2A.toInt());  ctx.drawTextWithShadow(textRenderer,lbl,tx+4,ty+4,PURPLH) }
-                    else ->   ctx.drawTextWithShadow(textRenderer,lbl,tx+4,ty+4,LGRAY)
+    private fun drawCosmetic(ctx: GuiContext, entry: CosmeticManager.CosmeticEntry, rect: UiRect, mx: Int, my: Int) {
+        if (rect.bottom <= viewport.y || rect.y >= viewport.bottom) return
+        val equipped = CosmeticManager.isEquipped(entry)
+        val hover = viewport.contains(mx.toDouble(), my.toDouble()) && rect.contains(mx.toDouble(), my.toDouble())
+        Theme.panel(ctx, rect, if (hover) Theme.HOVER else Theme.CARD, if (equipped) Theme.ACCENT else Theme.BORDER, 6)
+        if (entry.file != null && entry.type == CosmeticType.CAPE) {
+            ctx.drawTextureRegion(entry.texture,rect.x+14,rect.y+7,16,26,1f,1f,10,16,64,32)
+        } else ctx.drawTexture(entry.preview,rect.x+8,rect.y+6,28,28)
+        Theme.label(ctx, textRenderer, entry.name, rect.x + 10, rect.y + if (rect.height < 68) 32 else 40, Theme.TEXT, rect.width - 20)
+        Theme.label(ctx, textRenderer, if (equipped) "Equipped" else "Click to equip", rect.x + 10, rect.bottom - 16, if (equipped) Theme.ACCENT else Theme.SUBTLE, rect.width - 20)
+    }
+
+    private fun drawCosmeticSummary(ctx: GuiContext, rect: UiRect, mx: Int, my: Int) {
+        Theme.panel(ctx, rect, Theme.BACKGROUND)
+        ctx.drawTexture(Theme.LOGO, rect.x + (rect.width - 34) / 2, rect.y + 10, 34, 34)
+        Theme.label(ctx, textRenderer, "YOUR OUTFIT", rect.x + 12, rect.y + 52, Theme.ACCENT, rect.width - 24)
+        var y = rect.y + 72
+        for (type in types) {
+            val entry = CosmeticManager.getEquipped(type) ?: continue
+            if (y + 12 >= rect.bottom - 64) break
+            Theme.label(ctx, textRenderer, "${type.displayName}: ${entry.name}", rect.x + 10, y, Theme.MUTED, rect.width - 20)
+            y += 16
+        }
+        if (rect.height > 168) Theme.label(ctx, textRenderer, "Client-side / F5 to view", rect.x + 10, rect.bottom - 69, Theme.SUBTLE, rect.width - 20)
+        if (rect.height > 114) {
+            val folder = UiRect(rect.x + 8, rect.bottom - 54, rect.width - 16, 21)
+            val clear = UiRect(rect.x + 8, rect.bottom - 28, rect.width - 16, 21)
+            Theme.button(ctx, textRenderer, folder, "Open folder", folder.contains(mx.toDouble(), my.toDouble()))
+            Theme.button(ctx, textRenderer, clear, "Unequip all", clear.contains(mx.toDouble(), my.toDouble()))
+        }
+    }
+
+    private fun iconButton(ctx: GuiContext, rect: UiRect, icon: String, mx: Int, my: Int) {
+        val hover = rect.contains(mx.toDouble(), my.toDouble())
+        if (hover) Theme.rounded(ctx, rect, Theme.HOVER, 4)
+        ctx.drawTexture(Theme.icon(icon), rect.x + 4, rect.y + 4, rect.width - 8, rect.height - 8, if (hover) Theme.ACCENT else Theme.MUTED)
+    }
+
+    private fun changeView(value: Boolean) {
+        cosmetics = value; favoritesOnly = false; query = ""; searchFocused = false
+        moduleScroll.endDrag(); cosmeticScroll.endDrag()
+        refreshItems(); layout()
+    }
+
+    private fun changedSearch() { scroll.reset(); refreshItems(); updateBounds() }
+
+    override fun onMouseClicked(mx: Double, my: Double, button: Int): Boolean {
+        updateBounds()
+        if (button == 0) {
+            if (closeButton.contains(mx, my)) { closeGui(); return true }
+            if (modsButton.contains(mx, my)) { changeView(false); return true }
+            if (cosmeticsButton.contains(mx, my)) { changeView(true); return true }
+            for ((rect, index) in tabs) if (rect.contains(mx, my)) {
+                if (cosmetics) cosmeticType = types[index] else category = categories[index]
+                scroll.reset(); refreshItems(); updateBounds(); return true
+            }
+            searchFocused = searchBox.contains(mx, my)
+            if (searchFocused) {
+                if (mx >= searchBox.right - 22 && query.isNotEmpty()) { query = ""; changedSearch() }
+                return true
+            }
+            if (cosmetics && toolsButton.contains(mx, my)) {
+                when (((mx-toolsButton.x)/30).toInt()) {
+                    0 -> { CosmeticManager.reload(); refreshItems(); updateBounds() }
+                    1 -> { val folder=java.io.File(CosmeticManager.baseDir(),cosmeticType.folderName);folder.mkdirs();openPath(folder) }
+                    2 -> CosmeticManager.unequipAll()
                 }
-                tx += tw + 3
+                return true
             }
-            // Refresh btn
-            val rw = textRenderer.getWidth("↺")+8; val rx = gx+GW-rw-4
-            val rhov = mx in rx..(rx+rw) && my in ry..(ry+ROW2H)
-            ctx.fill(rx,ry+3,rx+rw,ry+ROW2H-3, if(rhov) 0xFF2A2A2A.toInt() else 0xFF1A1A1A.toInt())
-            ctx.drawTextWithShadow(textRenderer,"↺",rx+4,ry+5, if(rhov) WHITE else GRAY)
-        } else {
-            // Search bar + Cosmetics shortcut button
-            ctx.drawTextWithShadow(textRenderer,"⌕",gx+6,ry+5,GRAY)
-            val sbX = gx+18
-            ctx.fill(sbX,ry+3,gx+GW-70,ry+ROW2H-3,0xFF222222.toInt())
-            ctx.fill(sbX,ry+3,sbX+1,ry+ROW2H-3, if(searchFocused) RED else GRAY)
-            val disp = if(searchQuery.isEmpty()&&!searchFocused) "Search mods..." else searchQuery + if(searchFocused) "|" else ""
-            ctx.drawTextWithShadow(textRenderer,disp,sbX+4,ry+5, if(searchQuery.isEmpty()&&!searchFocused) GRAY else WHITE)
-            // Cosmetics button right side of row2
-            val cbLbl = "✦ Cosmetics"
-            val cbW = textRenderer.getWidth(cbLbl)+10; val cbX = gx+GW-cbW-4
-            val cbHov = mx in cbX..(cbX+cbW) && my in ry..(ry+ROW2H)
-            ctx.fill(cbX,ry+2,cbX+cbW,ry+ROW2H-2, if(cbHov) 0xFF2A1A3A.toInt() else 0xFF1A1020.toInt())
-            ctx.fill(cbX,ry+2,cbX+1,ry+ROW2H-2,PURPLE)
-            ctx.drawTextWithShadow(textRenderer,cbLbl,cbX+5,ry+5, if(cbHov) PURPLH else PURPLE)
-        }
-    }
-
-    // ── Cosmetics content ─────────────────────────────────────────────
-    private fun drawCosmetics(ctx: DrawContext, mx: Int, my: Int) {
-        val ct = contentTop(); val ch = contentH()
-        val GRID_W = 368; val PREV_X = gx+GRID_W; val PREV_W = GW-GRID_W
-        ctx.fill(PREV_X,ct,PREV_X+1,ct+ch,0xFF1A1A1A.toInt())
-
-        // Left: card grid
-        val items = CosmeticManager.getByType(cosTab)
-        ctx.enableScissor(gx, ct, PREV_X, ct+ch)
-        if (items.isEmpty()) {
-            val m1 = "No ${cosTab.displayName} found"
-            val m2 = "Add .png to  custom_cosmetics/${cosTab.folderName}/"
-            ctx.drawTextWithShadow(textRenderer,m1,gx+GRID_W/2-textRenderer.getWidth(m1)/2,ct+40,LGRAY)
-            ctx.drawTextWithShadow(textRenderer,m2,gx+GRID_W/2-textRenderer.getWidth(m2)/2,ct+54,GRAY)
-        } else {
-            items.forEachIndexed { i, entry ->
-                val col=i%CCOLS; val row=i/CCOLS
-                val cx=gx+PAD+col*(CCW+PAD); val cy=ct+PAD+row*(CCH+PAD)-cosScroll
-                if (cy+CCH<ct||cy>ct+ch) return@forEachIndexed
-                val isEq=CosmeticManager.isEquipped(entry); val hov=mx in cx..(cx+CCW)&&my in cy..(cy+CCH)
-                ctx.fill(cx,cy,cx+CCW,cy+CCH, when{isEq->CARDEQ;hov->CARDH;else->CARD})
-                if (isEq) ctx.fill(cx,cy,cx+2,cy+CCH,ON)
-                val ic=entry.type.icon
-                ctx.fill(cx+CCW/2-11,cy+7,cx+CCW/2+11,cy+24,0xFF2A2A2A.toInt())
-                ctx.drawTextWithShadow(textRenderer,ic,cx+CCW/2-textRenderer.getWidth(ic)/2,cy+13, if(isEq) ON else LGRAY)
-                val nm=if(textRenderer.getWidth(entry.name)>CCW-6) entry.name.take(8)+"…" else entry.name
-                ctx.drawTextWithShadow(textRenderer,nm,cx+CCW/2-textRenderer.getWidth(nm)/2,cy+30,WHITE)
-                val bY=cy+CCH-16;val bX=cx+4;val bW=CCW-8
-                ctx.fill(bX,bY,bX+bW,bY+12, if(isEq) ON else OFF)
-                val bl=if(isEq)"Equipped ✓" else "Equip"
-                ctx.drawTextWithShadow(textRenderer,bl,bX+bW/2-textRenderer.getWidth(bl)/2,bY+2, if(isEq) WHITE else LGRAY)
-            }
-        }
-        ctx.disableScissor()
-        // Scrollbar
-        val cms=cosMaxScroll()
-        if(cms>0){val tH=(ch.toFloat()/(ch+cms)*ch).toInt().coerceAtLeast(14);val tY=ct+(cosScroll.toFloat()/cms*(ch-tH)).toInt();ctx.fill(PREV_X-5,ct,PREV_X-1,ct+ch,0xFF1A1A1A.toInt());ctx.fill(PREV_X-5,tY,PREV_X-1,tY+tH,0xFF777777.toInt())}
-
-        // Right: player preview
-        val px=PREV_X+2; val pw=PREV_W-3
-        ctx.fill(px,ct,px+pw,ct+ch,0xF2161616.toInt())
-        ctx.drawTextWithShadow(textRenderer,"Preview",px+pw/2-textRenderer.getWidth("Preview")/2,ct+4,LGRAY)
-
-        val cx2=px+pw/2; val bTop=ct+20
-        val hW=16;val hH=16;val boW=12;val boH=20;val aW=4;val aH=16;val lW=5;val lH=18
-        val hX=cx2-hW/2;val hY=bTop
-        val boX=cx2-boW/2;val boY=hY+hH+1
-        val laX=boX-aW-1;val raX=boX+boW+1;val aY=boY
-        val llX=boX;val rlX=boX+boW-lW;val lY=boY+boH+1
-
-        // Cape behind
-        CosmeticManager.getEquipped(CosmeticType.CAPE)?.let{
-            val cX=cx2-9;val cY=hY+hH-2
-            ctx.fill(cX,cY,cX+18,cY+boH+14,0xFFAA2222.toInt())
-            ctx.fill(cX+1,cY+1,cX+17,cY+boH+13,0xFF882222.toInt())
-            for(s in 0..2)ctx.fill(cX+3+s*5,cY+4,cX+4+s*5,cY+boH+8,0x33FFFFFF.toInt())
-        }
-        // Wings behind
-        CosmeticManager.getEquipped(CosmeticType.WINGS)?.let{
-            ctx.fill(boX-20,aY,boX-1,aY+22,0xFF665522.toInt())
-            ctx.fill(boX+boW+1,aY,boX+boW+20,aY+22,0xFF665522.toInt())
-            ctx.fill(boX-19,aY+1,boX-2,aY+21,0xFF997733.toInt())
-            ctx.fill(boX+boW+2,aY+1,boX+boW+19,aY+21,0xFF997733.toInt())
-        }
-        // Head
-        ctx.fill(hX,hY,hX+hW,hY+hH,0xFF8B6040.toInt())
-        ctx.fill(hX,hY,hX+hW,hY+4,0xFF2A1A0A.toInt())
-        // Hat
-        CosmeticManager.getEquipped(CosmeticType.HAT)?.let{
-            ctx.fill(hX-2,hY-1,hX+hW+2,hY,0xFF222222.toInt())
-            ctx.fill(hX,hY-8,hX+hW,hY-1,0xFF222222.toInt())
-            ctx.fill(hX,hY-2,hX+hW,hY-1,0xFFCC2222.toInt())
-        }
-        // Body
-        val suit=CosmeticManager.getEquipped(CosmeticType.SUIT)
-        val bc=if(suit!=null) 0xFF224488.toInt() else 0xFF4466AA.toInt()
-        ctx.fill(boX,boY,boX+boW,boY+boH,bc)
-        suit?.let{ctx.fill(boX,boY,boX+1,boY+boH,0xFF4488CC.toInt());ctx.fill(boX+boW-1,boY,boX+boW,boY+boH,0xFF4488CC.toInt())}
-        // Arms
-        ctx.fill(laX,aY,laX+aW,aY+aH,bc);ctx.fill(raX,aY,raX+aW,aY+aH,bc)
-        ctx.fill(laX,aY+aH-3,laX+aW,aY+aH,0xFF9A7050.toInt());ctx.fill(raX,aY+aH-3,raX+aW,aY+aH,0xFF9A7050.toInt())
-        // Pet
-        CosmeticManager.getEquipped(CosmeticType.PET)?.let{
-            ctx.fill(laX-6,aY-3,laX-6+8,aY+6,0xFF55AA55.toInt())
-            ctx.fill(laX-5,aY-6,laX+1,aY-2,0xFF55AA55.toInt())
-            ctx.fill(laX-4,aY-5,laX-3,aY-4,0xFF000000.toInt())
-            ctx.fill(laX-1,aY-5,laX,aY-4,0xFF000000.toInt())
-        }
-        // Legs
-        ctx.fill(llX,lY,llX+lW,lY+lH,0xFF334477.toInt());ctx.fill(rlX,lY,rlX+lW,lY+lH,0xFF334477.toInt())
-        ctx.fill(llX,lY+lH-2,llX+lW,lY+lH,0xFF111111.toInt());ctx.fill(rlX,lY+lH-2,rlX+lW,lY+lH,0xFF111111.toInt())
-
-        // Equipped list
-        val sList=CosmeticManager.equipped.values.filterNotNull()
-        var ey=lY+lH+6
-        if(sList.isEmpty()){ctx.drawTextWithShadow(textRenderer,"Nothing equipped",px+pw/2-textRenderer.getWidth("Nothing equipped")/2,ey,GRAY)}
-        else{for(e in sList){val s="${e.type.icon} ${e.name.take(10)}";ctx.drawTextWithShadow(textRenderer,s,px+pw/2-textRenderer.getWidth(s)/2,ey,ON);ey+=9}}
-
-        // Remove All
-        val raL="✕ Remove All";val raW=textRenderer.getWidth(raL)+10;val raX2=px+pw/2-raW/2;val raY2=ct+ch-15
-        val raHov=mx in raX2..(raX2+raW)&&my in raY2..(raY2+12)
-        ctx.fill(raX2,raY2,raX2+raW,raY2+12, if(raHov) 0xFF4A1A1A.toInt() else 0xFF2A1010.toInt())
-        ctx.fill(raX2,raY2,raX2+1,raY2+12,RED)
-        ctx.drawTextWithShadow(textRenderer,raL,raX2+5,raY2+2,RED)
-    }
-
-    // ── Mod grid ──────────────────────────────────────────────────────
-    private fun drawModGrid(ctx: DrawContext, mx: Int, my: Int) {
-        val ct=contentTop();val ch=contentH()
-        ctx.enableScissor(gx,ct,gx+GW,ct+ch)
-        getFiltered().forEachIndexed { i, mod ->
-            val col=i%COLS;val row=i/COLS
-            val cx=gx+PAD+col*(CW+PAD);val cy=ct+PAD+row*(CH+PAD)-scroll
-            if(cy+CH<ct||cy>ct+ch)return@forEachIndexed
-            val hov=mx in cx..(cx+CW)&&my in cy..(cy+CH)
-            ctx.fill(cx,cy,cx+CW,cy+CH, if(hov) CARDH else CARD)
-            if(mod.enabled)ctx.fill(cx,cy,cx+2,cy+CH,ON)
-            if(mod.isNew){ctx.fill(cx+3,cy+3,cx+26,cy+12,ON);ctx.drawTextWithShadow(textRenderer,"NEW",cx+4,cy+4,WHITE)}
-            val icon=getIcon(mod.name)
-            ctx.fill(cx+CW/2-12,cy+14,cx+CW/2+12,cy+34,0xFF2A2A2A.toInt())
-            ctx.drawTextWithShadow(textRenderer,icon,cx+CW/2-textRenderer.getWidth(icon)/2,cy+20, if(mod.enabled) ON else LGRAY)
-            val nm=if(textRenderer.getWidth(mod.name)>CW-8)mod.name.take(11)+"..." else mod.name
-            ctx.drawTextWithShadow(textRenderer,nm,cx+CW/2-textRenderer.getWidth(nm)/2,cy+40,WHITE)
-            val bY=cy+CH-18;val bX=cx+4;val bW=CW-24
-            ctx.fill(bX,bY,bX+bW,bY+13, if(mod.enabled) ON else OFF)
-            val lb=if(mod.enabled)"Enabled" else "Disabled"
-            ctx.drawTextWithShadow(textRenderer,lb,bX+bW/2-textRenderer.getWidth(lb)/2,bY+3, if(mod.enabled) WHITE else LGRAY)
-            ctx.fill(cx+CW-17,bY,cx+CW-4,bY+13,0xFF2A2A2A.toInt())
-            ctx.drawTextWithShadow(textRenderer,"⚙",cx+CW-14,bY+2,GRAY)
-        }
-        ctx.disableScissor()
-        val ms=maxScroll()
-        if(ms>0){val tH=(contentH().toFloat()/(contentH()+ms)*contentH()).toInt().coerceAtLeast(20);val tY=ct+(scroll.toFloat()/ms*(contentH()-tH)).toInt();ctx.fill(gx+GW-8,ct,gx+GW,ct+contentH(),0xFF1A1A1A.toInt());ctx.fill(gx+GW-8,tY,gx+GW,tY+tH,0xFF888888.toInt())}
-    }
-
-    // ── Bottom bar ────────────────────────────────────────────────────
-    private fun drawBottomBar(ctx: DrawContext, mx: Int, my: Int) {
-        val bbY=gy+GH-BBH
-        ctx.fill(gx,bbY,gx+GW,gy+GH,0xF20D0D0D.toInt())
-        ctx.fill(gx,bbY,gx+GW,bbY+1,0xFF1A1A1A.toInt())
-        val hint=if(showCosmetics)"Click: equip/unequip  |  ↺: reload  |  RShift: close"
-                 else             "Left: toggle  |  Right: settings  |  RShift: close"
-        ctx.drawTextWithShadow(textRenderer,hint,gx+6,bbY+5,GRAY)
-        val ver="v1.0  MC1.21.1";val vW=textRenderer.getWidth(ver)+10
-        ctx.fill(gx+GW-vW-2,bbY+2,gx+GW-2,gy+GH-2,0xFF1A1A1A.toInt())
-        ctx.fill(gx+GW-vW-2,bbY+2,gx+GW-vW-1,gy+GH-2,RED)
-        ctx.drawTextWithShadow(textRenderer,ver,gx+GW-vW+3,bbY+5,LGRAY)
-    }
-
-    // ═══════════════════════════════════════════════════════════════════
-    // INPUT
-    // ═══════════════════════════════════════════════════════════════════
-    override fun mouseClicked(mx: Double, my: Double, btn: Int): Boolean {
-        val imx=mx.toInt();val imy=my.toInt()
-        // Close
-        if(imx in (gx+GW-16)..(gx+GW-4)&&imy in (gy+4)..(gy+TOPH-4)){MinecraftClient.getInstance().setScreen(null);return true}
-        // Row 1: module tabs
-        val r1y=gy+TOPH;val r1b=r1y+ROW1H
-        if(imy in r1y..r1b){
-            var tx=gx+4
-            for(t in MOD_TABS){val tw=textRenderer.getWidth(t.displayName)+8;if(imx in tx..(tx+tw)){showCosmetics=false;modTab=t;scroll=0;searchQuery="";return true};tx+=tw+3}
-        }
-        // Row 2
-        val r2y=gy+TOPH+ROW1H;val r2b=r2y+ROW2H
-        if(imy in r2y..r2b){
-            if(showCosmetics){
-                // cos type tabs
-                var tx=gx+4
-                for(ct in COS_TYPES){val tw=textRenderer.getWidth("${ct.icon} ${ct.displayName}")+8;if(imx in tx..(tx+tw)){cosTab=ct;cosScroll=0;return true};tx+=tw+3}
-                // refresh
-                val rw=textRenderer.getWidth("↺")+8;val rx=gx+GW-rw-4
-                if(imx in rx..(rx+rw)){CosmeticManager.reload();return true}
-            } else {
-                // search focus
-                val sbX=gx+18
-                if(imx in sbX..(gx+GW-70)&&imy in r2y..r2b){searchFocused=true;return true} else searchFocused=false
-                // cosmetics button
-                val cbLbl="✦ Cosmetics";val cbW=textRenderer.getWidth(cbLbl)+10;val cbX=gx+GW-cbW-4
-                if(imx in cbX..(cbX+cbW)){showCosmetics=true;cosScroll=0;CosmeticManager.reload();return true}
-            }
-        }
-        // Cosmetics content clicks
-        if(showCosmetics){
-            val ct=contentTop();val ch=contentH();val GRID_W=368;val PREV_X=gx+GRID_W;val PREV_W=GW-GRID_W
-            val px=PREV_X+2;val pw=PREV_W-3
-            // Remove All
-            val raL="✕ Remove All";val raW=textRenderer.getWidth(raL)+10;val raX2=px+pw/2-raW/2;val raY2=ct+ch-15
-            if(imx in raX2..(raX2+raW)&&imy in raY2..(raY2+12)){COS_TYPES.forEach{CosmeticManager.unequip(it)};return true}
-            // Cards
-            if(imx<PREV_X&&imy>=ct&&imy<=ct+ch){
-                CosmeticManager.getByType(cosTab).forEachIndexed{i,entry->
-                    val col=i%CCOLS;val row=i/CCOLS
-                    val cx=gx+PAD+col*(CCW+PAD);val cy=ct+PAD+row*(CCH+PAD)-cosScroll
-                    if(imx in cx..(cx+CCW)&&imy in cy..(cy+CCH)){if(CosmeticManager.isEquipped(entry))CosmeticManager.unequip(entry.type) else CosmeticManager.equip(entry);return true}
+            if (scroll.beginDrag(mx, my, track)) return true
+            sidebar?.let { rect ->
+                if (rect.height > 114 && UiRect(rect.x + 8, rect.bottom - 54, rect.width - 16, 21).contains(mx, my)) {
+                    val folder = MinecraftClient.getInstance().runDirectory.resolve("custom_cosmetics/${cosmeticType.folderName}")
+                    folder.mkdirs(); openPath(folder); return true
+                }
+                if (rect.height > 114 && UiRect(rect.x + 8, rect.bottom - 28, rect.width - 16, 21).contains(mx, my)) {
+                    CosmeticManager.unequipAll(); return true
                 }
             }
-            return super.mouseClicked(mx,my,btn)
         }
-        // Mod cards
-        val ct=contentTop();val ch=contentH()
-        if(imy>=ct&&imy<=ct+ch){
-            getFiltered().forEachIndexed{i,mod->
-                val col=i%COLS;val row=i/COLS
-                val cx=gx+PAD+col*(CW+PAD);val cy=ct+PAD+row*(CH+PAD)-scroll
-                if(imx !in cx..(cx+CW)||imy !in cy..(cy+CH))return@forEachIndexed
-                when(btn){0->{mod.toggle();return true};1->{MinecraftClient.getInstance().setScreen(ModSettingsGui(mod,this));return true}}
-            }
-        }
-        return super.mouseClicked(mx,my,btn)
-    }
-
-    override fun mouseScrolled(mx: Double, my: Double, h: Double, v: Double): Boolean {
-        if(showCosmetics){if(mx.toInt()<gx+368){val ms=cosMaxScroll();if(ms>0)cosScroll=(cosScroll-(v*18).toInt()).coerceIn(0,ms)};return true}
-        val ms=maxScroll();if(ms>0)scroll=(scroll-(v*20).toInt()).coerceIn(0,ms);return true
-    }
-
-    override fun keyPressed(kc: Int, sc: Int, mods: Int): Boolean {
-        if(!showCosmetics&&searchFocused){
-            when(kc){org.lwjgl.glfw.GLFW.GLFW_KEY_BACKSPACE->{if(searchQuery.isNotEmpty()){searchQuery=searchQuery.dropLast(1);scroll=0};return true};org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE->{searchFocused=false;return true}}
+        // Clipped rows and the footer are deliberately not clickable.
+        if (!viewport.contains(mx, my)) return super.onMouseClicked(mx, my, button)
+        val index = grid.hit(mx, my, if (cosmetics) entries.size else modules.size, scroll.pixels)
+            ?: return super.onMouseClicked(mx, my, button)
+        if (cosmetics && button == 0) {
+            val entry = entries[index]
+            if (CosmeticManager.isEquipped(entry)) CosmeticManager.unequip(entry.type) else CosmeticManager.equip(entry)
             return true
         }
-        return super.keyPressed(kc,sc,mods)
+        if (!cosmetics) {
+            val module = modules[index]
+            val rect = grid.card(index, scroll.pixels)
+            if (button == 1 || (button == 0 && UiRect(rect.right - 29, rect.y + 7, 22, 22).contains(mx, my))) {
+                MinecraftClient.getInstance().setScreen(ModSettingsGui(module, this)); return true
+            }
+            if (button == 0) { if(module.unavailableReason!=null)feedback=module.unavailableReason!! else { module.toggle();feedback="${module.name}: ${if(module.enabled)"enabled" else "disabled"}" };return true }
+        }
+        return super.onMouseClicked(mx, my, button)
     }
-    override fun charTyped(c: Char, m: Int): Boolean {if(!showCosmetics&&searchFocused){searchQuery+=c;scroll=0;return true};return super.charTyped(c,m)}
-    override fun shouldPause()=false
 
-    private fun getIcon(n:String)=when(n){"FPS"->"FPS";"CPS"->"CPS";"Coordinates"->"XYZ";"Keystrokes"->"KEY";"Armor Status"->"ARM";"Armor Bar"->"BAR";"Attack Indicator"->"ATK";"Autohide HUD"->"HUD";"Block Indicator"->"BLK";"Block Overlay"->"OVR";"Boss Bar"->"BSS";"Crosshair"->" + ";"Hotbar"->"HOT";"Nametags"->"TAG";"Pack Display"->"PKG";"Ping"->"PNG";"Potion Status"->"POT";"Scoreboard"->"SCR";"Server Address"->"SRV";"Reach Display"->"RCH";"Speed HUD"->"SPD";"Memory HUD"->"MEM";"Clock HUD"->"CLK";"Direction HUD"->"DIR";"Hit Color"->"HIT";"PvP Info"->"PVP";"Team Circles"->"CRL";"Toggle Sprint"->"SPR";"Sprint"->">>>";"Freecam"->"CAM";"Animations"->"ANI";"Motion Blur"->"BLR";"NoWeather"->"SUN";"TimeChanger"->"TME";"Zoom"->"ZOM";"Auto Text"->"TXT";"Camera"->"PIC";"Chat"->"MSG";"Nick Hider"->"NCK";"Popup Events"->"POP";"Timers"->"TMR";"Waypoints"->"WPT";"UHC Overlay"->"UHC";"Hypixel Addons"->"HYP";"Skyblock Addons"->"SKY";"Tab Stat"->"TAB";"Net Graph"->"NET";"Combo Counter"->"CMB";"FOV Changer"->"FOV";"Full Bright"->"BRT";"Team View"->"TM";else->"MOD"}
+    override fun onMouseScrolled(mx: Double, my: Double, horizontal: Double, vertical: Double): Boolean {
+        updateBounds()
+        if ((viewport.contains(mx, my) || track.contains(mx, my)) && scroll.wheel(vertical, horizontal)) return true
+        return super.onMouseScrolled(mx, my, horizontal, vertical)
+    }
+
+    override fun onMouseDragged(mx: Double, my: Double, button: Int, dx: Double, dy: Double): Boolean =
+        (button == 0 && scroll.drag(my, track)) || super.onMouseDragged(mx, my, button, dx, dy)
+
+    override fun onMouseReleased(mx: Double, my: Double, button: Int): Boolean =
+        scroll.endDrag() || super.onMouseReleased(mx, my, button)
+
+    override fun onKeyPressed(key: Int, scancode: Int, modifiers: Int): Boolean {
+        if (key == GLFW.GLFW_KEY_RIGHT_SHIFT) { closeGui(); return true }
+        if (searchFocused) {
+            if (key == GLFW.GLFW_KEY_ESCAPE) { searchFocused = false; return true }
+            if (key == GLFW.GLFW_KEY_BACKSPACE) {
+                if (query.isNotEmpty()) query = query.substring(0, query.offsetByCodePoints(query.length, -1))
+                changedSearch(); return true
+            }
+        } else when (key) {
+            GLFW.GLFW_KEY_PAGE_DOWN -> { scroll.moveBy(viewport.height * 0.85); return true }
+            GLFW.GLFW_KEY_PAGE_UP -> { scroll.moveBy(-viewport.height * 0.85); return true }
+            GLFW.GLFW_KEY_HOME -> { scroll.moveTo(0.0); return true }
+            GLFW.GLFW_KEY_END -> { scroll.moveTo(scroll.maximum); return true }
+        }
+        return super.onKeyPressed(key, scancode, modifiers)
+    }
+
+    override fun onCharTyped(text: String): Boolean {
+        if (!searchFocused) return super.onCharTyped(text)
+        query = (query + text.filterNot { it.isISOControl() }).take(96)
+        changedSearch(); return true
+    }
+
+    override fun closeGui() {
+        com.endiq.client.config.ModulePreferences.save();MinecraftClient.getInstance().setScreen(parent) }
 }

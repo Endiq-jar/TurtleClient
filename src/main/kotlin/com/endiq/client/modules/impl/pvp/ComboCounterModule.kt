@@ -27,6 +27,8 @@ class ComboCounterModule : Module("Combo Counter", "Tracks consecutive hits on a
         if (shakeOnHit.value) lastPopTicks = 6
     }
 
+    fun tick() { if(lastPopTicks>0)lastPopTicks-- }
+
     fun isExpired(): Boolean =
         System.currentTimeMillis() - lastHitAt > (resetAfter.value * 1000).toLong()
 

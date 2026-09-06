@@ -8,6 +8,8 @@ abstract class Module(
     val category: Category,
     var key: Int = GLFW.GLFW_KEY_UNKNOWN
 ) {
+    val unavailableReason get()=ModulePresentation.unavailable(this)
+    val visibleSettings get()=ModulePresentation.settings(this)
     var enabled: Boolean = false
         private set
     var keyWasDown: Boolean = false
@@ -26,7 +28,19 @@ abstract class Module(
     protected fun dropdown(name: String, desc: String = "", vararg options: String, default: Int = 0) =
         DropdownSetting(name, desc, options.toList(), default).also { settings.add(it) }
 
-    fun toggle() { enabled = !enabled; if (enabled) onEnable() else onDisable() }
+    protected fun text(name:String,desc:String="",default:String="",limit:Int=256)=
+        TextSetting(name,desc,default,limit).also { settings.add(it) }
+    protected fun action(name:String,desc:String="",available:()->Boolean={true},run:()->String)=
+        ActionSetting(name,desc,available,run).also { settings.add(it) }
+
+    /** Track releases even inside screens, without toggling while typing in a menu. */
+    fun updateKeyState(down: Boolean, allowToggle: Boolean) {
+        val pressed = down && !keyWasDown
+        keyWasDown = down
+        if (pressed && allowToggle) toggle()
+    }
+
+    fun toggle() { if(unavailableReason!=null)return;enabled = !enabled; if (enabled) onEnable() else onDisable() }
     fun enable()  { if (!enabled) toggle() }
     fun disable() { if (enabled)  toggle() }
 

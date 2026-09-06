@@ -1,6 +1,6 @@
 package com.endiq.client.modules.impl.pvp
 import com.endiq.client.modules.Module
-class HitColorModule : Module("Hit Color", "Custom hurt flash color", Category.PVP) {
+class HitColorModule : Module("Hit Color", "Client screen flash on a local attack (not entity tint)", Category.PVP) {
     val hitColor    = color("Hit Color", r=255, g=0, b=0, a=100)
     val ownHitColor = color("Own Hit Color", r=255, g=255, b=0, a=100)
     val duration    = slider("Duration", default=10f, min=1f, max=30f)

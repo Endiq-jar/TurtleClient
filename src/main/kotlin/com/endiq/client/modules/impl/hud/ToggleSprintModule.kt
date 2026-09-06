@@ -9,11 +9,12 @@ class ToggleSprintModule : Module("Toggle Sprint", "Shows sprint toggle state", 
     val style      = dropdown("Style", options=arrayOf("Sprint: ON/OFF", "Sprinting/Walking", "Icon"), default=0)
     val scale      = slider("Scale", default=1f, min=0.5f, max=3f, suffix="x")
     val posX       = slider("Position X", default=2f, min=0f, max=100f, suffix="%")
-    val posY       = slider("Position Y", default=112f, min=0f, max=100f, suffix="%")
+    val posY       = slider("Position Y", default=98f, min=0f, max=100f, suffix="%")
     val shadow     = bool("Text Shadow", default=true)
     val showSneakToggle = bool("Show Sneak Toggle", default=false)
     var sprintOn = false
     fun getText() = when(style.selected) {
+        2 -> if(sprintOn)"»" else "·"
         1 -> if (sprintOn) "Sprinting" else "Walking"
         else -> "Sprint: ${if (sprintOn) "ON" else "OFF"}"
     }

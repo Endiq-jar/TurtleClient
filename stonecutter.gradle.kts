@@ -3,7 +3,7 @@ plugins {
 }
 
 // The version you're actively editing. Switch with the "Set active project to ..."
-// Gradle tasks (or `./gradlew chiseledBuild` from Termux to build every version).
+// Gradle tasks. See MIGRATION_NOTES.md for the single-target and matrix build commands.
 stonecutter active "1.21.4"
 
 // See https://stonecutter.kikugie.dev/wiki/config/params

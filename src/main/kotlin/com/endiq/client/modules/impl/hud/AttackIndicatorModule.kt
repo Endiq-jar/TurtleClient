@@ -15,7 +15,7 @@ class AttackIndicatorModule : Module("Attack Indicator", "Shows attack cooldown"
     val animation    = bool("Smooth Fill", default=true)
     val shadow       = bool("Text Shadow", default=true)
     val outline      = bool("Show Outline", default=false)
-    val onlyInCombat = bool("Only In Combat", default=false)
+    val onlyInCombat = bool("Only While Charging", default=false)
     val scale        = slider("Scale", default=1f, min=0.5f, max=3f, suffix="x")
     val colorMode    = dropdown("Color Mode", options=arrayOf("Static", "Dynamic"), default=1)
     val bgAlpha      = slider("BG Alpha", default=180f, min=0f, max=255f)

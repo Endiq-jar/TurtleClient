@@ -1,6 +1,6 @@
 package com.endiq.client.modules.impl.hud
 import com.endiq.client.modules.Module
-import java.time.LocalTime
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 class ClockHudModule : Module("Clock", "Shows real-time clock", Category.HUD) {
     val textColor   = color("Text Color", r=255, g=255, b=255)
@@ -17,12 +17,14 @@ class ClockHudModule : Module("Clock", "Shows real-time clock", Category.HUD) {
     val showLabel   = bool("Show Label", default=false)
     val colorHours  = bool("Color Hours", default=false)
     val hoursColor  = color("Hours Color", r=62, g=153, b=112)
-    fun getText(): String {
+    fun getText(now:LocalDateTime=LocalDateTime.now()): String {
         val pat = if (format24.value) {
             if (showSeconds.value) "HH:mm:ss" else "HH:mm"
         } else {
             if (showSeconds.value) "hh:mm:ss a" else "hh:mm a"
         }
-        return LocalTime.now().format(DateTimeFormatter.ofPattern(pat))
+        val time=now.format(DateTimeFormatter.ofPattern(pat,java.util.Locale.ROOT))
+        val date=if(showDate.value)" "+now.format(DateTimeFormatter.ofPattern(when(dateFormat.selected) { 1->"dd/MM";2->"yyyy/MM/dd";else->"MM/dd" })) else ""
+        return (if(showLabel.value)"Time: " else "")+time+date
     }
 }

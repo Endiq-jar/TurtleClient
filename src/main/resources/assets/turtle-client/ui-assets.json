@@ -1,0 +1,1256 @@
+{
+  "schema": 2,
+  "assets": [
+    {
+      "path": "icon.png",
+      "width": 128,
+      "height": 128,
+      "bytes": 3459,
+      "sha256": "4daeb46a06caf60506c2e37ca912a2b64f10b33e9452de8ecc6b224f92883481",
+      "source": "artwork/branding/turtle.svg",
+      "sourceSha256": "195206d4841c74eb2ca58387c3cb614c06283f5ca88790b76a078c2eb8d1deaa"
+    },
+    {
+      "path": "textures/cosmetics/cape/aurora.png",
+      "width": 128,
+      "height": 64,
+      "bytes": 347,
+      "sha256": "c7aa96f0501fa58706bd33393943e2033cc9f32a6f3fdc533afb45ca5528485e",
+      "source": "artwork/cosmetics/cape/aurora.svg",
+      "sourceSha256": "acbb732b8981bcfe1ff4211287f02b6a59da179a5677aad16c784cc0b48e4fa4"
+    },
+    {
+      "path": "textures/cosmetics/cape/ember.png",
+      "width": 128,
+      "height": 64,
+      "bytes": 343,
+      "sha256": "815255a5743c668f15841e739c3df53f4b32410b71bdabfc62296bebbdcd2a6a",
+      "source": "artwork/cosmetics/cape/ember.svg",
+      "sourceSha256": "133221bd3ec2550afb6e39b4232ad0c044c3f8ca372e3884448fbf6e1feb8190"
+    },
+    {
+      "path": "textures/cosmetics/cape/jade.png",
+      "width": 128,
+      "height": 64,
+      "bytes": 344,
+      "sha256": "52e51e3a0efb27e133a073f4f0b0a21a3561dc6b8ead323a6824f18b6d178387",
+      "source": "artwork/cosmetics/cape/jade.svg",
+      "sourceSha256": "2bb8febc2ce8c49a4b31754eed706d2ee67e637257a833914fdcc940179ebd5e"
+    },
+    {
+      "path": "textures/cosmetics/hat/aurora.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 291,
+      "sha256": "658f854eb94415abae954fde254b98b7b8f878cc4281843fc17d0c27e24c206e",
+      "source": "artwork/cosmetics/hat/aurora.svg",
+      "sourceSha256": "a7c3397e1431bf07ea40c8ca5b22c84bd923d251811cafc3b175595eb153d174"
+    },
+    {
+      "path": "textures/cosmetics/hat/ember.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 294,
+      "sha256": "8511c5bc4946b29724745578409d5e2172d47e777d283bd66cfcee61e49dc610",
+      "source": "artwork/cosmetics/hat/ember.svg",
+      "sourceSha256": "a5b3b7ad2c7ff43dbc92682869ec5bd2ed0959bdb889f5fdea92d2c83b96b4e4"
+    },
+    {
+      "path": "textures/cosmetics/hat/jade.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 292,
+      "sha256": "bb6560c1342625ed9fe2fb8998c5879f7b15aa90eb726e883ca7670a71d04537",
+      "source": "artwork/cosmetics/hat/jade.svg",
+      "sourceSha256": "73037a1e868c3b5282d646f7e3fb858aee42baa1d2c4af55b93417262fd24eaa"
+    },
+    {
+      "path": "textures/cosmetics/mask/aurora.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 291,
+      "sha256": "658f854eb94415abae954fde254b98b7b8f878cc4281843fc17d0c27e24c206e",
+      "source": "artwork/cosmetics/mask/aurora.svg",
+      "sourceSha256": "a7c3397e1431bf07ea40c8ca5b22c84bd923d251811cafc3b175595eb153d174"
+    },
+    {
+      "path": "textures/cosmetics/mask/ember.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 294,
+      "sha256": "8511c5bc4946b29724745578409d5e2172d47e777d283bd66cfcee61e49dc610",
+      "source": "artwork/cosmetics/mask/ember.svg",
+      "sourceSha256": "a5b3b7ad2c7ff43dbc92682869ec5bd2ed0959bdb889f5fdea92d2c83b96b4e4"
+    },
+    {
+      "path": "textures/cosmetics/mask/jade.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 292,
+      "sha256": "bb6560c1342625ed9fe2fb8998c5879f7b15aa90eb726e883ca7670a71d04537",
+      "source": "artwork/cosmetics/mask/jade.svg",
+      "sourceSha256": "73037a1e868c3b5282d646f7e3fb858aee42baa1d2c4af55b93417262fd24eaa"
+    },
+    {
+      "path": "textures/cosmetics/pet/aurora.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 291,
+      "sha256": "658f854eb94415abae954fde254b98b7b8f878cc4281843fc17d0c27e24c206e",
+      "source": "artwork/cosmetics/pet/aurora.svg",
+      "sourceSha256": "a7c3397e1431bf07ea40c8ca5b22c84bd923d251811cafc3b175595eb153d174"
+    },
+    {
+      "path": "textures/cosmetics/pet/ember.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 294,
+      "sha256": "8511c5bc4946b29724745578409d5e2172d47e777d283bd66cfcee61e49dc610",
+      "source": "artwork/cosmetics/pet/ember.svg",
+      "sourceSha256": "a5b3b7ad2c7ff43dbc92682869ec5bd2ed0959bdb889f5fdea92d2c83b96b4e4"
+    },
+    {
+      "path": "textures/cosmetics/pet/jade.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 292,
+      "sha256": "bb6560c1342625ed9fe2fb8998c5879f7b15aa90eb726e883ca7670a71d04537",
+      "source": "artwork/cosmetics/pet/jade.svg",
+      "sourceSha256": "73037a1e868c3b5282d646f7e3fb858aee42baa1d2c4af55b93417262fd24eaa"
+    },
+    {
+      "path": "textures/cosmetics/previews/cape_aurora.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 1491,
+      "sha256": "11c8449f106bab9ac141509aacce7370425346e33bd817e75f09fccea373405f",
+      "source": "artwork/cosmetics/previews/cape_aurora.svg",
+      "sourceSha256": "331ebcec311b8d04237b95bbf1b545511c7ba79fc2c7992aec919baf82dfabdc"
+    },
+    {
+      "path": "textures/cosmetics/previews/cape_ember.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 1633,
+      "sha256": "5ab89a97577364604663f983a568be8aa1cb8d202e5c5a98479f6a2d911b29c3",
+      "source": "artwork/cosmetics/previews/cape_ember.svg",
+      "sourceSha256": "ec27a3fc8121269972bd0c862318521566b8e3c160fcd0b87130ad0b635ba0b1"
+    },
+    {
+      "path": "textures/cosmetics/previews/cape_jade.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 1593,
+      "sha256": "5872f5014a31dd206250a8b135bf21af51d26e27e312cd59a891b3f1eb94e3e8",
+      "source": "artwork/cosmetics/previews/cape_jade.svg",
+      "sourceSha256": "6e57298610ee869ca47603c73448141ed4bc03d8cf341ea266728382d00751f1"
+    },
+    {
+      "path": "textures/cosmetics/previews/hat_aurora.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 774,
+      "sha256": "c940e7551c7193c6386303d281860116755886fdab29d1a1e72d7dca45cd55d5",
+      "source": "artwork/cosmetics/previews/hat_aurora.svg",
+      "sourceSha256": "23d8db6dc6df09d13e6672ee64b013bd4f45ce8b823b8b35eb43a0e5c9ba7cd4"
+    },
+    {
+      "path": "textures/cosmetics/previews/hat_ember.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 808,
+      "sha256": "0a0dd0275274d01406065e6a2f6d6fc2e277db23c2d41d01dcb4d9a6f953ab35",
+      "source": "artwork/cosmetics/previews/hat_ember.svg",
+      "sourceSha256": "6cfb8192538335aab053cc758041a9a13ac586de6dc847ae40749f40d6a38499"
+    },
+    {
+      "path": "textures/cosmetics/previews/hat_jade.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 799,
+      "sha256": "ae2a3e9b2cce0dc9a5a39ec953fd908294d0527f2155596e538cb05d3a564903",
+      "source": "artwork/cosmetics/previews/hat_jade.svg",
+      "sourceSha256": "49e36d919adf0af837bdc44b1099e45fadcc54d1ba74d4a3ddc5fe2cce50ec5d"
+    },
+    {
+      "path": "textures/cosmetics/previews/mask_aurora.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 1308,
+      "sha256": "5efee226b0d073937bac56aa448d0f89526f404322f0ede1d677c2e6a0d3a897",
+      "source": "artwork/cosmetics/previews/mask_aurora.svg",
+      "sourceSha256": "0b551341473ca4f5d853d8e1b4724e4d1c96cc5aa05b8628feb5b8df54f02496"
+    },
+    {
+      "path": "textures/cosmetics/previews/mask_ember.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 1415,
+      "sha256": "63a0fef95e52b113b17b46569296483fa432c2bb0e54599fa1192595a260c475",
+      "source": "artwork/cosmetics/previews/mask_ember.svg",
+      "sourceSha256": "29da2a0b380ccb5e92689a58606d4259484e62ffaa11eb4f9c47ce728fbb0d31"
+    },
+    {
+      "path": "textures/cosmetics/previews/mask_jade.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 1397,
+      "sha256": "3857b80410444e17b0d4ecb8aa3c0b9c298a9aadf71b83e69cbb4b2e18898565",
+      "source": "artwork/cosmetics/previews/mask_jade.svg",
+      "sourceSha256": "43b9f4a816f0d0fb899f2638771b6af3b31a8a1e8586fdd80b916a193b9cfe44"
+    },
+    {
+      "path": "textures/cosmetics/previews/pet_aurora.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 2108,
+      "sha256": "9ff999f07e4294d37ecadf436b4ecc877996a403cddc8958f1c87744c0e59d20",
+      "source": "artwork/cosmetics/previews/pet_aurora.svg",
+      "sourceSha256": "fea0b55d6d0e7f386d3ce5a1710cb7e54a64ff45acefa06a0d9a4e698ea4f04c"
+    },
+    {
+      "path": "textures/cosmetics/previews/pet_ember.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 2239,
+      "sha256": "419ab79b4d76af9f317421a01c15140cd58da57e20b6f13af33c1e881b8f3523",
+      "source": "artwork/cosmetics/previews/pet_ember.svg",
+      "sourceSha256": "9afe129ab9e863ca2f8a42a0ab01c12e3de9ff477db78ba4ee782b45e12a6f35"
+    },
+    {
+      "path": "textures/cosmetics/previews/pet_jade.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 2270,
+      "sha256": "5fd57dfca5f9e847b061f45ac547905f15dc0213d8ce2239c93371c7e43292b7",
+      "source": "artwork/cosmetics/previews/pet_jade.svg",
+      "sourceSha256": "d7275f2059f48390c955a23bcfcec9a53277782b9b14eda7fa1ab818dc19f24f"
+    },
+    {
+      "path": "textures/cosmetics/previews/suit_aurora.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 1040,
+      "sha256": "ad134185e0132c935cf10907bca165be2f6d41b4831c9fd2d29e3fc9b7a07818",
+      "source": "artwork/cosmetics/previews/suit_aurora.svg",
+      "sourceSha256": "27e6bcf7310faf65c3144f46dc1c131fcef14818b8eb2bafc10946ae58ba70e5"
+    },
+    {
+      "path": "textures/cosmetics/previews/suit_ember.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 1114,
+      "sha256": "e37dca9f2820a8cbdfb572d697d59c629df2909fa667f8c8976acfeb29980aa7",
+      "source": "artwork/cosmetics/previews/suit_ember.svg",
+      "sourceSha256": "2acf121a207f012933a0a3c333e97defe063817f5f650ccc4a7869145e94f2d9"
+    },
+    {
+      "path": "textures/cosmetics/previews/suit_jade.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 1084,
+      "sha256": "26686fed734e34f2320334125650956d2cb0eb0cca914bdcb896f2c4766bf6b4",
+      "source": "artwork/cosmetics/previews/suit_jade.svg",
+      "sourceSha256": "c53053bcc77e483a7ce498e5ca434cee29b76a1bf5dc15fd94236bb9bd59764e"
+    },
+    {
+      "path": "textures/cosmetics/previews/wings_aurora.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 1591,
+      "sha256": "cb1dca1ce7132cc5b7f6ab3954269ec5414bea46a4e9055af3ca953932f56eab",
+      "source": "artwork/cosmetics/previews/wings_aurora.svg",
+      "sourceSha256": "ee0e054b278b230eee38826efcc545a882f48811c494bd9a60c0a91561bc6892"
+    },
+    {
+      "path": "textures/cosmetics/previews/wings_ember.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 1747,
+      "sha256": "95f7ddd3bbf2d34e998b203a40f434b3f91c513aba113f03bbe4b16ebe093941",
+      "source": "artwork/cosmetics/previews/wings_ember.svg",
+      "sourceSha256": "2c1ba7fb9f4fb40effcce3193e976725f3fa479ab2d5d1ab621066bdde630153"
+    },
+    {
+      "path": "textures/cosmetics/previews/wings_jade.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 1744,
+      "sha256": "fb15e238dc3a58d56ccda13d4d1da759d3bc409ffd4970f15366d9306c68d1b5",
+      "source": "artwork/cosmetics/previews/wings_jade.svg",
+      "sourceSha256": "5b03145698432cc12ab14eabaac104e1f92d0bf06f5d24c30ee3731b383d33ce"
+    },
+    {
+      "path": "textures/cosmetics/suit/aurora.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 291,
+      "sha256": "658f854eb94415abae954fde254b98b7b8f878cc4281843fc17d0c27e24c206e",
+      "source": "artwork/cosmetics/suit/aurora.svg",
+      "sourceSha256": "a7c3397e1431bf07ea40c8ca5b22c84bd923d251811cafc3b175595eb153d174"
+    },
+    {
+      "path": "textures/cosmetics/suit/ember.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 294,
+      "sha256": "8511c5bc4946b29724745578409d5e2172d47e777d283bd66cfcee61e49dc610",
+      "source": "artwork/cosmetics/suit/ember.svg",
+      "sourceSha256": "a5b3b7ad2c7ff43dbc92682869ec5bd2ed0959bdb889f5fdea92d2c83b96b4e4"
+    },
+    {
+      "path": "textures/cosmetics/suit/jade.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 292,
+      "sha256": "bb6560c1342625ed9fe2fb8998c5879f7b15aa90eb726e883ca7670a71d04537",
+      "source": "artwork/cosmetics/suit/jade.svg",
+      "sourceSha256": "73037a1e868c3b5282d646f7e3fb858aee42baa1d2c4af55b93417262fd24eaa"
+    },
+    {
+      "path": "textures/cosmetics/wings/aurora.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 291,
+      "sha256": "658f854eb94415abae954fde254b98b7b8f878cc4281843fc17d0c27e24c206e",
+      "source": "artwork/cosmetics/wings/aurora.svg",
+      "sourceSha256": "a7c3397e1431bf07ea40c8ca5b22c84bd923d251811cafc3b175595eb153d174"
+    },
+    {
+      "path": "textures/cosmetics/wings/ember.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 294,
+      "sha256": "8511c5bc4946b29724745578409d5e2172d47e777d283bd66cfcee61e49dc610",
+      "source": "artwork/cosmetics/wings/ember.svg",
+      "sourceSha256": "a5b3b7ad2c7ff43dbc92682869ec5bd2ed0959bdb889f5fdea92d2c83b96b4e4"
+    },
+    {
+      "path": "textures/cosmetics/wings/jade.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 292,
+      "sha256": "bb6560c1342625ed9fe2fb8998c5879f7b15aa90eb726e883ca7670a71d04537",
+      "source": "artwork/cosmetics/wings/jade.svg",
+      "sourceSha256": "73037a1e868c3b5282d646f7e3fb858aee42baa1d2c4af55b93417262fd24eaa"
+    },
+    {
+      "path": "textures/gui/backgrounds/coast.png",
+      "width": 1024,
+      "height": 576,
+      "bytes": 4374,
+      "sha256": "5bae689a38cbf516ede6b156dc4c5a947ec4051ab39cbeb594cd1b7f0b2d554d",
+      "source": "artwork/backgrounds/coast.svg",
+      "sourceSha256": "c4ffeebf225c0fbe9dc421f37cc94e911f80863fd0475119dc4f27146387d45a"
+    },
+    {
+      "path": "textures/gui/backgrounds/forest.png",
+      "width": 1024,
+      "height": 576,
+      "bytes": 9577,
+      "sha256": "7372aae27a9dcc305e012ea3029c1c7f8a211db1297ac14311b3956bf8b16e98",
+      "source": "artwork/backgrounds/forest.svg",
+      "sourceSha256": "4ec73a9d35c75a7df14de86188359edabc6cf9c6729824a1baaf5bbe61e25860"
+    },
+    {
+      "path": "textures/gui/branding/badge.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 1918,
+      "sha256": "f16ad4a972f15e7bdf963616367a2c49a3830ec6b5e4a4aa858f034b3fc22ca4",
+      "source": "artwork/branding/turtle.svg",
+      "sourceSha256": "195206d4841c74eb2ca58387c3cb614c06283f5ca88790b76a078c2eb8d1deaa"
+    },
+    {
+      "path": "textures/gui/branding/turtle.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 7193,
+      "sha256": "cb579d56baf0c2f368196be8fb9e7ce241d338c42eea2f03c65a4355191a379d",
+      "source": "artwork/branding/turtle.svg",
+      "sourceSha256": "195206d4841c74eb2ca58387c3cb614c06283f5ca88790b76a078c2eb8d1deaa"
+    },
+    {
+      "path": "textures/gui/branding/wordmark.png",
+      "width": 512,
+      "height": 96,
+      "bytes": 2968,
+      "sha256": "12e82e5f6ea3070e2b05aa5d32b07aced173d87a7ece9314d755441cc080ba91",
+      "source": "artwork/branding/wordmark.svg",
+      "sourceSha256": "3105d5ab5a227bc808f8d89ff421b388691ae318c99cbe79d3bc8af48e2c7259"
+    },
+    {
+      "path": "textures/gui/buttons/danger.png",
+      "width": 128,
+      "height": 32,
+      "bytes": 528,
+      "sha256": "c2a9dcfe6177e48e74ca304fe2fe29708509e4a8ae24f17685b177c46c99e366",
+      "source": "artwork/buttons/danger.svg",
+      "sourceSha256": "3d2b53ba635a60b7a611c9e7f3b655f92650f70cd6bd3906f28b0b36a39467d1"
+    },
+    {
+      "path": "textures/gui/buttons/danger_hover.png",
+      "width": 128,
+      "height": 32,
+      "bytes": 506,
+      "sha256": "a7101606cdb8a9e18f1bb4ed40ed4cf2d6d93e4818c6937718d7406d36c405be",
+      "source": "artwork/buttons/danger_hover.svg",
+      "sourceSha256": "9fe85283ba8123b7104cde770c8bda9195944678f2cb08b0f9caaba5dcc099e5"
+    },
+    {
+      "path": "textures/gui/buttons/disabled.png",
+      "width": 128,
+      "height": 32,
+      "bytes": 491,
+      "sha256": "66a082a9074e86aa5bbdd3723a59c233488b9dd4af32911ee7271483f007ddac",
+      "source": "artwork/buttons/disabled.svg",
+      "sourceSha256": "dc7c0c3c93274c0299341a5da1dbb396e2de6ab0905625fafe75d3f04ca897cb"
+    },
+    {
+      "path": "textures/gui/buttons/hover.png",
+      "width": 128,
+      "height": 32,
+      "bytes": 573,
+      "sha256": "a76d770041bbe7faa4144e0b342229f9d29867888fad1f72a1008cc6a222f8f4",
+      "source": "artwork/buttons/hover.svg",
+      "sourceSha256": "cd5bab8482bbc321ec8a1090e74790863ac69678612156bc86714edb2d77ddd1"
+    },
+    {
+      "path": "textures/gui/buttons/normal.png",
+      "width": 128,
+      "height": 32,
+      "bytes": 526,
+      "sha256": "f75e9bdb31c7188e6ff9d11f1ef3c8117780873c80af7dd334a765db511f5d27",
+      "source": "artwork/buttons/normal.svg",
+      "sourceSha256": "ee0bcc8faceea35d07b8bca4a9f8c92902cb2e5f2423b0d2f268b85eff2cc4b9"
+    },
+    {
+      "path": "textures/gui/buttons/panel.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 598,
+      "sha256": "00f61927ea9c34db3ca2a3e63acfeb639117f074cbddd30f2f233b0127ee049a",
+      "source": "artwork/buttons/panel.svg",
+      "sourceSha256": "9113349a90b91baf7725d709c822322e9ac56b4585561944cb19e0a4ad7954ee"
+    },
+    {
+      "path": "textures/gui/buttons/primary.png",
+      "width": 128,
+      "height": 32,
+      "bytes": 510,
+      "sha256": "59c182ef73816a939a95593c41a889a6739b0dc386e7d8468af5f1e8988150e7",
+      "source": "artwork/buttons/primary.svg",
+      "sourceSha256": "34dd3214a2ed49c0ec11a10d2b6e84edd5402b253327e5df837a7e7fe9ce31c3"
+    },
+    {
+      "path": "textures/gui/buttons/primary_hover.png",
+      "width": 128,
+      "height": 32,
+      "bytes": 538,
+      "sha256": "d4cc09ac3d25b69df504d484b47b6b603c8da09693a3e4cc2d6a0ec74108b0b5",
+      "source": "artwork/buttons/primary_hover.svg",
+      "sourceSha256": "51b64f4f0e75fdd308a61c7a3bdabe48d4fbe72b2e8988c2818265f7b27f636e"
+    },
+    {
+      "path": "textures/gui/buttons/selected.png",
+      "width": 128,
+      "height": 32,
+      "bytes": 596,
+      "sha256": "40309dbe6eb8067210272f284ca2246211a6ed23dd0e4f6134a8230dcd613ba3",
+      "source": "artwork/buttons/selected.svg",
+      "sourceSha256": "ed4a5ccbb1fc9761d66d8914df25235184e3b4a9396646dfdb2a70eaea2bcfd1"
+    },
+    {
+      "path": "textures/gui/icons/account.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 650,
+      "sha256": "82d5fa985c8600224297a121045d0911931031da8ffa6a72f63d1d1264142e0e",
+      "source": "artwork/icons/account.svg",
+      "sourceSha256": "94a4fbc707083563f5b0b4845c4c6a6d10a4fe7e7595801795ad844c53f9751e"
+    },
+    {
+      "path": "textures/gui/icons/add.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 338,
+      "sha256": "b1f11ef7d339faa928e0b8506749ae2f762c30f6bf9c1aa4580d73ba1109e48c",
+      "source": "artwork/icons/add.svg",
+      "sourceSha256": "f78f7a22ce00cf12c6c8d34a87feab502307e573d915a88ca4b116b53c25631b"
+    },
+    {
+      "path": "textures/gui/icons/back.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 298,
+      "sha256": "b3eb513e48624e2f6101ac9c89cc60b7cff6a7dedf66e599f683a80c18d18b67",
+      "source": "artwork/icons/back.svg",
+      "sourceSha256": "9cd9e191737e0a1d9af2437ab6c78a4a50a28fc382c6c846167b9beefd62013a"
+    },
+    {
+      "path": "textures/gui/icons/camera.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 752,
+      "sha256": "4b116dc1c17fd3581aba0b585d3852e4b6eaeef1085ed619d7f833e12d0da41c",
+      "source": "artwork/icons/camera.svg",
+      "sourceSha256": "5f8b18b5d116fda5d661fe1912e08eaac691c11c47768f3de69680b3068b6f18"
+    },
+    {
+      "path": "textures/gui/icons/cape.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 986,
+      "sha256": "08f5ee9323b123fc2fe1cb28bfc47724458583dfef8c9669d62f6952dc810601",
+      "source": "artwork/icons/cape.svg",
+      "sourceSha256": "f3308595ea6e8ef80180315695588e1dfb04dfd44c895b875f0444deb1f06401"
+    },
+    {
+      "path": "textures/gui/icons/check.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 378,
+      "sha256": "2048531947428599d12aa1a51feddbbf3d8dc4fb918340816d2915a1ac137e3b",
+      "source": "artwork/icons/check.svg",
+      "sourceSha256": "cc5473dd5937389dc0e776861059e44e0d780e4c38471d8c6853b68a6c71cc31"
+    },
+    {
+      "path": "textures/gui/icons/close.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 269,
+      "sha256": "50743edf8e5f72a28a818aabcce2900054a283897fd9e0570ba5b5a5b4b610c8",
+      "source": "artwork/icons/close.svg",
+      "sourceSha256": "0225a3d614d069cc5ff400156e42dc95c80b223dd53c5715e49b6dbf33c15069"
+    },
+    {
+      "path": "textures/gui/icons/copy.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 653,
+      "sha256": "e2d76783e314f303dc73d1f7f216e8c0a27c632c51b9660859a942927a986651",
+      "source": "artwork/icons/copy.svg",
+      "sourceSha256": "9beac995683e368c9a9711bd3c9a965dc6f7ebe45c6baaeb5c28ccbb89870ed8"
+    },
+    {
+      "path": "textures/gui/icons/delete.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 763,
+      "sha256": "634a8ff20de6a3f3859b73c5c610d903fe76604d9e2fdc83923097792b7bf6ec",
+      "source": "artwork/icons/delete.svg",
+      "sourceSha256": "ba8d5db94c7506559dfb3fbc38c964fb73ff21e9e1a6e9faf17c9e08e8cd2b9e"
+    },
+    {
+      "path": "textures/gui/icons/external.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 673,
+      "sha256": "a72f2711e3d4fd754fbd19a5e1cfec4ebbce8186cb426cb6eed30291f73a4284",
+      "source": "artwork/icons/external.svg",
+      "sourceSha256": "dc3884e793af900c397f16530127018aa15cae6045c3d09cf416cadfe3fb4d52"
+    },
+    {
+      "path": "textures/gui/icons/folder.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 498,
+      "sha256": "f3ab595b0f6ca76f51450e23cf64af3dabe7f8386fe75f9b2d828219c5eccff6",
+      "source": "artwork/icons/folder.svg",
+      "sourceSha256": "376fb9ad7213900d99b53490ab6392a7d624b732f1a14109627b7552d120632c"
+    },
+    {
+      "path": "textures/gui/icons/grid.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 804,
+      "sha256": "177d944d00aef00b8a3cfdd1015e2aae87699b3213dc643c11e2270e002bb3fa",
+      "source": "artwork/icons/grid.svg",
+      "sourceSha256": "66bbc894a5d511340fcd7150666ff0fa2a8533f777bc8c834e1ed4ecab4a0d94"
+    },
+    {
+      "path": "textures/gui/icons/hat.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 661,
+      "sha256": "7ef1d4b825e284ebeee6a6ac56bfe584784d2d2829886b6f985bc7537ae9d852",
+      "source": "artwork/icons/hat.svg",
+      "sourceSha256": "0f51fab9b06cf1cbcafcf21a5075bf27e59e955cf1e04891d25d6035394cbf7a"
+    },
+    {
+      "path": "textures/gui/icons/hud.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 689,
+      "sha256": "b8d0539728f3a33ae8fffe4bc5bd757b2ce08acc0ade56e63feff995b21cbada",
+      "source": "artwork/icons/hud.svg",
+      "sourceSha256": "68a71b7c59a6dc836ef72eff3e5ef2efb30a8ca01647ef149e5700f5d58b792e"
+    },
+    {
+      "path": "textures/gui/icons/hypixel.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 695,
+      "sha256": "8f25b0243a0919c66cc5451ba563e21345f5c8ff95705b932bda1c72e44c2301",
+      "source": "artwork/icons/hypixel.svg",
+      "sourceSha256": "bb2763b9fddfe931842bb716f8a1385418b73e854fb0d63bd0833baaa583a63b"
+    },
+    {
+      "path": "textures/gui/icons/logout.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 582,
+      "sha256": "e24e431699663af066c3913094d5d1e09f97663bd1192bfa07645a63eabea183",
+      "source": "artwork/icons/logout.svg",
+      "sourceSha256": "a1dabb68daa93bfe510ea6d7b5263e046c68abb0323ec4e2e7215ec304027043"
+    },
+    {
+      "path": "textures/gui/icons/mask.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 785,
+      "sha256": "445d0521f04c711e89552d455fdc50ca0b6d02a1b3d8f554c36c2105e1e7c317",
+      "source": "artwork/icons/mask.svg",
+      "sourceSha256": "2c6fb4eafb3794dbf479d74660e02a071b1522c49a401d56010bb7dd98aaeadd"
+    },
+    {
+      "path": "textures/gui/icons/movement.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 293,
+      "sha256": "9298467819998082497080ea71af3ee3f3c3d7ea7b9512bf5ed4faa53098057c",
+      "source": "artwork/icons/movement.svg",
+      "sourceSha256": "b33a4b423749636108b6c481f4fe2ad8484dc6e02d86bcfdc5e2d92aae7fc92e"
+    },
+    {
+      "path": "textures/gui/icons/pause.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 404,
+      "sha256": "3174ba8bd0b3051a1ba6440e3dde19963aa617cb2963994b445628fb92ec0273",
+      "source": "artwork/icons/pause.svg",
+      "sourceSha256": "2ea745f75b6bd3a2eabdff410f94d24218529f15c277531a20cffe39eb171fcf"
+    },
+    {
+      "path": "textures/gui/icons/performance.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 557,
+      "sha256": "de67ca10d3c097fc5ff67ab7ab0e0c918a86ca67603883100b4940d2d924c736",
+      "source": "artwork/icons/performance.svg",
+      "sourceSha256": "dcfee52aba82f010420c2e8c409f4d49d3ced5c82affbe05d4cd5b89f02e25a8"
+    },
+    {
+      "path": "textures/gui/icons/pet.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 1069,
+      "sha256": "c35eb36f5a1e9d8f11c718f8ee0cc730b24baf8314f4327f4ed923c90367f433",
+      "source": "artwork/icons/pet.svg",
+      "sourceSha256": "aaacb9360795f0b4937d7534cf0acf5634cb076a3bca827a5999711dc567c953"
+    },
+    {
+      "path": "textures/gui/icons/play.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 459,
+      "sha256": "d75e231fe35d909a3b5c903cbe3ecfbdc5f3503265a5511e8f9472e3e2c9d9cd",
+      "source": "artwork/icons/play.svg",
+      "sourceSha256": "a4566c1b18b79162f7614971ddeb36da9aed76ca54289d3099c46de8d9a3a148"
+    },
+    {
+      "path": "textures/gui/icons/pvp.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 942,
+      "sha256": "afddaf8d2cf9a216f7c1fcd1b78a899fef138db20a10d0041c67ea4d3080c904",
+      "source": "artwork/icons/pvp.svg",
+      "sourceSha256": "8f7192b581fd4143a1e28ac21819713326ef1ef1d73abe5337afc013f8ddda9f"
+    },
+    {
+      "path": "textures/gui/icons/refresh.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 848,
+      "sha256": "31596175db9e51ed815caeb32c2766b790751565c727b593ef36fb74d9bda702",
+      "source": "artwork/icons/refresh.svg",
+      "sourceSha256": "e813cac8167c525d0daf4fa69cc60e9d828b98c19523eb0beba0f70fecc23d5a"
+    },
+    {
+      "path": "textures/gui/icons/render.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 608,
+      "sha256": "d2d9f75bbf59278aeb2b37a65ebaf095b92b834139c03bbfb0ae9d21ea0a9455",
+      "source": "artwork/icons/render.svg",
+      "sourceSha256": "1bb4ad7606ba00acbd4469e8ad4a00cb91aac99dd324459c7bc7cd1904569e12"
+    },
+    {
+      "path": "textures/gui/icons/search.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 589,
+      "sha256": "1079a929fafe39dffdef09fdf06a1f667cb54f73cfc4a223a7cb5f327c040cb0",
+      "source": "artwork/icons/search.svg",
+      "sourceSha256": "95aff65028f1ad082127ef9b882512b3a0ee48860d8a10b634a98574d61534e1"
+    },
+    {
+      "path": "textures/gui/icons/settings.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 809,
+      "sha256": "392cf429d38311b7d26975b17b26430e5a57cbed8e13010b60b0989f324d956e",
+      "source": "artwork/icons/settings.svg",
+      "sourceSha256": "01f2919b7a7c91917ede4cb31007fdd42f4d074ad1871e3d653762b5978447da"
+    },
+    {
+      "path": "textures/gui/icons/suit.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 841,
+      "sha256": "636539284e8b324b0f7562c938075528a1dd5b93d38e8f5153fc4f17bfe3faa9",
+      "source": "artwork/icons/suit.svg",
+      "sourceSha256": "6cc53385753440e519c33171492d4db2f0c8910bf4871426b4f425817ddb5f76"
+    },
+    {
+      "path": "textures/gui/icons/utility.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 730,
+      "sha256": "71fa92c5f8cd385e2a6e16733607a113b0aaf3ad9eb3653b8a5d255cbb2acc0e",
+      "source": "artwork/icons/utility.svg",
+      "sourceSha256": "cd573b0b498b6693e03718d5477371e9261acfae7d412b3037383e314ad250ee"
+    },
+    {
+      "path": "textures/gui/icons/wings.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 886,
+      "sha256": "38a324a16fb06c3e583f6f8b24d0ba5541cfb531cbddbc83830ffe6c11620190",
+      "source": "artwork/icons/wings.svg",
+      "sourceSha256": "946f1a9f085302ccd87bcc0bc85e804a841b7ca6ebf726bbbdc6c655e9079b66"
+    },
+    {
+      "path": "textures/gui/loading/contours.png",
+      "width": 512,
+      "height": 288,
+      "bytes": 38773,
+      "sha256": "27282c442524334f60d1447fd1e4eb8926c8f2882fd00e52d54c1697a03900e3",
+      "source": "artwork/loading/contours.svg",
+      "sourceSha256": "9a88527e796b35d2545c53fce3554cdbe7cb4fd798e03de6bed60be2212ccefd"
+    },
+    {
+      "path": "textures/gui/loading/edition.png",
+      "width": 192,
+      "height": 20,
+      "bytes": 1940,
+      "sha256": "90de167e9d3d2a9b399557e2d92beb7446f37886c1fcbf2be8141718271f649c",
+      "source": "artwork/loading/edition.svg",
+      "sourceSha256": "8d27dcebf4c0529d28a841b885d6009c421f3979c5e43e1ffa96f2ee90027ec1"
+    },
+    {
+      "path": "textures/gui/loading/finishing.png",
+      "width": 252,
+      "height": 24,
+      "bytes": 2682,
+      "sha256": "efb446863c0cf2271f106b05f4c5daa3d7ab2d57f018aca9b1ef522205019d33",
+      "source": "artwork/loading/finishing.svg",
+      "sourceSha256": "e08748367477ce6184694db6b90561925fc751ada3c51de19a1c0f931ca62026"
+    },
+    {
+      "path": "textures/gui/loading/numbers.png",
+      "width": 176,
+      "height": 24,
+      "bytes": 2232,
+      "sha256": "6b39b0231aee743d64a996a21f35e6f450b826d4313f2f248b1eea6afffb17ac",
+      "source": "artwork/loading/numbers.svg",
+      "sourceSha256": "8cc14443a5cc68f506369732e8cc2f67454b79006206ccf86fa05b134c089d09"
+    },
+    {
+      "path": "textures/gui/loading/resources.png",
+      "width": 224,
+      "height": 24,
+      "bytes": 2556,
+      "sha256": "a9e7831d648e5e586386fce5f811bb983adbf51898deefd5de2d4b18a2518bd0",
+      "source": "artwork/loading/resources.svg",
+      "sourceSha256": "6b3b493104bf6d05852f57e7fe3e8d8ee7b26adcff0a195c24674d1071ce25c4"
+    },
+    {
+      "path": "textures/gui/loading/startup.png",
+      "width": 200,
+      "height": 20,
+      "bytes": 2242,
+      "sha256": "0c61098b712a8ff508a4afabb4142dcebefb8d6f093ebb9b51c39e2d5c1f2162",
+      "source": "artwork/loading/startup.svg",
+      "sourceSha256": "2ec82e9549ca4b89b2840294b18e8592618e104f59fcd6d8dd6122fe4240756a"
+    },
+    {
+      "path": "textures/gui/modules/adaptive-vsync.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 788,
+      "sha256": "57d8b3c91f1f5b2a3b011b803ee33dffa1a3c52ce9490346ea2e2492bddc0fa4",
+      "source": "artwork/modules/adaptive-vsync.svg",
+      "sourceSha256": "0d2fdb789a6251bf9a1dfef7dc3fd870a3901187ab9ff5de6235498fad96f957"
+    },
+    {
+      "path": "textures/gui/modules/animations.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 966,
+      "sha256": "ed0cdb2ac693b1dae668380f37cf103327cf2a677d053b9e16a58dbb76ce749a",
+      "source": "artwork/modules/animations.svg",
+      "sourceSha256": "abcb41b2f77479c162ee684da78ce48e3f8b818efbdd5b0697c2094a7177833d"
+    },
+    {
+      "path": "textures/gui/modules/armor-bar.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 946,
+      "sha256": "1e793eee8a0dcfb4576bc734dcde32971a2136a7869c11cb5e8229cb966ba869",
+      "source": "artwork/modules/armor-bar.svg",
+      "sourceSha256": "fcea7aa635e50c523c5e1da3fd174dd14b87dff10a6d9fc2b33a68ae54660470"
+    },
+    {
+      "path": "textures/gui/modules/armor-status.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 937,
+      "sha256": "589c650291e81e8e2eedfb102fa2fda621ec2b6e6ac4e454d37d37739431032c",
+      "source": "artwork/modules/armor-status.svg",
+      "sourceSha256": "d8e5dbded2ad3dccef91c7ab601e891af0906a2b014a766808ad20dbc4b09ebb"
+    },
+    {
+      "path": "textures/gui/modules/attack-indicator.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 880,
+      "sha256": "fe09bc43ce90f5d1d928322128e261d88e603502282fa146ec0e1e89abd47afd",
+      "source": "artwork/modules/attack-indicator.svg",
+      "sourceSha256": "473b192bf85d8d76821a515e4ad56770024e887f9496e7ae5bbb5abdb5a37d52"
+    },
+    {
+      "path": "textures/gui/modules/auto-hide-hud.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 960,
+      "sha256": "5a1b570e94ff4947492f59a85f0d019f7babce98356b547559baaaaa90ddeade",
+      "source": "artwork/modules/auto-hide-hud.svg",
+      "sourceSha256": "4507b08bb18eac5b6c450d15602e0916f87d82a07890126e19300780551c7b39"
+    },
+    {
+      "path": "textures/gui/modules/auto-text.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 670,
+      "sha256": "aff1f03017c10a7086b7fbf8edb3e33cf33f3888934a2516064fcf686f9d3a96",
+      "source": "artwork/modules/auto-text.svg",
+      "sourceSha256": "072594be1a86b1ef354d7aedf22c00db999e458480bdf9deac2461af40b0f055"
+    },
+    {
+      "path": "textures/gui/modules/block-indicator.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 1001,
+      "sha256": "5c9e6189adfdcaa105b2a0e956a5ca5177372b3978be9782fb625f1358e6e4c2",
+      "source": "artwork/modules/block-indicator.svg",
+      "sourceSha256": "28610f6d5a385ce2a35c9c680b88d6bb27171dac6e47ef09b677d25e776c3da0"
+    },
+    {
+      "path": "textures/gui/modules/block-overlay.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 664,
+      "sha256": "ff450a76acaea69c808f65be0dd85fc95f26722aa478c7f5a470fea91c11e9d9",
+      "source": "artwork/modules/block-overlay.svg",
+      "sourceSha256": "672820dde3adf823925f699d4415b1198f2673fb7c46b6d73419b283dfd92b30"
+    },
+    {
+      "path": "textures/gui/modules/boss-bar.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 842,
+      "sha256": "d443f3faa7cb503bc3ac1466df80c69a75a17bb12b10c7990a27107145cdd785",
+      "source": "artwork/modules/boss-bar.svg",
+      "sourceSha256": "085dde584c2ef7fdf10e6d6b916502af9c62898387564c9c7dbb2016915dc222"
+    },
+    {
+      "path": "textures/gui/modules/camera.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 752,
+      "sha256": "4b116dc1c17fd3581aba0b585d3852e4b6eaeef1085ed619d7f833e12d0da41c",
+      "source": "artwork/modules/camera.svg",
+      "sourceSha256": "5f8b18b5d116fda5d661fe1912e08eaac691c11c47768f3de69680b3068b6f18"
+    },
+    {
+      "path": "textures/gui/modules/chat.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 805,
+      "sha256": "0cf0e3445e27f90ddf1f323d7ad8a2af12b6163d7f647780fcc8b5b6b6fbb6be",
+      "source": "artwork/modules/chat.svg",
+      "sourceSha256": "190a96ee9602ed99698d5947ee70df276ea95553cb1d7325085919fa37141187"
+    },
+    {
+      "path": "textures/gui/modules/clock-hud.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 740,
+      "sha256": "533a34f5c4fbd4eb7bee01aa1a8a97dcb0b23715a413d7889d97821fdadab485",
+      "source": "artwork/modules/clock-hud.svg",
+      "sourceSha256": "ba1bbb9083a240cb8f4d3a49288386f9b2c7038c2689ccc37ebbe5aaadbdcfc7"
+    },
+    {
+      "path": "textures/gui/modules/combo-counter.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 851,
+      "sha256": "9f0cc509c4e39afef66f2be59448b0aeb8fe633b336a4b94bc9f703396494d76",
+      "source": "artwork/modules/combo-counter.svg",
+      "sourceSha256": "121e44cee4d45e7e3f49d4b064ce101a2736c86ca17bd99a4f071910b68b8c0f"
+    },
+    {
+      "path": "textures/gui/modules/coordinates.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 704,
+      "sha256": "7e9caea0bc035df612836e84ae44fc0e7beeb8995c6d028ac2c1c997ed51966b",
+      "source": "artwork/modules/coordinates.svg",
+      "sourceSha256": "34282f8465a6d262eb005b4258e97e39c15df9863ec83be9b0d255ada7fae184"
+    },
+    {
+      "path": "textures/gui/modules/cps.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 684,
+      "sha256": "835b4a8e9ef8db5fde1855db6e336cb2f6018b4a3e8e2738a6c64e48ba487025",
+      "source": "artwork/modules/cps.svg",
+      "sourceSha256": "686a196678f8be77fa7356f09bc223bd5aee529a18eec2520f0cb7f4fd96ecc3"
+    },
+    {
+      "path": "textures/gui/modules/crosshair.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 696,
+      "sha256": "1ce5600d33cad4f3a86044742b42c0def7ed4570921ff145ec5408bd16468ad9",
+      "source": "artwork/modules/crosshair.svg",
+      "sourceSha256": "45574dabc94c618d04733da7a333ebc198d59ca8b0e8c08c05604a52691af98e"
+    },
+    {
+      "path": "textures/gui/modules/culling.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 1002,
+      "sha256": "c0dcc5aa7da369eacfd41fbd1e509417208832340cb95e7dd77220f2166cfe31",
+      "source": "artwork/modules/culling.svg",
+      "sourceSha256": "29b4e0ca799f2ccea603931e61b65ae294be31166e8ddeddb347806a959f2647"
+    },
+    {
+      "path": "textures/gui/modules/direction-hud.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 916,
+      "sha256": "35d1603fd6e8bff8d120919f6f9e87aebe928bed34c856a078a84f889dff46c3",
+      "source": "artwork/modules/direction-hud.svg",
+      "sourceSha256": "c3ccfb1d1ee2bfa55321772c05e72bb2a52e273572b1e58b7a47837be2750d50"
+    },
+    {
+      "path": "textures/gui/modules/dynamic-render-distance.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 854,
+      "sha256": "c91b637ab6b56de7b0047e3a47b7e9ad5b34a0b66936a6902327eab25c3762f1",
+      "source": "artwork/modules/dynamic-render-distance.svg",
+      "sourceSha256": "a75058359ed3a449eb91efc488d6c20a97e3874baccf9590462d5415f70ec209"
+    },
+    {
+      "path": "textures/gui/modules/fov-changer.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 659,
+      "sha256": "2cedfbd4d091246b365aee627a360197426fa9b1b0c20bed9dff987e9d5c50a5",
+      "source": "artwork/modules/fov-changer.svg",
+      "sourceSha256": "f1cd6335f7de3f194b3f7405441819126b1f6a75f374f4622a2deba50139811c"
+    },
+    {
+      "path": "textures/gui/modules/fps.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 736,
+      "sha256": "4172e1d092ceba683ac92ebe2fc61a311a842aa95fe9a58e7146c5ecb2ace126",
+      "source": "artwork/modules/fps.svg",
+      "sourceSha256": "e0ca7350a3f67d02478f3ae3af9ee78aa81d521655ed2e5fbaaf764a4be51008"
+    },
+    {
+      "path": "textures/gui/modules/freecam.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 1124,
+      "sha256": "037979911c1eb912198de60bb10652cd4132a6ea260d7f656db8cd933363be25",
+      "source": "artwork/modules/freecam.svg",
+      "sourceSha256": "b35ec286c14440170f440084b8b4090b3ebea4b547c347486820cf2d6a83d1fe"
+    },
+    {
+      "path": "textures/gui/modules/full-bright.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 593,
+      "sha256": "34bc74fc8776e54ceb96cdb5c0f9365ad0710e8b7c657ed8dccfae240a8b4d5a",
+      "source": "artwork/modules/full-bright.svg",
+      "sourceSha256": "2f4be5f73882bfee6c653543bc3c91c654af65943b917bf27f3393aec329f3bb"
+    },
+    {
+      "path": "textures/gui/modules/hit-color.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 898,
+      "sha256": "560c852fea7c1a98192313eccf0c6903712ed107931110bcc5a0821651745253",
+      "source": "artwork/modules/hit-color.svg",
+      "sourceSha256": "0c1e7114ccde4a76acdb1771c35f3fe4bda1cf7e304193929c531da6a3e01dec"
+    },
+    {
+      "path": "textures/gui/modules/hypixel-addons.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 693,
+      "sha256": "a2166435431a126bc5d10b28ab837dfab2a88ca9708cbb3b12384df3fbf38fa3",
+      "source": "artwork/modules/hypixel-addons.svg",
+      "sourceSha256": "36df281ffe3eb0d0ebecfbeaefb1f45b73cfd6cbcf80af080bec0b643690a643"
+    },
+    {
+      "path": "textures/gui/modules/keystrokes.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 848,
+      "sha256": "42651d807691912e2fd3b95ee7487263af88b94b5a29eec648e47e7038af9b2f",
+      "source": "artwork/modules/keystrokes.svg",
+      "sourceSha256": "9941d6b96520d623f18e63812809138fedef96d9849d1d26653aa2f5bf0c3e55"
+    },
+    {
+      "path": "textures/gui/modules/memory-hud.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 707,
+      "sha256": "f5c9b5aaa95e467892a5a3b6735012f37c6c0fca7de3e57cdbdb93fc883e6e55",
+      "source": "artwork/modules/memory-hud.svg",
+      "sourceSha256": "2adfd4a0009ca1c3e8b416eff4deace17cc124b54aaf17f0e2227cc92a8b4b59"
+    },
+    {
+      "path": "textures/gui/modules/motion-blur.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 594,
+      "sha256": "79396b662768792af5de5ed11d4057ba4c3face3e972536c2712c948fee56580",
+      "source": "artwork/modules/motion-blur.svg",
+      "sourceSha256": "41d7ad7f6927cc8c61c380a60144eee370a5f412237bfd81ef61fc827cd37a7c"
+    },
+    {
+      "path": "textures/gui/modules/net-graph.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 649,
+      "sha256": "be45f9c3aca7d1c4d27d3b4e736bfb5f29769196038e04a6b7cd2a9040ccca4c",
+      "source": "artwork/modules/net-graph.svg",
+      "sourceSha256": "78f63c257eea621a3917fb4c7b8d8dc1bd5e56f3160c401dc09a3bfa48b0085b"
+    },
+    {
+      "path": "textures/gui/modules/nick-hider.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 792,
+      "sha256": "4e8e404ec2c729c0306f51356f0e550cb9fd8fe6ce8762799002acfcf9aa0f1e",
+      "source": "artwork/modules/nick-hider.svg",
+      "sourceSha256": "562427e185f0c3e5d16a72112883f1ad1eea8acb5e6d1a3a6cc6751081c1fb35"
+    },
+    {
+      "path": "textures/gui/modules/no-weather.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 787,
+      "sha256": "6576b320fe5961bdf64b11ba4df719307c1303f7d3148300f67a8cdcfb7b0fc3",
+      "source": "artwork/modules/no-weather.svg",
+      "sourceSha256": "44418dd55dd1f2593f62aed943184e924fa7a3e714a74a5408395148e83fb2da"
+    },
+    {
+      "path": "textures/gui/modules/pack-display.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 827,
+      "sha256": "e7f4cdbf6007936e9d20d0c474b7930adbbb44e013d115c59c9c71f568174098",
+      "source": "artwork/modules/pack-display.svg",
+      "sourceSha256": "13d7bce4267e77b937846189225f3a9c933e395821fbb4bbf907fdd2e8198714"
+    },
+    {
+      "path": "textures/gui/modules/ping.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 759,
+      "sha256": "332eb664432e21e675e66fca7ccc76202a48edce4b0cd40b98a152cee2b55094",
+      "source": "artwork/modules/ping.svg",
+      "sourceSha256": "adff38e3b769661520ee981cff7c1e693b79aaa5b06c28cf882949f2e1bd85fc"
+    },
+    {
+      "path": "textures/gui/modules/popup-events.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 717,
+      "sha256": "9c6e1be01fe7a6055cae73d1661ad508d99dadaa7ba88d43149451f1350face7",
+      "source": "artwork/modules/popup-events.svg",
+      "sourceSha256": "3df1e222b131e34a7c4316a9d3893b0ce344dcf11119d8a083e81a262fbe5cae"
+    },
+    {
+      "path": "textures/gui/modules/potion-status.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 771,
+      "sha256": "0d43d6f130fc8f92c3c7858ea6f7f60e1b8e01d31b23be569ad953ff7e2a5cc4",
+      "source": "artwork/modules/potion-status.svg",
+      "sourceSha256": "d4bdfc6eb7ed21df170d9397debedc3e0364520d295b5fc1f165e7cd86411948"
+    },
+    {
+      "path": "textures/gui/modules/pvp-info.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 902,
+      "sha256": "1dd9e2ec299fca7fe275ff240c1fec448085f9a1679a3650d94745165883fe39",
+      "source": "artwork/modules/pvp-info.svg",
+      "sourceSha256": "bb3f40ec50fbe4665c434906995f67a82c88608f803313ca42a214797cab0422"
+    },
+    {
+      "path": "textures/gui/modules/reach-display.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 400,
+      "sha256": "abd6ae3129300837693afb636f56f1765e2bdcc0b8762d07cf351ee88a2c033f",
+      "source": "artwork/modules/reach-display.svg",
+      "sourceSha256": "67f02fa1747d483f101d6379ef5ebe8cb973f232352ca34fa56488bad42d1263"
+    },
+    {
+      "path": "textures/gui/modules/scoreboard.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 637,
+      "sha256": "383f810036b58c418b6eeb7d6fbf24c9514f03fbc683ce5459de5aaa9e6a6cae",
+      "source": "artwork/modules/scoreboard.svg",
+      "sourceSha256": "33e8a7b56d0420bccf843b72bec25c9d9531b2a46e65d4408c53c91226ec255a"
+    },
+    {
+      "path": "textures/gui/modules/server-address.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 1042,
+      "sha256": "0c407f63eafa30c0a424a360576565e5861751864c5d3f384e2cc7ee284a5b99",
+      "source": "artwork/modules/server-address.svg",
+      "sourceSha256": "664397f75ec9b1a51acd7d81684f8da43057ba77a9ddba30d83a93df45183cfe"
+    },
+    {
+      "path": "textures/gui/modules/skyblock-addons.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 719,
+      "sha256": "b34e59a3c73160a5b49963e11fc77107d8746ee534065d3282a2f9b58f46d438",
+      "source": "artwork/modules/skyblock-addons.svg",
+      "sourceSha256": "4cbbc7c284775a15f44a9c49ca9d2ee04179d69d8630ee58aa44d9149fd71395"
+    },
+    {
+      "path": "textures/gui/modules/speed-hud.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 919,
+      "sha256": "ca462f30f8cb6d164f1c808842e68456d996baa63235fd1f9c0fe9df8cc798b1",
+      "source": "artwork/modules/speed-hud.svg",
+      "sourceSha256": "a5cb2c34d973d875c0d2caa093a12b81fedc034348cffdc2cb472807cb424d24"
+    },
+    {
+      "path": "textures/gui/modules/sprint.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 709,
+      "sha256": "ba448592a96dcd49c92b4d6e8ea1576b3d0f7d3c50017e8f104f8a8e250baf9c",
+      "source": "artwork/modules/sprint.svg",
+      "sourceSha256": "db9e02043999d1ee3d913b75745920dd2b72c178ff7da64f0ed7b8722305a36f"
+    },
+    {
+      "path": "textures/gui/modules/tab-stat.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 715,
+      "sha256": "c0e4ca6161e1adc5ac69495bceb73fd28115a5948e8da77b0fd5421a184afaed",
+      "source": "artwork/modules/tab-stat.svg",
+      "sourceSha256": "1088e66d7b09a3be1749aa89bb7f8527a3294e017d4b0c1d3de5ddf799fb461c"
+    },
+    {
+      "path": "textures/gui/modules/team-circles.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 945,
+      "sha256": "0b3c541b159c9568b78c2b2171a2af82a35e83f11405faf7657fa1032399ea40",
+      "source": "artwork/modules/team-circles.svg",
+      "sourceSha256": "f68d34b6211bf9d09f6c002e5bd5b014c73ffb9002e4298eefd0e2c1d351e0e7"
+    },
+    {
+      "path": "textures/gui/modules/team-view.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 767,
+      "sha256": "5ea2aefe54225655ec93ef50a48e4a08d7d4045977c2b09b1c755f1fbd827dfe",
+      "source": "artwork/modules/team-view.svg",
+      "sourceSha256": "b817e404b9a172e3dc479a51541a6cc53982dd541d88cbb9e307b3cc22c9c3f3"
+    },
+    {
+      "path": "textures/gui/modules/time-changer.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 1001,
+      "sha256": "eb7b80dfcfe403534a47dba65f787dd1405c0e4531eec3ac0a2b71c6e172f7e4",
+      "source": "artwork/modules/time-changer.svg",
+      "sourceSha256": "3550d508ad9d1721dd46ce9812d7193cae23c6f5c9ad32eaa2324dbaa80d7997"
+    },
+    {
+      "path": "textures/gui/modules/timers.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 879,
+      "sha256": "1d6a7403299bda5073d3653f5ad92c38b5a7a1be4864249e8ab0e128f38a5dce",
+      "source": "artwork/modules/timers.svg",
+      "sourceSha256": "df764e8cc0b70e06a8a6afdf2486e1b3845aaf1a21e659431d47a4db52e7191b"
+    },
+    {
+      "path": "textures/gui/modules/toggle-sprint.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 766,
+      "sha256": "46ac0a79915476fb4fe6e7a17594b427ff17480002f975673b3a8467745a392b",
+      "source": "artwork/modules/toggle-sprint.svg",
+      "sourceSha256": "6f14644e79fddfc5a7c9b939dae3bb9dcd9664e99624262d2ff4131eb12d6569"
+    },
+    {
+      "path": "textures/gui/modules/uhc-overlay.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 910,
+      "sha256": "b1aa57e0d0386e1b6595e59367441a3294d5e2f8ba1d389c7f1829d7c0133f81",
+      "source": "artwork/modules/uhc-overlay.svg",
+      "sourceSha256": "dd75194a835d98def32a4b5424ba990b63ef59a16015798f3b2ca51c1b73ddf3"
+    },
+    {
+      "path": "textures/gui/modules/waypoints.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 786,
+      "sha256": "a2676db2d4f6fb73fa184bc703fcda60a6148f93c68c9877040a426204623384",
+      "source": "artwork/modules/waypoints.svg",
+      "sourceSha256": "3d7702209bc75f688cf627261034ef6a6e29ef2359be0ee2be883ab9340f83c0"
+    },
+    {
+      "path": "textures/gui/modules/zoom.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 895,
+      "sha256": "0522a6f9ae0d860a198dee11802bf7505220ff4d6b78aadfb5ac47e59ed8d05f",
+      "source": "artwork/modules/zoom.svg",
+      "sourceSha256": "5c88cd8bb09eccf86a46716eeae4401b0ce65ab1af7afd258a8786508ae0893a"
+    }
+  ]
+}

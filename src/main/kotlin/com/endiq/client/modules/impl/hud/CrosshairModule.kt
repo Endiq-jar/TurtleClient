@@ -12,7 +12,7 @@ class CrosshairModule : Module("Crosshair", "Custom crosshair", Category.HUD) {
     val alpha       = slider("Alpha", default=255f, min=50f, max=255f)
     val outline     = bool("Outline", default=false)
     val outlineColor= color("Outline Color", r=0, g=0, b=0)
-    val colorMode   = dropdown("Color Mode", options=arrayOf("Static", "Rainbow", "Enemy Color"), default=0)
+    val colorMode   = dropdown("Color Mode", options=arrayOf("Static", "Rainbow", "Entity Target"), default=0)
     val attackScale = bool("Scale on Attack", default=false)
     val hideVanilla = bool("Hide Vanilla Crosshair", default=true)
     val offsetX     = slider("X Offset", default=0f, min=-20f, max=20f)

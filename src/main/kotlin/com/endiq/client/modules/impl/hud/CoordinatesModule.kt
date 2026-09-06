@@ -1,6 +1,6 @@
 package com.endiq.client.modules.impl.hud
+import com.endiq.client.compat.*
 import com.endiq.client.modules.Module
-import net.minecraft.client.MinecraftClient
 import kotlin.math.floor
 class CoordinatesModule : Module("Coordinates", "Shows XYZ position", Category.HUD) {
     val textColor  = color("Text Color", r=255, g=255, b=255)
@@ -25,8 +25,18 @@ class CoordinatesModule : Module("Coordinates", "Shows XYZ position", Category.H
     val labelStyle = dropdown("Label Style", options=arrayOf("XYZ:", "X Y Z", "Coords:"), default=0)
     fun getText(): String {
         val p = MinecraftClient.getInstance().player ?: return "XYZ: N/A"
-        val x = floor(p.x).toInt(); val y = floor(p.y).toInt(); val z = floor(p.z).toInt()
-        return "XYZ: $x / $y / $z"
+        val digits=precision.value.toInt()
+        fun value(v:Double)=if(digits==0)floor(v).toInt().toString() else java.lang.String.format(java.util.Locale.ROOT,"%.${digits}f",v)
+        val parts=mutableListOf<String>()
+        if(showX.value)parts+=(if(layout.selected==2)"" else "X: ")+value(p.x)
+        if(showY.value)parts+=(if(layout.selected==2)"" else "Y: ")+value(p.y)
+        if(showZ.value)parts+=(if(layout.selected==2)"" else "Z: ")+value(p.z)
+        if(showDir.value) {
+            val names=arrayOf("S","SW","W","NW","N","NE","E","SE")
+            parts+=names[Math.floorMod(floor(p.yaw/45.0+.5).toInt(),8)]
+        }
+        val prefix=when(labelStyle.selected){2->"Coords: ";1->"";else->if(layout.selected==2)"XYZ: " else ""}
+        return prefix+parts.joinToString(if(layout.selected==1)"\n" else if(layout.selected==2)", " else " / ")
     }
     init { enable() }
 }

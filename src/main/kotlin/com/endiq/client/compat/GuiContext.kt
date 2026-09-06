@@ -1,0 +1,181 @@
+package com.endiq.client.compat
+
+/** The drawing operations TurtleClient uses, backed by each version's GUI API. */
+class GuiContext(val native: NativeGuiContext) {
+    val scaledWindowWidth: Int get() = MinecraftClient.getInstance().windowWidth()
+    val scaledWindowHeight: Int get() = MinecraftClient.getInstance().windowHeight()
+
+    fun fill(x1: Int, y1: Int, x2: Int, y2: Int, color: Int) {
+//? if >=1.20 {
+        native.fill(x1, y1, x2, y2, color)
+//?} else {
+/*        net.minecraft.client.gui.DrawableHelper.fill(native, x1, y1, x2, y2, color)
+*///?}
+    }
+
+    fun drawText(font:TextRenderer,text:String,x:Int,y:Int,color:Int,shadow:Boolean) {
+        // Old fonts interpret tiny alpha as an unspecified/opaque RGB color.
+        if(color ushr 24<4)return
+        if(shadow) { drawTextWithShadow(font,text,x,y,color);return }
+//? if >=26.1 {
+/*        native.text(font,text,x,y,color,false)
+*///?} else if >=1.20 {
+        native.drawText(font,text,x,y,color,false)
+//?} else {
+/*        font.draw(native,text,x.toFloat(),y.toFloat(),color)
+*///?}
+    }
+
+    fun drawTextWithShadow(font: TextRenderer, text: String, x: Int, y: Int, color: Int) {
+        if(color ushr 24<4)return
+//? if >=26.1 {
+/*        native.text(font, text, x, y, color, true)
+*///?} else if >=1.20 {
+        native.drawTextWithShadow(font, text, x, y, color)
+//?} else {
+/*        font.drawWithShadow(native, text, x.toFloat(), y.toFloat(), color)
+*///?}
+    }
+
+    fun drawItem(stack: ItemStack, x: Int, y: Int) {
+//? if >=26.1 {
+/*        native.item(stack, x, y)
+*///?} else if >=1.20 {
+        native.drawItem(stack, x, y)
+//?} else if >=1.19.3 {
+/*        MinecraftClient.getInstance().itemRenderer.renderInGui(native, stack, x, y)
+*///?} else {
+/*        MinecraftClient.getInstance().itemRenderer.renderInGui(stack, x, y)
+*///?}
+    }
+
+    // All current callers draw a whole texture, scaled to the supplied rectangle.
+    fun drawTexture(texture: Identifier, x: Int, y: Int, width: Int, height: Int, color: Int = -1) {
+//? if >=26.1 {
+/*        native.blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED,
+            texture, x, y, 0f, 0f, width, height, width, height, color)
+*///?} else if >=1.21.6 {
+/*        native.drawTexture(net.minecraft.client.gl.RenderPipelines.GUI_TEXTURED,
+            texture, x, y, 0f, 0f, width, height, width, height, color)
+*///?} else if >=1.21.2 {
+        native.drawTexture(net.minecraft.client.render.RenderLayer::getGuiTextured,
+            texture, x, y, 0f, 0f, width, height, width, height, color)
+//?} else if >=1.20 {
+/*        val a = (color ushr 24 and 255) / 255f
+        val r = (color ushr 16 and 255) / 255f
+        val g = (color ushr 8 and 255) / 255f
+        val b = (color and 255) / 255f
+        com.mojang.blaze3d.systems.RenderSystem.setShaderColor(r, g, b, a)
+        try {
+            native.drawTexture(texture, x, y, 0f, 0f, width, height, width, height)
+        } finally {
+            com.mojang.blaze3d.systems.RenderSystem.setShaderColor(1f, 1f, 1f, 1f)
+        }
+*///?} else if >=1.19.4 {
+/*        val a = (color ushr 24 and 255) / 255f
+        val r = (color ushr 16 and 255) / 255f
+        val g = (color ushr 8 and 255) / 255f
+        val b = (color and 255) / 255f
+        com.mojang.blaze3d.systems.RenderSystem.setShader { net.minecraft.client.render.GameRenderer.getPositionTexProgram() }
+        com.mojang.blaze3d.systems.RenderSystem.setShaderTexture(0, texture)
+        com.mojang.blaze3d.systems.RenderSystem.enableBlend()
+        com.mojang.blaze3d.systems.RenderSystem.defaultBlendFunc()
+        com.mojang.blaze3d.systems.RenderSystem.setShaderColor(r, g, b, a)
+        try {
+            net.minecraft.client.gui.DrawableHelper.drawTexture(native, x, y, 0f, 0f, width, height, width, height)
+        } finally {
+            com.mojang.blaze3d.systems.RenderSystem.setShaderColor(1f, 1f, 1f, 1f)
+            com.mojang.blaze3d.systems.RenderSystem.disableBlend()
+        }
+*///?} else {
+/*        val a = (color ushr 24 and 255) / 255f
+        val r = (color ushr 16 and 255) / 255f
+        val g = (color ushr 8 and 255) / 255f
+        val b = (color and 255) / 255f
+        com.mojang.blaze3d.systems.RenderSystem.setShader { net.minecraft.client.render.GameRenderer.getPositionTexShader() }
+        com.mojang.blaze3d.systems.RenderSystem.setShaderTexture(0, texture)
+        com.mojang.blaze3d.systems.RenderSystem.enableBlend()
+        com.mojang.blaze3d.systems.RenderSystem.defaultBlendFunc()
+        com.mojang.blaze3d.systems.RenderSystem.setShaderColor(r, g, b, a)
+        try {
+            net.minecraft.client.gui.DrawableHelper.drawTexture(native, x, y, 0f, 0f, width, height, width, height)
+        } finally {
+            com.mojang.blaze3d.systems.RenderSystem.setShaderColor(1f, 1f, 1f, 1f)
+            com.mojang.blaze3d.systems.RenderSystem.disableBlend()
+        }
+*///?}
+    }
+
+    fun transformed(x:Float,y:Float,scale:Float,draw:()->Unit) {
+//? if >=26.1 {
+/*        val matrices=native.pose();matrices.pushMatrix();matrices.translate(x,y);matrices.scale(scale,scale)
+        try { draw() } finally { matrices.popMatrix() }
+*///?} else if >=1.21.6 {
+/*        val matrices=native.matrices;matrices.pushMatrix();matrices.translate(x,y);matrices.scale(scale,scale)
+        try { draw() } finally { matrices.popMatrix() }
+*///?} else if >=1.20 {
+        val matrices=native.matrices;matrices.push();matrices.translate(x.toDouble(),y.toDouble(),0.0);matrices.scale(scale,scale,1f)
+        try { draw() } finally { matrices.pop() }
+//?} else {
+/*        native.push();native.translate(x.toDouble(),y.toDouble(),0.0);native.scale(scale,scale,1f)
+        try { draw() } finally { native.pop() }
+*///?}
+    }
+
+    /** Scaled source region; used for small nine-slice textures and cape previews. */
+    fun drawTextureRegion(texture: Identifier, x: Int, y: Int, width: Int, height: Int,
+                          u: Float, v: Float, sourceWidth: Int, sourceHeight: Int,
+                          textureWidth: Int, textureHeight: Int, color: Int = -1) {
+        if (width <= 0 || height <= 0) return
+//? if >=26.1 {
+/*        native.blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, texture, x,y,u,v,width,height,
+            sourceWidth,sourceHeight,textureWidth,textureHeight,color)
+*///?} else if >=1.21.6 {
+/*        native.drawTexture(net.minecraft.client.gl.RenderPipelines.GUI_TEXTURED, texture, x,y,u,v,width,height,
+            sourceWidth,sourceHeight,textureWidth,textureHeight,color)
+*///?} else if >=1.21.2 {
+        native.drawTexture(net.minecraft.client.render.RenderLayer::getGuiTextured, texture, x,y,u,v,width,height,
+            sourceWidth,sourceHeight,textureWidth,textureHeight,color)
+//?} else {
+/*        com.mojang.blaze3d.systems.RenderSystem.enableBlend()
+        com.mojang.blaze3d.systems.RenderSystem.defaultBlendFunc()
+        com.mojang.blaze3d.systems.RenderSystem.setShaderColor((color ushr 16 and 255)/255f,(color ushr 8 and 255)/255f,(color and 255)/255f,(color ushr 24 and 255)/255f)
+        try {
+//? if >=1.20 {
+            native.drawTexture(texture,x,y,width,height,u,v,sourceWidth,sourceHeight,textureWidth,textureHeight)
+//?} else {
+//? if >=1.19.4 {
+            com.mojang.blaze3d.systems.RenderSystem.setShader { net.minecraft.client.render.GameRenderer.getPositionTexProgram() }
+//?} else {
+            com.mojang.blaze3d.systems.RenderSystem.setShader { net.minecraft.client.render.GameRenderer.getPositionTexShader() }
+//?}
+            com.mojang.blaze3d.systems.RenderSystem.setShaderTexture(0,texture)
+            net.minecraft.client.gui.DrawableHelper.drawTexture(native,x,y,width,height,u,v,sourceWidth,sourceHeight,textureWidth,textureHeight)
+//?}
+        } finally {
+            com.mojang.blaze3d.systems.RenderSystem.setShaderColor(1f,1f,1f,1f)
+            com.mojang.blaze3d.systems.RenderSystem.disableBlend()
+        }
+*///?}
+    }
+
+    fun enableScissor(x1: Int, y1: Int, x2: Int, y2: Int) {
+//? if >=1.20 {
+        native.enableScissor(x1, y1, x2, y2)
+//?} else {
+/*        val window = MinecraftClient.getInstance().window
+        val scale = window.scaleFactor
+        com.mojang.blaze3d.systems.RenderSystem.enableScissor(
+            (x1 * scale).toInt(), (window.framebufferHeight - y2 * scale).toInt(),
+            ((x2 - x1) * scale).toInt().coerceAtLeast(0), ((y2 - y1) * scale).toInt().coerceAtLeast(0))
+*///?}
+    }
+
+    fun disableScissor() {
+//? if >=1.20 {
+        native.disableScissor()
+//?} else {
+/*        com.mojang.blaze3d.systems.RenderSystem.disableScissor()
+*///?}
+    }
+}

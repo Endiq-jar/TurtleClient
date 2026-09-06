@@ -1,10 +1,7 @@
 package com.endiq.client.modules.impl.render
 
+import com.endiq.client.compat.*
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
-import net.minecraft.client.MinecraftClient
-import net.minecraft.entity.Entity
-import net.minecraft.entity.LivingEntity
-import net.minecraft.entity.player.PlayerEntity
 
 /**
  * Real memory/CPU optimization, not a cosmetic one: PvpInfoModule, TeamCirclesModule
