@@ -56,9 +56,10 @@ Unavailable, as documented in [the control audit](BUTTON_AUDIT.md).
 - A simplified original turtle emblem at 256/128/64 pixels.
 - A clean wordmark; DejaVu lettering is stored as SVG outlines. Its notice is in
   `artwork/licenses/DejaVu.txt`. No font binary or custom in-game font engine ships.
-- Two flat **1024 × 576** coast/forest compositions, not synthetic screenshots.
-- Clean cosmetic-type previews and pixel-aligned Jade/Aurora/Ember materials.
-  Existing cosmetic IDs, UV layouts, meshes and saved selections are unchanged.
+- Menus are flat: no backdrop images ship, and the title screen's scene
+  switcher is gone.
+- No bundled cosmetic art either. Capes are downloaded at runtime and drawn
+  with the standard Minecraft cape UVs.
 - Menu labels no longer add a drop shadow; HUD shadow preferences still work.
 
 ## Rebuilding
@@ -81,11 +82,11 @@ SVGs and preview sheets stay outside the game jar.
 
 ### Current budget
 
-- **139 prepared PNGs:** **177,667 compressed bytes**.
-- Including the retained 1 × 1 white primitive: **140 PNGs / 177,736 bytes**.
-- **7,065,348 bytes** of base RGBA pixels for all runtime PNGs (about **6.74 MiB**).
-- Roughly **81% less compressed PNG data** than the preceding 954,035-byte set,
-  despite adding 52 module icons and the loading assets.
+- **95 prepared PNGs:** **126,914 compressed bytes**.
+- Including the retained 1 × 1 white primitive: **96 PNGs / 126,983 bytes**.
+- **1,683,200 bytes** of base RGBA pixels for all runtime PNGs (about **1.61 MiB**).
+- Roughly **87% less compressed PNG data** than the preceding 954,035-byte set,
+  after dropping the menu backdrops and the bundled cosmetic art.
 - The automated compressed budget is now **250 KB**, tightened from 1.2 MB.
 
 These are file/pixel budgets, **not measured FPS, total VRAM or GPU benchmarks**.

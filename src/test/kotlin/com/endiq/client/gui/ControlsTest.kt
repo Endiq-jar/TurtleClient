@@ -1,8 +1,7 @@
 package com.endiq.client.gui
 
 import com.endiq.client.gui.components.*
-import com.endiq.client.cosmetics.CosmeticMeshes
-import com.endiq.client.cosmetics.CosmeticManager
+import com.endiq.client.capes.CapeMesh
 import kotlin.test.*
 
 class ControlsTest {
@@ -25,18 +24,15 @@ class ControlsTest {
         assertTrue(buttons.click(70.0,20.0,0));assertEquals("Disconnect first",message);assertEquals(1,calls)
         assertFalse(buttons.click(2.0,20.0,0))
     }
-    @Test fun allSixCosmeticTypesHaveBoundedNonemptyTexturedGeometry() {
-        for (type in CosmeticManager.CosmeticType.values()) {
-            val parts=CosmeticMeshes.models[type]?:fail("Missing mesh: $type")
-            assertTrue(parts.isNotEmpty())
-            for(p in parts) {
-                assertTrue(p.vertices.isNotEmpty() && p.vertices.size%4==0)
-                for(v in p.vertices) {
-                    assertTrue(v.u in 0f..1f && v.v in 0f..1f)
-                    assertTrue(v.x.isFinite() && v.y.isFinite() && v.z.isFinite())
-                }
-            }
-            assertTrue(parts.sumOf { it.vertices.size }<=512,"Mesh budget exceeded for $type")
+    @Test fun theCapeMeshIsBoundedTexturedAndUsesStandardCapeUvs() {
+        val vertices = CapeMesh.vertices
+        assertTrue(vertices.isNotEmpty() && vertices.size % 4 == 0, "Cape mesh must be whole quads")
+        for (vertex in vertices) {
+            assertTrue(vertex.u in 0f..1f && vertex.v in 0f..1f, "Cape UVs stay inside the texture")
+            assertTrue(vertex.x.isFinite() && vertex.y.isFinite() && vertex.z.isFinite())
         }
+        // The visible back panel occupies u 1/64..11/64, v 1/32..17/32 of a 64x32 cape.
+        assertTrue(vertices.any { it.u > 0f && it.v > 0f })
+        assertTrue(vertices.size <= 64, "Cape mesh budget exceeded")
     }
 }

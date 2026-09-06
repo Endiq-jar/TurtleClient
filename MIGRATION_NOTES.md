@@ -46,7 +46,7 @@ That task depends on the full `build` lifecycle, including:
 
 - Kotlin and Java compilation, plus remapping where required;
 - shared unit tests for GUI scrolling/actions, editable controls, settings, timers,
-  notifications, bounded artwork/cosmetics, account storage and fake authentication;
+  notifications, bounded artwork, cape discovery/caching, account storage and fake authentication;
 - runtime bytecode probes for version-specific account-service constructors/factories;
 - bytecode checks that configured `@Inject` targets exist and their callback
   arguments, return callbacks, and staticness match the target Minecraft API, plus
@@ -58,7 +58,7 @@ Stonecutter comments in those test files do not select a version: use runtime
 bytecode/type inspection for version-specific assertions instead.
 
 These checks do not launch Minecraft or apply Mixins in a running client. Smoke-test
-menus, HUDs, name badges, cosmetics, real-account switching, and culling in-game before a release, including with other
+menus, HUDs, name badges, capes, real-account switching, and culling in-game before a release, including with other
 rendering mods if those combinations are supported.
 
 ## Where compatibility lives
@@ -79,8 +79,8 @@ The Kotlin adapters in `com.endiq.client.compat` cover:
   resource packs, inventory, and platform helpers.
 - **`SessionBridge`**: disconnected, type-discovered account-service transactions;
   real session/service behavior still requires the manual account checklist.
-- **`CosmeticFeature` / `CosmeticTextures`**: player render layers, immutable queued
-  loadouts and cached/released custom texture uploads.
+- **`CapeFeature` / `CapeTextures`**: the cape render layer, an immutable queued
+  snapshot and cached/released downloaded texture uploads.
 - **`GameplayControls`**: render-time FOV/lightmap and input hooks. On native 26.2,
   FOV lives in `Camera.calculateFov` and brightness extraction lives in
   `LightmapRenderStateExtractor.extract`, not the old GameRenderer/LightTexture paths.

@@ -1,7 +1,7 @@
 package com.endiq.client.gui
 
+import com.endiq.client.capes.CapeManager
 import com.endiq.client.config.ModulePreferenceCodec
-import com.endiq.client.cosmetics.CosmeticManager
 import com.endiq.client.modules.Module
 import com.endiq.client.modules.impl.utility.TimerClock
 import com.endiq.client.modules.impl.hud.CpsModule
@@ -47,9 +47,11 @@ class WorkingControlsTest {
         fun png(w:Int,h:Int)=ByteBuffer.allocate(33).apply {
             put(byteArrayOf(-119,80,78,71,13,10,26,10));putInt(13);put("IHDR".toByteArray());putInt(w);putInt(h)
         }.array()
-        CosmeticManager.validatePng(png(64,32),true)
-        assertFailsWith<IllegalArgumentException> { CosmeticManager.validatePng(png(512,512),true) }
-        assertFailsWith<IllegalArgumentException> { CosmeticManager.validatePng(png(Int.MAX_VALUE,16),false) }
-        assertFailsWith<IllegalArgumentException> { CosmeticManager.validatePng(ByteArray(33),false) }
+        assertEquals(CapeManager.Size(64,32),CapeManager.validatePng(png(64,32)))
+        assertEquals(CapeManager.Size(128,64),CapeManager.validatePng(png(128,64)))
+        assertFailsWith<IllegalArgumentException> { CapeManager.validatePng(png(512,512)) }
+        assertFailsWith<IllegalArgumentException> { CapeManager.validatePng(png(Int.MAX_VALUE,16)) }
+        assertFailsWith<IllegalArgumentException> { CapeManager.validatePng(png(8,4)) }
+        assertFailsWith<IllegalArgumentException> { CapeManager.validatePng(ByteArray(33)) }
     }
 }

@@ -87,9 +87,9 @@ def main():
     for i,(name,label) in enumerate([('normal','Options'),('hover','Hover'),('primary','Play'),('disabled','Unavailable')]):
         box=(36+i*210,737,192,42);skin(im,name,box)
         text(im,(box[0]+box[2]//2,box[1]+13),label,16,BG if name=='primary' else SUBTLE if name=='disabled' else TEXT,'mt')
-    text(im,(36,815),'04  /  PIXEL MATERIALS + CLEAN TYPE ICONS',14,MUTED)
-    for i,kind in enumerate(('cape','hat','wings','mask','suit','pet')):
-        pic(im,f'textures/cosmetics/previews/{kind}_jade.png',(43+i*137,849,54,54))
+    text(im,(36,815),'04  /  CLEAN TYPE ICONS',14,MUTED)
+    for i,kind in enumerate(('account','search','refresh','folder','delete','settings')):
+        pic(im,f'textures/gui/icons/{kind}.png',(43+i*137,849,54,54))
         text(im,(70+i*137,914),kind.title(),13,MUTED,'mt')
     pic(im,'textures/gui/branding/turtle.png',(905,741,89,89))
     pic(im,'textures/gui/branding/wordmark.png',(1018,765,357,67))
