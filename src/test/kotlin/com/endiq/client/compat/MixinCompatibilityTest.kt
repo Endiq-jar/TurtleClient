@@ -19,7 +19,7 @@ class MixinCompatibilityTest {
 
     private fun readClass(name: String): ClassNode = classes.getOrPut(name) {
         val stream = loader.getResourceAsStream("$name.class") ?: fail("Missing class on test classpath: $name")
-        stream.use { ClassNode().also { node -> ClassReader(it).accept(node, ClassReader.SKIP_CODE) } }
+        stream.use { ClassNode().also { node -> ClassReader(it).accept(node, ClassReader.SKIP_DEBUG) } }
     }
 
     private fun AnnotationNode.value(key: String): Any? {
@@ -58,6 +58,26 @@ class MixinCompatibilityTest {
                                         validateCallback(targetName, method, handler)
                                         checked++
                                     }
+                                }
+                            }
+                            for(redirect in handler.annotations().filter { it.desc=="Lorg/spongepowered/asm/mixin/injection/Redirect;" }) {
+                                val selectors=redirect.value("method") as List<*>
+                                val at=redirect.value("at") as AnnotationNode
+                                val selector=at.value("target") as String
+                                val owner=selector.substringAfter('L').substringBefore(';')
+                                val member=selector.substringAfter(';')
+                                for(methodName in selectors.map { it as String }) {
+                                    val methods=target.methods.filter { it.name==methodName }
+                                    assertTrue(methods.isNotEmpty(),"Missing redirect method $targetName.$methodName")
+                                    val matches=methods.flatMap { it.instructions.toArray().toList() }.count { instruction ->
+                                        when(instruction) {
+                                            is org.objectweb.asm.tree.MethodInsnNode -> instruction.owner==owner && instruction.name+instruction.desc==member
+                                            is org.objectweb.asm.tree.FieldInsnNode -> instruction.owner==owner && instruction.name+":"+instruction.desc==member
+                                            else -> false
+                                        }
+                                    }
+                                    assertTrue(matches>0,"Missing redirect site $selector in $targetName.$methodName")
+                                    checked++
                                 }
                             }
                             for (accessor in handler.annotations().filter { it.desc == "Lorg/spongepowered/asm/mixin/gen/Accessor;" }) {

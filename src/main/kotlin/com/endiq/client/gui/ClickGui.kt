@@ -294,5 +294,6 @@ class ClickGui(private val parent: Screen? = null, initialCosmetics: Boolean = f
         changedSearch(); return true
     }
 
-    override fun closeGui() { MinecraftClient.getInstance().setScreen(parent) }
+    override fun closeGui() {
+        com.endiq.client.config.ModulePreferences.save();MinecraftClient.getInstance().setScreen(parent) }
 }

@@ -26,6 +26,11 @@ abstract class Module(
     protected fun dropdown(name: String, desc: String = "", vararg options: String, default: Int = 0) =
         DropdownSetting(name, desc, options.toList(), default).also { settings.add(it) }
 
+    protected fun text(name:String,desc:String="",default:String="",limit:Int=256)=
+        TextSetting(name,desc,default,limit).also { settings.add(it) }
+    protected fun action(name:String,desc:String="",available:()->Boolean={true},run:()->String)=
+        ActionSetting(name,desc,available,run).also { settings.add(it) }
+
     /** Track releases even inside screens, without toggling while typing in a menu. */
     fun updateKeyState(down: Boolean, allowToggle: Boolean) {
         val pressed = down && !keyWasDown

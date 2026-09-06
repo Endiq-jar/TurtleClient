@@ -17,21 +17,19 @@ object HudRenderer {
     private val BLACK  = 0x88000000.toInt()
     private val BLUE   = 0xFF5B9BD5.toInt()
 
-    @Suppress("UNCHECKED_CAST")
-    private inline fun <reified T : Any> mod(name: String): T? =
-        ModuleManager.getByName(name) as? T
+    private inline fun <reified T : com.endiq.client.modules.Module> mod(): T? = ModuleManager.get<T>()
 
     fun onTick() {
         val client = MinecraftClient.getInstance()
         val player = client.player
 
         // AutoHide
-        mod<AutoHideHudModule>("Autohide HUD")?.let {
+        mod<AutoHideHudModule>()?.let {
             if (it.enabled) it.tick(player?.velocity?.lengthSquared() ?: 0.0 > 0.01)
         }
 
         // Block Indicator
-        mod<BlockIndicatorModule>("Block Indicator")?.let {
+        mod<BlockIndicatorModule>()?.let {
             if (it.enabled) {
                 val hit = client.crosshairTarget
                 it.blockName = if (hit is BlockHitResult)
@@ -40,44 +38,36 @@ object HudRenderer {
         }
 
         // Pack Display
-        mod<PackDisplayModule>("Pack Display")?.let {
+        mod<PackDisplayModule>()?.let {
             if (it.enabled) {
                 it.packName = lastResourcePackName()
             }
         }
 
         // Sprint
-        mod<com.endiq.client.modules.impl.movement.SprintModule>("Sprint")?.let {
+        mod<com.endiq.client.modules.impl.movement.SprintModule>()?.let {
             if (it.enabled && player != null && player.forwardSpeed > 0f && !player.isSprinting)
                 player.isSprinting = true
         }
 
         // Toggle Sprint
-        mod<ToggleSprintModule>("Toggle Sprint")?.let {
+        mod<ToggleSprintModule>()?.let {
             if (it.enabled) it.sprintOn = player?.isSprinting ?: false
         }
 
-        // Zoom
-        mod<ZoomModule>("Zoom")?.let {
-            if (it.enabled) {
-                val pressing = client.currentScreen == null && isKeyDown(org.lwjgl.glfw.GLFW.GLFW_KEY_C)
-                if (pressing) it.startZoom() else it.stopZoom()
-            } else it.stopZoom()
-        }
+        mod<TimersModule>()?.tick()
 
-        // AutoText
-        mod<AutoTextModule>("Auto Text")?.let {
-            if (it.enabled && it.pendingSend && !it.sent && player != null) {
-                sendChatMessage(it.message)
-                it.sent = true; it.pendingSend = false
-            }
-        }
+        mod<FpsModule>()?.tick()
+        mod<ZoomModule>()?.tick(client.player!=null && client.currentScreen==null && isKeyDown(org.lwjgl.glfw.GLFW.GLFW_KEY_C))
+
+        mod<AutoTextModule>()?.tick()
+        mod<WaypointsModule>()?.tick()
 
         // Net Graph sampling
-        mod<NetGraphModule>("Net Graph")?.let { if (it.enabled) it.onTick() }
+        mod<NetGraphModule>()?.let { if (it.enabled) it.onTick() }
 
         // Hit Color flash decay
-        mod<HitColorModule>("Hit Color")?.let { it.tick() }
+        mod<HitColorModule>()?.let { it.tick() }
     }
 
     fun onHudRender(ctx: GuiContext) {
@@ -87,35 +77,49 @@ object HudRenderer {
         val sw = ctx.scaledWindowWidth
         val sh = ctx.scaledWindowHeight
 
+        // Wait for two unobstructed rendered frames before grabbing the game image.
+        mod<CameraModule>()?.frame()
+        mod<CameraModule>()?.let { camera ->
+            val fraction=1f-(System.currentTimeMillis()-camera.flashAt)/(camera.flashDuration.value*1000f)
+            if(camera.enabled && camera.flashEffect.value && fraction>0f) {
+                val alpha=(camera.flashColor.a*fraction).toInt().coerceIn(0,255)
+                ctx.fill(0,0,sw,sh,(alpha shl 24) or (camera.flashColor.toArgb() and 0xFFFFFF))
+            }
+        }
+        mod<WaypointsModule>()?.let { if(it.enabled)HudStyles.text(ctx,it,it.visibleText(),sw-160,60) }
+        mod<ZoomModule>()?.let { if(it.showFovNum.value && it.isZooming)ctx.drawTextWithShadow(tr,"Zoom ${"%.1f".format(it.currentFov)}",sw/2-28,sh-58,WHITE) }
+
         // AutoHide check
-        mod<AutoHideHudModule>("Autohide HUD")?.let {
+        mod<AutoHideHudModule>()?.let {
             if (it.enabled && !it.shouldShow()) return
         }
 
         var ly = 2
-        fun left(t: String) { ctx.drawTextWithShadow(tr, t, 2, ly, WHITE); ly += 10 }
+        fun left(module:com.endiq.client.modules.Module,t:String) {
+            HudStyles.text(ctx,module,t,2,ly);ly+=10
+        }
 
-        mod<FpsModule>("FPS")?.let            { if (it.enabled) left(it.getText()) }
-        mod<PingModule>("Ping")?.let          { if (it.enabled) left(it.getText()) }
-        mod<CpsModule>("CPS")?.let            { if (it.enabled) left(it.getText()) }
-        mod<CoordinatesModule>("Coordinates")?.let { if (it.enabled) left(it.getText()) }
-        mod<ServerAddressModule>("Server Address")?.let { if (it.enabled) left(it.getText()) }
-        mod<PackDisplayModule>("Pack Display")?.let { if (it.enabled) left("Pack: ${it.packName}") }
-        mod<SpeedHudModule>("Speed HUD")?.let { if (it.enabled) left(it.getText()) }
-        mod<MemoryHudModule>("Memory HUD")?.let { if (it.enabled) left(it.getText()) }
-        mod<ClockHudModule>("Clock HUD")?.let { if (it.enabled) left(it.getText()) }
-        mod<DirectionHudModule>("Direction HUD")?.let { if (it.enabled) left(it.getText()) }
-        mod<ToggleSprintModule>("Toggle Sprint")?.let { if (it.enabled) left(it.getText()) }
+        mod<FpsModule>()?.let            { if (it.enabled) left(it,it.getText()) }
+        mod<PingModule>()?.let          { if (it.enabled) left(it,it.getText()) }
+        mod<CpsModule>()?.let            { if (it.enabled) left(it,it.getText()) }
+        mod<CoordinatesModule>()?.let { if (it.enabled) left(it,it.getText()) }
+        mod<ServerAddressModule>()?.let { if (it.enabled) left(it,it.getText()) }
+        mod<PackDisplayModule>()?.let { if (it.enabled) left(it,"Pack: ${it.packName}") }
+        mod<SpeedHudModule>()?.let { if (it.enabled) left(it,it.getText()) }
+        mod<MemoryHudModule>()?.let { if (it.enabled) left(it,it.getText()) }
+        mod<ClockHudModule>()?.let { if (it.enabled) left(it,it.getText()) }
+        mod<DirectionHudModule>()?.let { if (it.enabled) left(it,it.getText()) }
+        mod<ToggleSprintModule>()?.let { if (it.enabled) left(it,it.getText()) }
 
-        val blockInd = mod<BlockIndicatorModule>("Block Indicator")
+        val blockInd = mod<BlockIndicatorModule>()
         if (blockInd?.enabled == true && blockInd.blockName.isNotEmpty())
-            left("Block: ${blockInd.blockName}")
+            left(blockInd,"Block: ${blockInd.blockName}")
 
-        val reach = mod<ReachDisplayModule>("Reach Display")
-        if (reach?.enabled == true && reach.lastReach > 0) left(reach.getText())
+        val reach = mod<ReachDisplayModule>()
+        if (reach?.enabled == true && reach.lastReach > 0) left(reach,reach.getText())
 
         // Block overlay below crosshair
-        mod<BlockOverlayModule>("Block Overlay")?.let {
+        mod<BlockOverlayModule>()?.let {
             if (it.enabled && blockInd?.blockName?.isNotEmpty() == true) {
                 val n = blockInd.blockName; val bw = tr.getWidth(n) + 8
                 val bx = sw/2 - bw/2; val by = sh/2 + 20
@@ -125,7 +129,7 @@ object HudRenderer {
         }
 
         // Crosshair
-        mod<CrosshairModule>("Crosshair")?.let {
+        mod<CrosshairModule>()?.let {
             if (it.enabled) {
                 ctx.fill(sw/2-5, sh/2-1, sw/2+5, sh/2+1, WHITE)
                 ctx.fill(sw/2-1, sh/2-5, sw/2+1, sh/2+5, WHITE)
@@ -133,7 +137,7 @@ object HudRenderer {
         }
 
         // Attack indicator
-        mod<AttackIndicatorModule>("Attack Indicator")?.let {
+        mod<AttackIndicatorModule>()?.let {
             if (it.enabled && player != null) {
                 val c = player.getAttackCooldownProgress(0f)
                 val bx = sw/2-20; val by = sh/2+14
@@ -143,7 +147,7 @@ object HudRenderer {
         }
 
         // Armor bar
-        mod<ArmorBarModule>("Armor Bar")?.let {
+        mod<ArmorBarModule>()?.let {
             if (it.enabled && player != null && player.armor > 0) {
                 val bx = sw/2-40; val by = sh-34
                 ctx.fill(bx, by, bx+80, by+3, BLACK)
@@ -152,7 +156,7 @@ object HudRenderer {
         }
 
         // Potion status (top right)
-        mod<PotionStatusModule>("Potion Status")?.let {
+        mod<PotionStatusModule>()?.let {
             if (it.enabled && player != null) {
                 var py = 2
                 for (e in player.statusEffects) {
@@ -167,7 +171,7 @@ object HudRenderer {
         }
 
         // UHC overlay
-        mod<UhcOverlayModule>("UHC Overlay")?.let {
+        mod<UhcOverlayModule>()?.let {
             if (it.enabled && player != null) {
                 val hp  = "%.1f".format(player.health)
                 val sat = "%.1f".format(player.hungerManager.saturationLevel)
@@ -176,7 +180,7 @@ object HudRenderer {
         }
 
         // PvP Info
-        mod<PvpInfoModule>("PvP Info")?.let {
+        mod<PvpInfoModule>()?.let {
             if (it.enabled && player != null) {
                 val nearby = com.endiq.client.modules.impl.render.EntityCache
                     .playersWithin(it.maxDist.value.toDouble())
@@ -195,19 +199,21 @@ object HudRenderer {
             }
         }
 
-        // Timers
-        mod<TimersModule>("Stopwatch / Timer")?.let {
-            if (it.enabled && it.running) {
-                val rem = it.remaining()
-                if (rem > 0) {
-                    val lbl = "Timer: ${rem/60000}:${"%02d".format((rem%60000)/1000)}"
-                    ctx.drawTextWithShadow(tr, lbl, sw/2-tr.getWidth(lbl)/2, 14, YELLOW)
+        // Timer controls now drive a monotonic clock and every visible style option.
+        mod<TimersModule>()?.let { timer ->
+            if(timer.enabled && timer.clock.started) {
+                val label=timer.text();val scale=timer.scale.value
+                val x=timer.posX.value/100f*(sw-tr.getWidth(label)*scale-8).coerceAtLeast(0f)+4
+                val y=timer.posY.value/100f*(sh-14*scale).coerceAtLeast(0f)+3
+                ctx.transformed(x,y,scale) {
+                    if(timer.showBg.value)ctx.fill(-4,-3,tr.getWidth(label)+4,11,timer.bgColor.toArgb())
+                    ctx.drawText(tr,label,0,0,if(timer.finished)timer.alertColor.toArgb() else timer.textColor.toArgb(),timer.shadow.value)
                 }
             }
         }
 
         // Popup events
-        mod<PopupEventsModule>("Popup Events")?.let {
+        mod<PopupEventsModule>()?.let {
             if (it.enabled) {
                 it.popups.removeAll { p -> p.ticks <= 0 }
                 it.popups.forEach { p -> p.ticks-- }
@@ -223,7 +229,7 @@ object HudRenderer {
         }
 
         // Motion blur overlay
-        mod<MotionBlurModule>("Motion Blur")?.let {
+        mod<MotionBlurModule>()?.let {
             if (it.enabled && player != null) {
                 val dy = Math.abs(player.yaw - it.lastYaw)
                 val dp = Math.abs(player.pitch - it.lastPitch)
@@ -234,7 +240,7 @@ object HudRenderer {
         }
 
         // Keystrokes
-        mod<KeystrokesModule>("Keystrokes")?.let {
+        mod<KeystrokesModule>()?.let {
             if (it.enabled) {
                 val o = client.options; val bx = 4; val by = sh-52
                 drawKey(ctx, "W", bx+13, by,      o.forwardKey.isPressed)
@@ -246,7 +252,7 @@ object HudRenderer {
         }
 
         // Armor Status
-        mod<ArmorStatusModule>("Armor Status")?.let {
+        mod<ArmorStatusModule>()?.let {
             if (it.enabled && player != null) {
                 var ax = 2; val ay = sh-68
                 for (stack in armorStacks(player)) {
@@ -261,7 +267,7 @@ object HudRenderer {
         }
 
         // Hit Color flash overlay
-        mod<HitColorModule>("Hit Color")?.let {
+        mod<HitColorModule>()?.let {
             if (it.enabled && it.flashTicks > 0) {
                 val strength = (it.flashTicks.toFloat() / it.duration.value.coerceAtLeast(1f)) * it.intensity.value
                 val base = it.hitColor.toArgb()
@@ -271,7 +277,7 @@ object HudRenderer {
         }
 
         // Combo Counter
-        mod<ComboCounterModule>("Combo Counter")?.let {
+        mod<ComboCounterModule>()?.let {
             if (it.enabled && it.combo > 1 && !it.isExpired()) {
                 val cx = (sw * it.posX.value / 100f).toInt()
                 val cy = (sh * it.posY.value / 100f).toInt()
@@ -282,7 +288,7 @@ object HudRenderer {
         }
 
         // Net Graph
-        mod<NetGraphModule>("Net Graph")?.let {
+        mod<NetGraphModule>()?.let {
             if (it.enabled && it.samples.isNotEmpty()) {
                 val gx = (sw * it.posX.value / 100f).toInt()
                 val gy = (sh * it.posY.value / 100f).toInt()
@@ -302,7 +308,7 @@ object HudRenderer {
         }
 
         // Team View
-        mod<TeamViewModule>("Team View")?.let {
+        mod<TeamViewModule>()?.let {
             if (it.enabled && player != null) {
                 val myTeam = player.scoreboardTeam
                 if (myTeam != null) {

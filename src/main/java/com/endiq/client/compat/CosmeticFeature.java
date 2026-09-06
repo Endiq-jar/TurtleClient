@@ -103,6 +103,8 @@ public final class CosmeticFeature extends FeatureRenderer<PlayerEntityRenderSta
                     };
 //? if >=26.1 {
 /*                    if (bone != null) bone.translateAndRotate(matrices);
+*///?} else if >=1.21.9 {
+/*                    if (bone != null) bone.applyTransform(matrices);
 *///?} else {
                     if (bone != null) bone.rotate(matrices);
 //?}

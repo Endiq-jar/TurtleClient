@@ -30,8 +30,10 @@ object TurtleClientClient : ClientModInitializer {
         net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents.CLIENT_STARTED.register {
             com.endiq.client.cosmetics.CosmeticManager.initialize()
             com.endiq.client.accounts.Accounts.initialize()
+            com.endiq.client.config.ModulePreferences.initialize()
         }
         net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents.CLIENT_STOPPING.register {
+            com.endiq.client.config.ModulePreferences.save()
             com.endiq.client.accounts.Accounts.shutdown()
         }
 
@@ -55,12 +57,14 @@ object TurtleClientClient : ClientModInitializer {
                 if (client.currentScreen == null) client.setScreen(ClickGui())
             }
             HudRenderer.onTick()
+            com.endiq.client.config.ModulePreferences.tick()
         }
 
         // Local attack detection -- drives Combo Counter and Hit Color flash.
         // Fires client-side when the player swings on an entity; not authoritative
         // damage confirmation, but the same approximation other PvP clients use for HUD feedback.
         AttackEntityCallback.EVENT.register { player, _world, _hand, entity, _hitResult ->
+            ModuleManager.get<com.endiq.client.modules.impl.hud.ReachDisplayModule>()?.takeIf { it.enabled }?.let { it.lastReach=player.distanceTo(entity).toDouble() }
             val combo = ModuleManager.getByName("Combo Counter") as? ComboCounterModule
             if (combo?.enabled == true) combo.registerHit(entity.uuid)
 
@@ -72,7 +76,7 @@ object TurtleClientClient : ClientModInitializer {
 
         ClientPlayConnectionEvents.JOIN.register { _handler, _sender, _client ->
             val m = ModuleManager.getByName("Auto Text") as? AutoTextModule
-            m?.let { it.sent = false; it.pendingSend = true }
+            m?.joined()
         }
 
         // 1.18.2 predates Fabric's receive-message event. LegacyChatMixin

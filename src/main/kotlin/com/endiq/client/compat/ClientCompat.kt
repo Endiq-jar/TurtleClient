@@ -217,3 +217,24 @@ fun copyToClipboard(text: String) {
     MinecraftClient.getInstance().keyboard.clipboard = text
 //?}
 }
+
+fun playUiClick() {
+//? if >=26.1 {
+/*    MinecraftClient.getInstance().soundManager.play(net.minecraft.client.resources.sounds.SimpleSoundInstance.forUI(net.minecraft.sounds.SoundEvents.UI_BUTTON_CLICK,1f))
+*///?} else {
+    MinecraftClient.getInstance().soundManager.play(net.minecraft.client.sound.PositionedSoundInstance.master(net.minecraft.sound.SoundEvents.UI_BUTTON_CLICK,1f))
+//?}
+}
+
+fun captureScreenshot(notify:Boolean) {
+    val client=MinecraftClient.getInstance()
+//? if >=26.1 {
+/*    net.minecraft.client.Screenshot.grab(client.gameDirectory,client.mainRenderTarget) { message ->
+        if(notify)client.execute { client.player?.displayClientMessage(message,false) }
+    }
+*///?} else {
+    net.minecraft.client.util.ScreenshotRecorder.saveScreenshot(client.runDirectory,client.framebuffer) { message ->
+        if(notify)client.execute { client.player?.sendMessage(message,false) }
+    }
+//?}
+}

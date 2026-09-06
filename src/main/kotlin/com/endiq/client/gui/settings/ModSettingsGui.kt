@@ -20,13 +20,15 @@ class ModSettingsGui(private val mod: Module, private val parent: Screen) : Clie
     private var waitingForKey = false
     private var draggingSlider: SliderSetting? = null
     private var sliderTrack = panel
-    private val palette = listOf(0x86E8BC, 0xFFFFFF, 0x7FC9FF, 0xB7A0EF, 0xF2AC9B, 0xF3D38A)
+    private var feedback=""
 
     private fun rowHeight(setting: Setting) = when (setting) {
         is SliderSetting -> 42
         is BoolSetting -> 30
         is DropdownSetting -> 42
         is ColorSetting -> 38
+        is ActionSetting -> 32
+        is TextSetting -> 44
     }
 
     private fun updateBounds() = scroll.update(mod.settings.sumOf { rowHeight(it) } + 16, viewport.height)
@@ -80,12 +82,17 @@ class ModSettingsGui(private val mod: Module, private val parent: Screen) : Clie
         val keyLabel = if (waitingForKey) "Press a key..." else keyName(mod.key)
         Theme.button(ctx, textRenderer, keyButton, keyLabel, keyButton.contains(mx.toDouble(), my.toDouble()), waitingForKey)
         Theme.button(ctx, textRenderer, clearButton, "Clear", clearButton.contains(mx.toDouble(), my.toDouble()))
-        Theme.label(ctx, textRenderer, if (waitingForKey) "Escape: cancel  /  Delete: clear" else "Wheel / drag to scroll  /  Escape: back",
+        Theme.label(ctx, textRenderer, if (waitingForKey) "Escape: cancel  /  Delete: clear" else if(feedback.isNotEmpty())feedback else com.endiq.client.config.ModulePreferences.lastError ?: "Wheel / drag to scroll  /  Escape: back",
             panel.x + 10, panel.bottom - 12, Theme.SUBTLE, panel.width - 20)
     }
 
     private fun drawSetting(ctx: GuiContext, setting: Setting, rect: UiRect) {
         when (setting) {
+            is ActionSetting -> Theme.button(ctx,textRenderer,UiRect(rect.x,rect.y+2,rect.width,24),setting.name,false,false,setting.available())
+            is TextSetting -> {
+                Theme.label(ctx,textRenderer,setting.name,rect.x,rect.y+2,Theme.TEXT,rect.width)
+                Theme.button(ctx,textRenderer,UiRect(rect.x,rect.y+16,rect.width,22),setting.value.ifEmpty { "Click to edit" },false)
+            }
             is SliderSetting -> {
                 val value = String.format(Locale.ROOT, if (setting.max >= 100f && setting.suffix.isEmpty()) "%.0f" else "%.2f", setting.value) + setting.suffix
                 Theme.label(ctx, textRenderer, setting.name, rect.x, rect.y + 3, Theme.TEXT, rect.width - textRenderer.getWidth(value) - 10)
@@ -114,7 +121,7 @@ class ModSettingsGui(private val mod: Module, private val parent: Screen) : Clie
             }
             is ColorSetting -> {
                 Theme.label(ctx, textRenderer, setting.name, rect.x, rect.y + 3, Theme.TEXT, rect.width - 35)
-                Theme.label(ctx, textRenderer, "Click swatch to cycle color", rect.x, rect.y + 17, Theme.SUBTLE, rect.width - 35)
+                Theme.label(ctx, textRenderer, "Edit color and opacity", rect.x, rect.y + 17, Theme.SUBTLE, rect.width - 35)
                 val swatch = UiRect(rect.right - 25, rect.y + 3, 25, 23)
                 Theme.panel(ctx, swatch, setting.toArgb(), Theme.BORDER, 4)
             }
@@ -142,6 +149,15 @@ class ModSettingsGui(private val mod: Module, private val parent: Screen) : Clie
         for ((setting, rect) in rows()) {
             if (!rect.contains(mx, my)) continue
             when (setting) {
+                is ActionSetting -> if(button==0) {
+                    feedback=if(!setting.available())setting.description.ifEmpty { "Join a world to use this action." }
+                        else runCatching { setting.action() }.getOrElse { "This action could not complete. Check the current world and try again." }
+                    return true
+                }
+                is TextSetting -> if(button==0) {
+                    MinecraftClient.getInstance().setScreen(TextEditorScreen(setting.name,setting.description,setting.value,setting.limit,this) { setting.value=it })
+                    return true
+                }
                 is SliderSetting -> if (button == 0 && UiRect(rect.x - 4, rect.y + 15, rect.width + 8, 17).contains(mx, my)) {
                     draggingSlider = setting; sliderTrack = UiRect(rect.x, rect.y + 21, rect.width, 5)
                     updateSlider(mx); return true
@@ -152,9 +168,7 @@ class ModSettingsGui(private val mod: Module, private val parent: Screen) : Clie
                     setting.selected = Math.floorMod(setting.selected + step, setting.options.size); return true
                 }
                 is ColorSetting -> if (button == 0 && UiRect(rect.right - 25, rect.y + 3, 25, 23).contains(mx, my)) {
-                    val current = (setting.r shl 16) or (setting.g shl 8) or setting.b
-                    val next = palette[(palette.indexOf(current) + 1).mod(palette.size)]
-                    setting.r = next ushr 16 and 255; setting.g = next ushr 8 and 255; setting.b = next and 255
+                    MinecraftClient.getInstance().setScreen(ColorEditorScreen(setting,this))
                     return true
                 }
             }
@@ -202,7 +216,7 @@ class ModSettingsGui(private val mod: Module, private val parent: Screen) : Clie
         return super.onKeyPressed(key, scancode, modifiers)
     }
 
-    override fun closeGui() { MinecraftClient.getInstance().setScreen(parent) }
+    override fun closeGui() { com.endiq.client.config.ModulePreferences.save();MinecraftClient.getInstance().setScreen(parent) }
 
     private fun keyName(key: Int): String = when (key) {
         GLFW.GLFW_KEY_UNKNOWN -> "None"

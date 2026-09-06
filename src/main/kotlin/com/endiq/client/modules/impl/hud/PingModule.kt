@@ -19,7 +19,7 @@ class PingModule : Module("Ping Display", "Shows server ping", Category.HUD) {
     val showBar     = bool("Show Signal Bar", default=false)
     fun getText(): String {
         val ping = clientPing() ?: return "Ping: N/A"
-        return "Ping: ${ping}ms"
+        return when(style.selected) { 1->"$ping ms";2->"$ping ping";else->"Ping: ${ping}ms" }
     }
     init { enable() }
 }

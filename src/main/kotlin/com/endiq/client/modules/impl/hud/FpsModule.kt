@@ -22,8 +22,11 @@ class FpsModule : Module("FPS Counter", "Shows frames per second", Category.HUD)
     val warnBelow   = slider("Warn Below FPS", default=30f, min=0f, max=120f)
     val warnColor   = color("Warn Color", r=224, g=82, b=82)
     val alignment   = dropdown("Alignment", options=arrayOf("Left", "Center", "Right"), default=0)
+    val history=ArrayDeque<Int>()
+    fun tick() { if(enabled) { history.addLast(clientFps());while(history.size>80)history.removeFirst() } }
     fun getText(): String {
         val fps = clientFps()
+        if(!showLabel.value)return fps.toString()
         return when(label.selected) {
             1 -> "$fps fps"; 2 -> "$fps FPS"; 3 -> "Frames: $fps"
             else -> "FPS: $fps"

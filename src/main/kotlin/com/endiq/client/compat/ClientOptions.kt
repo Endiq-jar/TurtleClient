@@ -74,4 +74,23 @@ object ClientOptions {
         }
 *///?}
 
+    var sensitivity:Double
+//? if >=26.1 {
+/*        get()=MinecraftClient.getInstance().options.sensitivity().get()
+        set(value) { MinecraftClient.getInstance().options.sensitivity().set(value.coerceIn(0.0,1.0)) }
+*///?} else if >=1.19 {
+        get()=MinecraftClient.getInstance().options.mouseSensitivity.value
+        set(value) { MinecraftClient.getInstance().options.mouseSensitivity.value=value.coerceIn(0.0,1.0) }
+//?} else {
+/*        get()=MinecraftClient.getInstance().options.mouseSensitivity
+        set(value) { MinecraftClient.getInstance().options.mouseSensitivity=value.coerceIn(0.0,1.0) }
+*///?}
+    var cinematic:Boolean
+//? if >=26.1 {
+/*        get()=MinecraftClient.getInstance().options.smoothCamera
+        set(value) { MinecraftClient.getInstance().options.smoothCamera=value }
+*///?} else {
+        get()=MinecraftClient.getInstance().options.smoothCameraEnabled
+        set(value) { MinecraftClient.getInstance().options.smoothCameraEnabled=value }
+//?}
 }

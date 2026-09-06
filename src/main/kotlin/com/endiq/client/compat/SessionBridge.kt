@@ -21,6 +21,14 @@ typealias GameSession = net.minecraft.client.session.Session
 /*typealias GameSession = net.minecraft.client.util.Session
 *///?}
 
+//? if <1.21.10 {
+//? if >=1.20.2 {
+typealias GameAccountType = net.minecraft.client.session.Session.AccountType
+//?} else {
+/*typealias GameAccountType = net.minecraft.client.util.Session.AccountType
+*///?}
+//?}
+
 /**
  * A transaction, not just a username edit. Rebuild account-scoped services before
  * touching Minecraft, then swap on its client thread while disconnected.
@@ -53,9 +61,9 @@ object SessionBridge {
 *///?} else if >=1.21.10 {
 /*        return GameSession(p.name,p.id,token,xuid,clientId)
 *///?} else if >=1.20.2 {
-        return GameSession(p.name,p.id,token,xuid,clientId,if(p.kind==AccountProfile.Kind.OFFLINE)GameSession.AccountType.LEGACY else GameSession.AccountType.MSA)
+        return GameSession(p.name,p.id,token,xuid,clientId,if(p.kind==AccountProfile.Kind.OFFLINE)GameAccountType.LEGACY else GameAccountType.MSA)
 //?} else {
-/*        return GameSession(p.name,p.id.toString(),token,xuid,clientId,if(p.kind==AccountProfile.Kind.OFFLINE)GameSession.AccountType.LEGACY else GameSession.AccountType.MSA)
+/*        return GameSession(p.name,p.id.toString(),token,xuid,clientId,if(p.kind==AccountProfile.Kind.OFFLINE)GameAccountType.LEGACY else GameAccountType.MSA)
 *///?}
     }
     private fun instanceFields(value:Any):List<Any> = runCatching {

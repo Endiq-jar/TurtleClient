@@ -13,6 +13,17 @@ class GuiContext(val native: NativeGuiContext) {
 *///?}
     }
 
+    fun drawText(font:TextRenderer,text:String,x:Int,y:Int,color:Int,shadow:Boolean) {
+        if(shadow) { drawTextWithShadow(font,text,x,y,color);return }
+//? if >=26.1 {
+/*        native.text(font,text,x,y,color,false)
+*///?} else if >=1.20 {
+        native.drawText(font,text,x,y,color,false)
+//?} else {
+/*        font.draw(native,text,x.toFloat(),y.toFloat(),color)
+*///?}
+    }
+
     fun drawTextWithShadow(font: TextRenderer, text: String, x: Int, y: Int, color: Int) {
 //? if >=26.1 {
 /*        native.text(font, text, x, y, color, true)
@@ -89,6 +100,22 @@ class GuiContext(val native: NativeGuiContext) {
             com.mojang.blaze3d.systems.RenderSystem.setShaderColor(1f, 1f, 1f, 1f)
             com.mojang.blaze3d.systems.RenderSystem.disableBlend()
         }
+*///?}
+    }
+
+    fun transformed(x:Float,y:Float,scale:Float,draw:()->Unit) {
+//? if >=26.1 {
+/*        val matrices=native.pose();matrices.pushMatrix();matrices.translate(x,y);matrices.scale(scale,scale)
+        try { draw() } finally { matrices.popMatrix() }
+*///?} else if >=1.21.6 {
+/*        val matrices=native.matrices;matrices.pushMatrix();matrices.translate(x,y);matrices.scale(scale,scale)
+        try { draw() } finally { matrices.popMatrix() }
+*///?} else if >=1.20 {
+        val matrices=native.matrices;matrices.push();matrices.translate(x.toDouble(),y.toDouble(),0.0);matrices.scale(scale,scale,1f)
+        try { draw() } finally { matrices.pop() }
+//?} else {
+/*        native.push();native.translate(x.toDouble(),y.toDouble(),0.0);native.scale(scale,scale,1f)
+        try { draw() } finally { native.pop() }
 *///?}
     }
 

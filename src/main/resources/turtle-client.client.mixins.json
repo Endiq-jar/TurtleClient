@@ -15,7 +15,10 @@
   "BlockEntityCullingMixin",
   "ParticleCullingMixin",
   "SkyCloudCullingMixin",
-  "ChunkOcclusionCullingMixin"
+  "ChunkOcclusionCullingMixin",
+  "GameplayMouseMixin",
+  "FovMixin",
+  "BrightnessMixin"
  ],
  "injectors": {
   "defaultRequire": 1
