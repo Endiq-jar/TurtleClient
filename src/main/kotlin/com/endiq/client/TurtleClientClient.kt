@@ -29,6 +29,10 @@ object TurtleClientClient : ClientModInitializer {
         CosmeticFeature.register()
         net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents.CLIENT_STARTED.register {
             com.endiq.client.cosmetics.CosmeticManager.initialize()
+            com.endiq.client.accounts.Accounts.initialize()
+        }
+        net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents.CLIENT_STOPPING.register {
+            com.endiq.client.accounts.Accounts.shutdown()
         }
 
         // The callback's second argument changed from tick delta to a tracker;

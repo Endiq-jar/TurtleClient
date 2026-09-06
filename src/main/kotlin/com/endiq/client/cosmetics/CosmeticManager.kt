@@ -53,16 +53,21 @@ object CosmeticManager {
         val bundled = builtins()
         val used = mutableSetOf<String>()
         var skipped = 0
+        var pixelsRemaining = 4_194_304 // At most 16 MiB of decoded custom RGBA pixels.
         for (type in CosmeticType.values()) {
             val folder = File(baseDir(), type.folderName)
             folder.mkdirs()
-            val custom = folder.listFiles()?.filter { it.isFile && it.extension.equals("png", true) }?.sortedBy { it.name }?.take(256).orEmpty().mapNotNull { file ->
+            val custom = folder.listFiles()?.filter { it.isFile && it.extension.equals("png", true) }?.sortedBy { it.name }?.take(64).orEmpty().mapNotNull { file ->
                 runCatching {
                     require(file.canonicalFile.toPath().startsWith(folder.canonicalFile.toPath()))
                     require(file.length() in 24..2_097_152)
-                    val bytes = file.readBytes()
+                    val bytes = file.inputStream().use { it.readNBytes(2_097_153) }
                     validatePng(bytes, type == CosmeticType.CAPE)
                     val key = MessageDigest.getInstance("SHA-256").digest(bytes).joinToString("") { "%02x".format(it.toInt() and 255) }
+                    if(key !in used) {
+                        val dimensions=ByteBuffer.wrap(bytes,16,8);val pixels=dimensions.int*dimensions.int
+                        require(pixels<=pixelsRemaining);pixelsRemaining-=pixels
+                    }
                     used += key
                     val texture = loadedTextures.getOrPut(key) {
                         identifier("turtle-client", "custom/$key").also { CosmeticTextures.upload(it, bytes) }
@@ -98,8 +103,13 @@ object CosmeticManager {
         val player = MinecraftClient.getInstance().player ?: return Loadout.EMPTY
         if (entity !== player || player.isInvisible || player.isSpectator) return Loadout.EMPTY
         // Suppress a cape/wing collision with elytra, and don't float a pet beside a bed.
+//? if >=1.21.2 && <26.1 {
+        val gliding=player.isGliding
+//?} else {
+/*        val gliding=player.isFallFlying
+*///?}
         val items=current.items.filterNot {
-            (player.isFallFlying && (it.type==CosmeticType.CAPE || it.type==CosmeticType.WINGS)) ||
+            (gliding && (it.type==CosmeticType.CAPE || it.type==CosmeticType.WINGS)) ||
                 (player.isSleeping && it.type==CosmeticType.PET)
         }
 //? if >=26.1 {
@@ -109,7 +119,8 @@ object CosmeticManager {
 //?}
     }
     fun validatePng(bytes: ByteArray, cape: Boolean) {
-        require(bytes.size >= 24 && bytes.take(8).toByteArray().contentEquals(byteArrayOf(-119,80,78,71,13,10,26,10))) { "Not a PNG" }
+        require(bytes.size in 24..2_097_152 && bytes.take(8).toByteArray().contentEquals(byteArrayOf(-119,80,78,71,13,10,26,10))) { "Not a PNG" }
+        require(ByteBuffer.wrap(bytes,8,4).int==13 && bytes.copyOfRange(12,16).contentEquals("IHDR".toByteArray())) { "Missing PNG header" }
         val buffer=ByteBuffer.wrap(bytes,16,8)
         val w=buffer.int;val h=buffer.int
         require(w in 16..512 && h in 16..512) { "PNG dimensions must be 16–512 pixels" }

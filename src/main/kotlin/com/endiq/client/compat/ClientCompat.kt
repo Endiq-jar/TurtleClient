@@ -202,3 +202,18 @@ fun optionsScreen(parent: Screen): Screen {
 }
 
 fun isLocalPlayer(entity: Entity): Boolean = entity.uuid == MinecraftClient.getInstance().player?.uuid
+
+fun clipboardText(): String {
+//? if >=26.1 {
+/*    return MinecraftClient.getInstance().keyboardHandler.clipboard
+*///?} else {
+    return MinecraftClient.getInstance().keyboard.clipboard
+//?}
+}
+fun copyToClipboard(text: String) {
+//? if >=26.1 {
+/*    MinecraftClient.getInstance().keyboardHandler.clipboard = text
+*///?} else {
+    MinecraftClient.getInstance().keyboard.clipboard = text
+//?}
+}

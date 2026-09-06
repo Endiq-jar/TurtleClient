@@ -18,6 +18,7 @@ class CustomTitleScreen : ClientScreen("TurtleClient") {
     private var sceneButton = card
     private var quitButton = card
     private var favoritesButton: UiRect? = null
+    private var accountButton=card
     private val version = gameVersion()
 
     override fun init() {
@@ -56,9 +57,12 @@ class CustomTitleScreen : ClientScreen("TurtleClient") {
         ctx.drawTexture(Theme.LOGO, 12, 10, 18, 18)
         Theme.label(ctx, textRenderer, "TURTLE CLIENT", 36, 15, Theme.TEXT)
         val name = Theme.fit(textRenderer, playerName(), minOf(100, width / 4))
-        val account = UiRect(width - textRenderer.getWidth(name) - 26, 10, textRenderer.getWidth(name) + 14, 20)
-        Theme.panel(ctx, account, 0xBF101C20.toInt(), 0x65385855, 5)
-        Theme.label(ctx, textRenderer, name, account.x + 7, account.y + 6, Theme.MUTED)
+        val account = UiRect(width - textRenderer.getWidth(name) - 44, 10, textRenderer.getWidth(name) + 32, 22)
+        accountButton=account
+        Theme.button(ctx,textRenderer,account,"",account.contains(mx.toDouble(),my.toDouble()))
+        ctx.drawTexture(Theme.icon("account"),account.x+5,account.y+4,14,14,Theme.ACCENT)
+        Theme.label(ctx, textRenderer, name, account.x + 23, account.y + 7, Theme.TEXT)
+        if(account.contains(mx.toDouble(),my.toDouble()))Theme.tooltip(ctx,textRenderer,"Manage and switch accounts",mx,my,width,height)
         Theme.panel(ctx, card, 0xEC101C20.toInt(), 0xCC36514A.toInt(), 9)
         if (compact) {
             val brandX = card.x + (card.width - 168) / 2
@@ -85,6 +89,7 @@ class CustomTitleScreen : ClientScreen("TurtleClient") {
 
     override fun onMouseClicked(mx: Double, my: Double, button: Int): Boolean {
         if (button == 0) {
+            if(accountButton.contains(mx,my)) { MinecraftClient.getInstance().setScreen(AccountsScreen(this));return true }
             buttons.firstOrNull { it.bounds.contains(mx, my) }?.let { it.action(); return true }
             if (quitButton.contains(mx, my)) { MinecraftClient.getInstance().scheduleStop(); return true }
             if (sceneButton.contains(mx, my)) { forest = !forest; return true }

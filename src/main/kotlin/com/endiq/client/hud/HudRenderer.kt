@@ -60,7 +60,7 @@ object HudRenderer {
         // Zoom
         mod<ZoomModule>("Zoom")?.let {
             if (it.enabled) {
-                val pressing = isKeyDown(org.lwjgl.glfw.GLFW.GLFW_KEY_C)
+                val pressing = client.currentScreen == null && isKeyDown(org.lwjgl.glfw.GLFW.GLFW_KEY_C)
                 if (pressing) it.startZoom() else it.stopZoom()
             } else it.stopZoom()
         }
@@ -196,7 +196,7 @@ object HudRenderer {
         }
 
         // Timers
-        mod<TimersModule>("Timers")?.let {
+        mod<TimersModule>("Stopwatch / Timer")?.let {
             if (it.enabled && it.running) {
                 val rem = it.remaining()
                 if (rem > 0) {

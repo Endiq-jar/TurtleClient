@@ -52,6 +52,8 @@ import net.minecraft.client.render.entity.state.PlayerEntityRenderState;
     @Override public void submit(PoseStack matrices, SubmitNodeCollector queue, int light, AvatarRenderState state, float a, float b) {
         CosmeticManager.Loadout outfit = ((CosmeticRenderState)state).turtleClient$getCosmetics();
         var model = getParentModel();
+        if (outfit.getItems().isEmpty()) return;
+        model.setupAnim(state);
 *///?} else if >=1.21.2 {
 public final class CosmeticFeature extends FeatureRenderer<PlayerEntityRenderState, PlayerEntityModel> {
     public CosmeticFeature(FeatureRendererContext<PlayerEntityRenderState, PlayerEntityModel> parent) { super(parent); }
@@ -67,6 +69,8 @@ public final class CosmeticFeature extends FeatureRenderer<PlayerEntityRenderSta
 //?}
         CosmeticManager.Loadout outfit = ((CosmeticRenderState)state).turtleClient$getCosmetics();
         var model = getContextModel();
+        if (outfit.getItems().isEmpty()) return;
+        model.setAngles(state);
 //?} else {
 /*public final class CosmeticFeature extends FeatureRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> {
     public CosmeticFeature(FeatureRendererContext<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> parent) { super(parent); }

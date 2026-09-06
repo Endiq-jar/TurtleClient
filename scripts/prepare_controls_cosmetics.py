@@ -53,7 +53,7 @@ panel=Image.new('RGBA',(64,64),(16,28,32,255))
 panel.alpha_composite(button.crop((0,0,8,8)),(0,0));panel.alpha_composite(button.crop((120,0,128,8)),(56,0))
 panel.alpha_composite(button.crop((0,24,8,32)),(0,56));panel.alpha_composite(button.crop((120,24,128,32)),(56,56))
 d=ImageDraw.Draw(panel);d.line((8,0,55,0),fill='#304D48');d.line((8,63,55,63),fill='#233C38');d.line((0,8,0,55),fill='#304D48');d.line((63,8,63,55),fill='#233C38')
-a=Image.new('L',(256,256));ImageDraw.Draw(a).rounded_rectangle((0,0,255,255),radius=24,fill=255);panel.putalpha(a.resize((64,64),Image.Resampling.LANCZOS))
+a=Image.new('L',(256,256));ImageDraw.Draw(a).rounded_rectangle((0,0,255,255),radius=24,fill=255);panel.putalpha(a.resize((64,64),Image.Resampling.LANCZOS).point(lambda v: 0 if v < 3 else v))
 save(panel,'textures/gui/buttons/panel.png')
 # Vanilla-layout capes plus compact all-face materials for the other meshes.
 sheet=Image.open(S/'cosmetic-material-master.png').convert('RGB')
