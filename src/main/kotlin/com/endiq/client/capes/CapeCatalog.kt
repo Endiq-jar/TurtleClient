@@ -79,15 +79,19 @@ object CapeCatalog {
     /** Mojang's session server answers with a base64 texture blob that may or may not hold a cape. */
     fun mojangProfile(uuid: UUID) = "https://sessionserver.mojang.com/session/minecraft/profile/$uuid"
 
+    /** The profile's base64 texture blob holds the cape URL when the account has a cape. */
     fun mojangCapeUrl(profileJson: String): String? = runCatching {
-        val properties = JsonParser.parseString(profileJson).asJsonObject["properties"]?.asJsonArray ?: return null
-        val decoded = properties.mapNotNull { runCatching { it.asJsonObject["value"].asString }.getOrNull() }
-            .mapNotNull { runCatching { String(Base64.getDecoder().decode(it), Charsets.UTF_8) }.getOrNull() }
+        val properties = JsonParser.parseString(profileJson).asJsonObject["properties"]?.asJsonArray
+        val encoded = mutableListOf<String>()
+        if (properties != null) for (property in properties) {
+            runCatching { property.asJsonObject["value"].asString }.getOrNull()?.let { encoded += it }
+        }
+        val decoded = encoded.mapNotNull { runCatching { String(Base64.getDecoder().decode(it), Charsets.UTF_8) }.getOrNull() }
             .mapNotNull { runCatching { JsonParser.parseString(it).asJsonObject }.getOrNull() }
-        val textures = decoded.firstOrNull { it["textures"]?.isJsonObject == true }?.getAsJsonObject("textures") ?: return null
-        val cape = textures["CAPE"]?.takeIf { it.isJsonObject }?.asJsonObject ?: return null
-        val url = cape["url"]?.takeIf { it.isJsonPrimitive && it.asJsonPrimitive.isString }?.asString ?: return null
-        secure(url)
+        val textures = decoded.firstOrNull { it["textures"]?.isJsonObject == true }?.getAsJsonObject("textures")
+        val cape = textures?.get("CAPE")?.takeIf { it.isJsonObject }?.asJsonObject
+        val url = cape?.get("url")?.takeIf { it.isJsonPrimitive && it.asJsonPrimitive.isString }?.asString
+        url?.let { secure(it) }
     }.getOrNull()
 
     /** LabyMod answers with the cape PNG itself, or 404 when the account has none. */
@@ -118,8 +122,8 @@ object CapeCatalog {
             val request = HttpRequest.newBuilder(URI(url)).timeout(Duration.ofSeconds(15))
                 .header("User-Agent", USER_AGENT).header("Accept", "*/*").GET().build()
             val response = client.send(request, HttpResponse.BodyHandlers.ofByteArray())
-            val body = response.body() ?: return null
-            if (response.statusCode() !in 200..299 || body.size > MAX_TEXTURE_BYTES) null else body
+            val body = response.body()
+            if (body == null || response.statusCode() !in 200..299 || body.size > MAX_TEXTURE_BYTES) null else body
         }.getOrNull()
     }
 }
