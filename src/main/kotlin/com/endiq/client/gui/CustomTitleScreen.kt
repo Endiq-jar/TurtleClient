@@ -5,6 +5,7 @@ import com.endiq.client.compat.*
 import com.endiq.client.gui.components.*
 import com.endiq.client.gui.components.TurtleTheme as Theme
 import org.lwjgl.glfw.GLFW
+import com.endiq.client.modules.ModuleManager
 
 /** One aspect-correct background and a compact navigation card, even at large GUI scales. */
 class CustomTitleScreen : ClientScreen("TurtleClient") {
@@ -16,6 +17,7 @@ class CustomTitleScreen : ClientScreen("TurtleClient") {
     private var compact = false
     private var sceneButton = card
     private var quitButton = card
+    private var favoritesButton: UiRect? = null
     private val version = gameVersion()
 
     override fun init() {
@@ -43,6 +45,7 @@ class CustomTitleScreen : ClientScreen("TurtleClient") {
         buttons += Button(UiRect(x + half + 6, y, w - half - 6, secondaryHeight), "Screenshots") { openFolder("screenshots") }
         quitButton = UiRect(12, height - 30, 54, 20)
         sceneButton = UiRect(width - 100, height - 30, 88, 20)
+        favoritesButton = if (ModuleManager.modules.any { it.favorited }) UiRect(72, height - 30, 74, 20) else null
         keyboardFocus = -1
     }
 
@@ -70,12 +73,13 @@ class CustomTitleScreen : ClientScreen("TurtleClient") {
         }
         Theme.button(ctx, textRenderer, quitButton, "Quit", quitButton.contains(mx.toDouble(), my.toDouble()))
         Theme.button(ctx, textRenderer, sceneButton, if (forest) "Scene: Forest" else "Scene: Coast", sceneButton.contains(mx.toDouble(), my.toDouble()))
+        favoritesButton?.let { Theme.button(ctx, textRenderer, it, "Favorites", it.contains(mx.toDouble(), my.toDouble())) }
         if (width >= 680) {
             val line = "YOUR WORLD. YOUR PACE."
             Theme.label(ctx, textRenderer, line, card.right + 32, card.bottom - 18, Theme.TEXT, width - card.right - 48)
         }
         val footer = "Fabric  /  Minecraft $version"
-        if (width > 390) Theme.label(ctx, textRenderer, footer, (width - textRenderer.getWidth(footer)) / 2, height - 23, Theme.MUTED)
+        if (width > 390 && (favoritesButton == null || width >= 560)) Theme.label(ctx, textRenderer, footer, (width - textRenderer.getWidth(footer)) / 2, height - 23, Theme.MUTED)
         super.renderGui(ctx, mx, my, delta)
     }
 
@@ -84,6 +88,9 @@ class CustomTitleScreen : ClientScreen("TurtleClient") {
             buttons.firstOrNull { it.bounds.contains(mx, my) }?.let { it.action(); return true }
             if (quitButton.contains(mx, my)) { MinecraftClient.getInstance().scheduleStop(); return true }
             if (sceneButton.contains(mx, my)) { forest = !forest; return true }
+            if (favoritesButton?.contains(mx, my) == true) {
+                MinecraftClient.getInstance().setScreen(ClickGui(this, favoritesOnly = true)); return true
+            }
         }
         return super.onMouseClicked(mx, my, button)
     }

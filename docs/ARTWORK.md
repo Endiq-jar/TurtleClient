@@ -1,5 +1,7 @@
 # TurtleClient visual refresh
 
+![TurtleClient artwork preview](turtle-ui-preview.jpg)
+
 ## Original identity
 
 The turtle emblem and both landscape masters were generated specifically for
@@ -54,6 +56,7 @@ keyboard paging. Modules, cosmetics, and settings use the same scroll model.
 Rendering and hit testing share geometry and the same scroll offset, so clipped
 rows cannot be activated through headers or footers. Returning from settings keeps
 the module list's position. The settings footer/keybind controls remain fixed.
+Favorited modules remain reachable through the title menu's Favorites shortcut.
 
 Cosmetics still use the existing local-file registry/equip state. This refresh does
 not implement in-world cosmetic meshes; the UI no longer presents a box-drawn fake

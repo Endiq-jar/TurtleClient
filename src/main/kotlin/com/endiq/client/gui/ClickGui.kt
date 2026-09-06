@@ -10,7 +10,7 @@ import com.endiq.client.modules.Module
 import com.endiq.client.modules.ModuleManager
 import org.lwjgl.glfw.GLFW
 
-class ClickGui(private val parent: Screen? = null, initialCosmetics: Boolean = false) : ClientScreen("TurtleClient") {
+class ClickGui(private val parent: Screen? = null, initialCosmetics: Boolean = false, private var favoritesOnly: Boolean = false) : ClientScreen("TurtleClient") {
     private var category = Module.Category.ALL
     private var cosmeticType = CosmeticType.CAPE
     private var cosmetics = initialCosmetics
@@ -46,13 +46,14 @@ class ClickGui(private val parent: Screen? = null, initialCosmetics: Boolean = f
     }
 
     private fun tabLabel(index: Int): String = if (cosmetics) types[index].displayName else when (categories[index]) {
+        Module.Category.ALL -> if (favoritesOnly) "Favorites" else "All"
         Module.Category.MOVEMENT -> "Move"
         Module.Category.PERFORMANCE -> "Perf"
         else -> categories[index].displayName
     }
 
     private fun refreshItems() {
-        modules = ModuleManager.getByCategory(category).filter { it.name.contains(query, true) }
+        modules = ModuleManager.getByCategory(category).filter { it.name.contains(query, true) && (!favoritesOnly || it.favorited) }
         entries = CosmeticManager.getByType(cosmeticType).filter { it.name.contains(query, true) }
     }
 
@@ -188,7 +189,7 @@ class ClickGui(private val parent: Screen? = null, initialCosmetics: Boolean = f
     }
 
     private fun changeView(value: Boolean) {
-        cosmetics = value; query = ""; searchFocused = false
+        cosmetics = value; favoritesOnly = false; query = ""; searchFocused = false
         moduleScroll.endDrag(); cosmeticScroll.endDrag()
         refreshItems(); layout()
     }

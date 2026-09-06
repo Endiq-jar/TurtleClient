@@ -56,7 +56,7 @@ object TurtleTheme {
     }
 
     fun button(ctx: GuiContext, font: TextRenderer, rect: UiRect, text: String, hovered: Boolean, primary: Boolean = false) {
-        val bg = if (primary) ACCENT else if (hovered) HOVER else CARD
+        val bg = if (primary) { if (hovered) 0xFFABF4D2.toInt() else ACCENT } else if (hovered) HOVER else CARD
         panel(ctx, rect, bg, if (hovered || primary) ACCENT else BORDER, 5)
         val value = fit(font, text, rect.width - 12)
         label(ctx, font, value, rect.x + (rect.width - font.getWidth(value)) / 2, rect.y + (rect.height - 8) / 2,
