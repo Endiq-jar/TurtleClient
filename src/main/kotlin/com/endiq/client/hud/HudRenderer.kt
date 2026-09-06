@@ -80,6 +80,10 @@ object HudRenderer {
         // Wait for two unobstructed rendered frames before grabbing the game image.
         mod<CameraModule>()?.frame()
         mod<CameraModule>()?.let { camera ->
+            if(camera.notification.value && System.currentTimeMillis()-camera.noticeAt<5000 && camera.notice.isNotEmpty()) {
+                val value=com.endiq.client.gui.components.TurtleTheme.fit(tr,camera.notice,sw-24)
+                ctx.drawTextWithShadow(tr,value,(sw-tr.getWidth(value))/2,sh-80,WHITE)
+            }
             val fraction=1f-(System.currentTimeMillis()-camera.flashAt)/(camera.flashDuration.value*1000f)
             if(camera.enabled && camera.flashEffect.value && fraction>0f) {
                 val alpha=(camera.flashColor.a*fraction).toInt().coerceIn(0,255)
@@ -128,13 +132,7 @@ object HudRenderer {
             }
         }
 
-        // Crosshair
-        mod<CrosshairModule>()?.let {
-            if (it.enabled) {
-                ctx.fill(sw/2-5, sh/2-1, sw/2+5, sh/2+1, WHITE)
-                ctx.fill(sw/2-1, sh/2-5, sw/2+1, sh/2+5, WHITE)
-            }
-        }
+        CrosshairRenderer.draw(ctx)
 
         // Attack indicator
         mod<AttackIndicatorModule>()?.let {

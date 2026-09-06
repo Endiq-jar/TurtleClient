@@ -29,7 +29,11 @@ public final class CosmeticGeometry {
             consumer.vertex(pose.getPositionMatrix(),v.getX(),v.getY(),v.getZ()).color(color)
                 .texture(v.getU(),v.getV()).overlay(OverlayTexture.DEFAULT_UV).light(light)
                 .normal(pose,v.getNx(),v.getNy(),v.getNz());
-//?} else {
+//?} else if >=1.20.5 {
+/*            consumer.vertex(pose.getPositionMatrix(),v.getX(),v.getY(),v.getZ()).color(color)
+                .texture(v.getU(),v.getV()).overlay(OverlayTexture.DEFAULT_UV).light(light)
+                .normal(pose,v.getNx(),v.getNy(),v.getNz()).next();
+*///?} else {
 /*            consumer.vertex(pose.getPositionMatrix(),v.getX(),v.getY(),v.getZ()).color(color)
                 .texture(v.getU(),v.getV()).overlay(OverlayTexture.DEFAULT_UV).light(light)
                 .normal(pose.getNormalMatrix(),v.getNx(),v.getNy(),v.getNz()).next();

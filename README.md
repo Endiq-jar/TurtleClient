@@ -1,5 +1,16 @@
 # 🐢 TurtleClient — Fabric, multi-version
 
+## Controls, cosmetics and accounts
+
+- Generated, optimized 32px icons and nine-sliced button textures in the Turtle jade style.
+- **18 client-side cosmetics:** three colorways each of capes, hats, wings, masks, shell suits and turtle pets. Equip in Cosmetics and use **F5** in a world. See [cosmetic formats and limits](COSMETICS_README.txt).
+- **Account switcher:** click the name at the top right of the title menu. Offline profiles and the launcher account are available; official Microsoft device sign-in requires your own approved public application ID. Tokens are memory-only. See [setup and security](docs/ACCOUNTS.md).
+- Repaired HUD lookups, CPS input, live FOV/zoom/brightness, timer/utility actions, crosshair customization, RGBA editing and saved preferences.
+- **Not every legacy prototype is implemented.** Unavailable modules and basic fixed-layout overlays are explicitly identified instead of presenting fake working controls. See the [button audit and manual test checklist](docs/BUTTON_AUDIT.md).
+
+![Generated control artwork, not an in-game screenshot](docs/turtle-controls-preview.jpg)
+
+
 A custom Minecraft client mod built with Fabric + Kotlin for eight Minecraft
 targets, from 1.18.2 through 26.2, via [Stonecutter](https://stonecutter.kikugie.dev/).
 See [MIGRATION_NOTES.md](MIGRATION_NOTES.md) for the exact version matrix,

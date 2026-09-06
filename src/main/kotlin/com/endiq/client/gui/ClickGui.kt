@@ -15,6 +15,7 @@ class ClickGui(private val parent: Screen? = null, initialCosmetics: Boolean = f
     private var cosmeticType = CosmeticType.CAPE
     private var cosmetics = initialCosmetics
     private var query = ""
+    private var feedback=""
     private var searchFocused = false
     private val moduleScroll = ScrollState()
     private val cosmeticScroll = ScrollState()
@@ -129,7 +130,7 @@ class ClickGui(private val parent: Screen? = null, initialCosmetics: Boolean = f
         Theme.scrollbar(ctx, scroll, track, mx, my)
         sidebar?.let { drawCosmeticSummary(ctx, it, mx, my) }
         ctx.fill(panel.x + 8, panel.bottom - 24, panel.right - 8, panel.bottom - 23, Theme.BORDER)
-        val hint = if (cosmetics) CosmeticManager.lastMessage else "Right-click: settings  /  Wheel: scroll"
+        val hint = if (cosmetics) CosmeticManager.lastMessage else feedback.ifEmpty { "Right-click: settings  /  Wheel: scroll" }
         val footer = "MC $version"
         val reserved = textRenderer.getWidth(footer) + 20
         Theme.label(ctx, textRenderer, hint, panel.x + 10, panel.bottom - 15, Theme.MUTED, panel.width - reserved - 20)
@@ -152,7 +153,7 @@ class ClickGui(private val parent: Screen? = null, initialCosmetics: Boolean = f
         val nameY = if (rect.height < 68) 30 else 34
         Theme.label(ctx, textRenderer, module.name, rect.x + 10, rect.y + nameY, Theme.TEXT, rect.width - 20)
         if (rect.height >= 78) Theme.label(ctx, textRenderer, module.description, rect.x + 10, rect.y + 47, Theme.MUTED, rect.width - 20)
-        Theme.label(ctx, textRenderer, if (module.enabled) "Enabled" else "Disabled", rect.x + 10, rect.bottom - 15,
+        Theme.label(ctx, textRenderer, if(module.unavailableReason!=null)"Unavailable" else if (module.enabled) "Enabled" else "Disabled", rect.x + 10, rect.bottom - 15,
             if (module.enabled) Theme.ACCENT else Theme.SUBTLE, rect.width - 52)
         val switch = UiRect(rect.right - 38, rect.bottom - 21, 28, 13)
         Theme.rounded(ctx, switch, if (module.enabled) Theme.ACTIVE else Theme.BACKGROUND, 6)
@@ -254,7 +255,7 @@ class ClickGui(private val parent: Screen? = null, initialCosmetics: Boolean = f
             if (button == 1 || (button == 0 && UiRect(rect.right - 29, rect.y + 7, 22, 22).contains(mx, my))) {
                 MinecraftClient.getInstance().setScreen(ModSettingsGui(module, this)); return true
             }
-            if (button == 0) { module.toggle(); return true }
+            if (button == 0) { if(module.unavailableReason!=null)feedback=module.unavailableReason!! else { module.toggle();feedback="${module.name}: ${if(module.enabled)"enabled" else "disabled"}" };return true }
         }
         return super.onMouseClicked(mx, my, button)
     }

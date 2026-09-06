@@ -65,3 +65,29 @@ not implement in-world cosmetic meshes; the UI no longer presents a box-drawn fa
 player as a working 3D preview.
 
 The included artwork preview is a design/asset preview, not an in-game screenshot.
+
+## Generated control/cosmetic extension
+
+The original logo and landscapes are retained. Three further generated masters
+(icon atlas, blank button-state atlas, and Jade/Aurora/Ember material/crest atlas)
+were sliced with `scripts/prepare_controls_cosmetics.py`.
+
+Run the original preparation script **first**, then:
+
+```sh
+python3 scripts/prepare_controls_cosmetics.py /path/to/v2-masters
+```
+
+Expected master names: `icon-atlas-master.png`, `button-atlas-master.png`,
+`cosmetic-material-master.png`. Masters are not runtime resources. The second
+script replaces the earlier procedural icons; running only the first script
+would revert them. Unwanted generated lettering was removed from the monitor
+icon. Buttons contain no baked-in text and are rendered in nine slices. Runtime
+icons are 32x32, button strips 128x32, material tiles 64x64 and capes 128x64.
+
+The combined manifest now covers **81 PNGs / 953,966 compressed bytes**, including
+18 model textures and 18 thumbnails. World materials use nearest sampling;
+interface assets use linear filtering. The manifest contains actual dimensions,
+byte counts and SHA-256 hashes; tests enforce transparency where appropriate and
+a 1.2 MB compressed budget. These are file/decode budgets, not measured VRAM/FPS.
+The new [artwork sheet](turtle-controls-preview.jpg) is not a game screenshot.

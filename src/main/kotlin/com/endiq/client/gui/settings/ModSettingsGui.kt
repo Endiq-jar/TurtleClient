@@ -31,11 +31,11 @@ class ModSettingsGui(private val mod: Module, private val parent: Screen) : Clie
         is TextSetting -> 44
     }
 
-    private fun updateBounds() = scroll.update(mod.settings.sumOf { rowHeight(it) } + 16, viewport.height)
+    private fun updateBounds() = scroll.update(mod.visibleSettings.sumOf { rowHeight(it) } + 16, viewport.height)
 
     private fun rows(): List<Pair<Setting, UiRect>> {
         var y = viewport.y + 8 - scroll.pixels
-        return mod.settings.map { setting ->
+        return mod.visibleSettings.map { setting ->
             (setting to UiRect(viewport.x + 10, y, (viewport.width - 20).coerceAtLeast(1), rowHeight(setting))).also { y += it.second.height }
         }
     }
@@ -63,9 +63,9 @@ class ModSettingsGui(private val mod: Module, private val parent: Screen) : Clie
         Theme.label(ctx, textRenderer, "MODULE SETTINGS", panel.x + 43, panel.y + 25, Theme.SUBTLE, panel.width - 84)
         if (closeButton.contains(mx.toDouble(), my.toDouble())) Theme.rounded(ctx, closeButton, Theme.HOVER)
         ctx.drawTexture(Theme.icon("close"), closeButton.x + 4, closeButton.y + 4, 14, 14, Theme.MUTED)
-        Theme.button(ctx, textRenderer, enableButton, if (mod.enabled) "Enabled" else "Disabled", enableButton.contains(mx.toDouble(), my.toDouble()), mod.enabled)
+        Theme.button(ctx, textRenderer, enableButton, if(mod.unavailableReason!=null)"Unavailable" else if (mod.enabled) "Enabled" else "Disabled", enableButton.contains(mx.toDouble(), my.toDouble()), mod.enabled,mod.unavailableReason==null)
         Theme.button(ctx, textRenderer, favoriteButton, if (mod.favorited) "Favorited" else "Favorite", favoriteButton.contains(mx.toDouble(), my.toDouble()))
-        Theme.label(ctx, textRenderer, mod.description, panel.x + 10, panel.y + 74, Theme.MUTED, panel.width - 20)
+        Theme.label(ctx, textRenderer, ModulePresentation.note(mod), panel.x + 10, panel.y + 74, Theme.MUTED, panel.width - 20)
         ctx.fill(panel.x + 10, viewport.y, panel.right - 10, viewport.y + 1, Theme.BORDER)
         updateBounds()
         ctx.enableScissor(viewport.x, viewport.y, viewport.right, viewport.bottom)
@@ -74,7 +74,7 @@ class ModSettingsGui(private val mod: Module, private val parent: Screen) : Clie
                 if (rect.bottom <= viewport.y || rect.y >= viewport.bottom) continue
                 drawSetting(ctx, setting, rect)
             }
-            if (mod.settings.isEmpty()) Theme.label(ctx, textRenderer, "No extra settings for this module.", viewport.x + 10, viewport.y + 18, Theme.MUTED, viewport.width - 20)
+            if (mod.visibleSettings.isEmpty()) Theme.label(ctx, textRenderer, "No extra settings for this module.", viewport.x + 10, viewport.y + 18, Theme.MUTED, viewport.width - 20)
         } finally { ctx.disableScissor() }
         Theme.scrollbar(ctx, scroll, scrollbar, mx, my)
         ctx.fill(panel.x + 10, panel.bottom - 52, panel.right - 10, panel.bottom - 51, Theme.BORDER)
@@ -138,9 +138,9 @@ class ModSettingsGui(private val mod: Module, private val parent: Screen) : Clie
         if (waitingForKey) { waitingForKey = false; return true }
         if (button == 0) {
             if (closeButton.contains(mx, my)) { closeGui(); return true }
-            if (enableButton.contains(mx, my)) { mod.toggle(); return true }
+            if (enableButton.contains(mx, my)) { if(mod.unavailableReason!=null)feedback=mod.unavailableReason!! else mod.toggle();return true }
             if (favoriteButton.contains(mx, my)) { mod.favorited = !mod.favorited; return true }
-            if (keyButton.contains(mx, my)) { waitingForKey = true; return true }
+            if (keyButton.contains(mx, my)) { if(mod.unavailableReason!=null)feedback=mod.unavailableReason!! else waitingForKey=true;return true }
             if (clearButton.contains(mx, my)) { mod.key = GLFW.GLFW_KEY_UNKNOWN; return true }
             updateBounds()
             if (scroll.beginDrag(mx, my, scrollbar)) return true

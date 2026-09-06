@@ -8,6 +8,11 @@ class CameraModule : Module("Camera","Capture a clean PNG or open the screenshot
     val flashColor=color("Flash Color",r=255,g=255,b=255,a=60)
     val flashDuration=slider("Flash Duration",default=.3f,min=.1f,max=1f,suffix="s")
     val notification=bool("Show Notification",default=true)
+    var notice=""
+        private set
+    var noticeAt=0L
+        private set
+    fun notifyCapture(message:String) { notice=message;noticeAt=System.currentTimeMillis() }
     private var frames=0
     var flashAt=0L
         private set

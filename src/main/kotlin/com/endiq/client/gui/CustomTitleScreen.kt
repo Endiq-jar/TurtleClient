@@ -9,12 +9,13 @@ import com.endiq.client.modules.ModuleManager
 
 /** One aspect-correct background and a compact navigation card, even at large GUI scales. */
 class CustomTitleScreen : ClientScreen("TurtleClient") {
-    private data class Button(val bounds: UiRect, val label: String, val primary: Boolean = false, val action: () -> Unit)
+    private data class Button(val bounds: UiRect, val label: String, val primary: Boolean = false, val enabled:()->Boolean={true}, val action: () -> Unit)
     private val buttons = mutableListOf<Button>()
     private var forest = false
     private var keyboardFocus = -1
     private var card = UiRect(0, 0, 1, 1)
     private var compact = false
+    private var feedback=""
     private var sceneButton = card
     private var quitButton = card
     private var favoritesButton: UiRect? = null
@@ -36,7 +37,7 @@ class CustomTitleScreen : ClientScreen("TurtleClient") {
         var y = card.y + 12 + header
         buttons += Button(UiRect(x, y, w, primaryHeight), "Singleplayer", true) { MinecraftClient.getInstance().setScreen(SelectWorldScreen(this)) }
         y += primaryHeight + 6
-        buttons += Button(UiRect(x, y, w, primaryHeight), "Multiplayer") { MinecraftClient.getInstance().setScreen(MultiplayerScreen(this)) }
+        buttons += Button(UiRect(x, y, w, primaryHeight), "Multiplayer",enabled={multiplayerAllowed()}) { MinecraftClient.getInstance().setScreen(MultiplayerScreen(this)) }
         y += primaryHeight + 6
         val half = (w - 6) / 2
         buttons += Button(UiRect(x, y, half, secondaryHeight), "Modules") { MinecraftClient.getInstance().setScreen(ClickGui(this)) }
@@ -74,11 +75,12 @@ class CustomTitleScreen : ClientScreen("TurtleClient") {
         }
         buttons.forEachIndexed { index, button ->
             Theme.button(ctx, textRenderer, button.bounds, button.label,
-                button.bounds.contains(mx.toDouble(), my.toDouble()) || keyboardFocus == index, button.primary)
+                button.bounds.contains(mx.toDouble(), my.toDouble()) || keyboardFocus == index, button.primary,button.enabled())
         }
         Theme.button(ctx, textRenderer, quitButton, "Quit", quitButton.contains(mx.toDouble(), my.toDouble()))
         Theme.button(ctx, textRenderer, sceneButton, if (forest) "Scene: Forest" else "Scene: Coast", sceneButton.contains(mx.toDouble(), my.toDouble()))
         favoritesButton?.let { Theme.button(ctx, textRenderer, it, "Favorites", it.contains(mx.toDouble(), my.toDouble())) }
+        if(feedback.isNotEmpty())Theme.label(ctx,textRenderer,feedback,card.x,card.bottom+8,Theme.DANGER,card.width)
         if (width >= 680) {
             val line = "YOUR WORLD. YOUR PACE."
             Theme.label(ctx, textRenderer, line, card.right + 32, card.bottom - 18, Theme.TEXT, width - card.right - 48)
@@ -90,7 +92,7 @@ class CustomTitleScreen : ClientScreen("TurtleClient") {
     override fun onMouseClicked(mx: Double, my: Double, button: Int): Boolean {
         if (button == 0) {
             if(accountButton.contains(mx,my)) { MinecraftClient.getInstance().setScreen(AccountsScreen(this));return true }
-            buttons.firstOrNull { it.bounds.contains(mx, my) }?.let { it.action(); return true }
+            buttons.firstOrNull { it.bounds.contains(mx, my) }?.let { if(it.enabled())it.action() else feedback="Multiplayer is disabled by this account's or launcher's permissions.";return true }
             if (quitButton.contains(mx, my)) { MinecraftClient.getInstance().scheduleStop(); return true }
             if (sceneButton.contains(mx, my)) { forest = !forest; return true }
             if (favoritesButton?.contains(mx, my) == true) {
@@ -107,7 +109,7 @@ class CustomTitleScreen : ClientScreen("TurtleClient") {
             return true
         }
         if ((key == GLFW.GLFW_KEY_ENTER || key == GLFW.GLFW_KEY_KP_ENTER) && keyboardFocus >= 0) {
-            buttons[keyboardFocus].action(); return true
+            val selected=buttons[keyboardFocus];if(selected.enabled())selected.action() else feedback="Multiplayer is disabled by this account's or launcher's permissions.";return true
         }
         return super.onKeyPressed(key, scancode, modifiers)
     }
@@ -119,6 +121,6 @@ class CustomTitleScreen : ClientScreen("TurtleClient") {
             val folder = MinecraftClient.getInstance().runDirectory.resolve(name)
             folder.mkdirs()
             openPath(folder)
-        }.onFailure { TurtleClient.LOGGER.warn("Unable to open the $name folder", it) }
+        }.onFailure { feedback="Could not open the $name folder. Check file permissions." }
     }
 }

@@ -35,7 +35,7 @@ class AccountsScreen(private val parent:Screen) : ClientScreen("Accounts") {
         buttons.clear()
         val x=panel.x+10;val gap=6;val w=(panel.width-32)/3;val y=panel.bottom-62
         fun add(id:String,label:String,rect:UiRect,primary:Boolean=false,enabled:()->Boolean={true},why:String="",run:()->Unit) {
-            buttons.add(rect,UiAction(id,label,enabled,why,run),primary)
+            buttons.add(rect,UiAction(id,label,enabled,why,run),primary,id=="account.remove")
         }
         when(mode) {
             Mode.LIST -> {

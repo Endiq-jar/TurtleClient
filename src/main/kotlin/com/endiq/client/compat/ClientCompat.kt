@@ -221,6 +221,8 @@ fun copyToClipboard(text: String) {
 fun playUiClick() {
 //? if >=26.1 {
 /*    MinecraftClient.getInstance().soundManager.play(net.minecraft.client.resources.sounds.SimpleSoundInstance.forUI(net.minecraft.sounds.SoundEvents.UI_BUTTON_CLICK,1f))
+*///?} else if >=1.21.9 {
+/*    MinecraftClient.getInstance().soundManager.play(net.minecraft.client.sound.PositionedSoundInstance.ui(net.minecraft.sound.SoundEvents.UI_BUTTON_CLICK,1f))
 *///?} else {
     MinecraftClient.getInstance().soundManager.play(net.minecraft.client.sound.PositionedSoundInstance.master(net.minecraft.sound.SoundEvents.UI_BUTTON_CLICK,1f))
 //?}
@@ -229,12 +231,34 @@ fun playUiClick() {
 fun captureScreenshot(notify:Boolean) {
     val client=MinecraftClient.getInstance()
 //? if >=26.1 {
-/*    net.minecraft.client.Screenshot.grab(client.gameDirectory,client.mainRenderTarget) { message ->
-        if(notify)client.execute { client.player?.displayClientMessage(message,false) }
+/*    net.minecraft.client.Screenshot.grab(client.gameDirectory,client.gameRenderer.mainRenderTarget()) { message ->
+        if(notify)client.execute { com.endiq.client.modules.ModuleManager.get<com.endiq.client.modules.impl.utility.CameraModule>()?.notifyCapture(message.string) }
     }
 *///?} else {
     net.minecraft.client.util.ScreenshotRecorder.saveScreenshot(client.runDirectory,client.framebuffer) { message ->
-        if(notify)client.execute { client.player?.sendMessage(message,false) }
+        if(notify)client.execute { com.endiq.client.modules.ModuleManager.get<com.endiq.client.modules.impl.utility.CameraModule>()?.notifyCapture(message.string) }
     }
+//?}
+}
+
+fun multiplayerAllowed():Boolean {
+//? if >=26.1 {
+/*    return MinecraftClient.getInstance().allowsMultiplayer()
+*///?} else {
+    return MinecraftClient.getInstance().isMultiplayerEnabled
+//?}
+}
+fun firstPersonView():Boolean {
+//? if >=26.1 {
+/*    return MinecraftClient.getInstance().options.cameraType.isFirstPerson
+*///?} else {
+    return MinecraftClient.getInstance().options.perspective.isFirstPerson
+//?}
+}
+fun targetsEntity():Boolean {
+//? if >=26.1 {
+/*    return MinecraftClient.getInstance().crosshairTarget is net.minecraft.world.phys.EntityHitResult
+*///?} else {
+    return MinecraftClient.getInstance().crosshairTarget is net.minecraft.util.hit.EntityHitResult
 //?}
 }

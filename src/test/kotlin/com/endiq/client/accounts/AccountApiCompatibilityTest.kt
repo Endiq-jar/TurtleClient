@@ -30,8 +30,8 @@ class AccountApiCompatibilityTest {
         }
         // Social manager on every target; keys, reporting and telemetry on modern ones.
         assertTrue(factories.isNotEmpty(),"No account-scoped factories were discovered")
-//? if >=1.19 {
-        assertTrue(factories.size>=4,"Missing account services: ${factories.map { it.first }}")
-//?}
+        if(minecraft.fields.any { it.name in setOf("profileKeys","profileKeyPairManager") })
+            assertTrue(factories.size>=4,"Missing account services: ${factories.map { it.first }}")
+        else assertTrue(factories.size>=2,"Missing legacy account services")
     }
 }

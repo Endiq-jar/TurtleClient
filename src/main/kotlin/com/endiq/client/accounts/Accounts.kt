@@ -76,6 +76,7 @@ object Accounts {
     }
     fun use(profile:AccountProfile) {
         if(busy)return
+        if(!ready(profile)) { message="Sign in to this Microsoft account again before switching.";return }
         if(MinecraftClient.getInstance().world!=null) { message="Disconnect from your world before switching accounts.";return }
         val value=credentials[profile.id] ?: when {
             profile.id==launcher.profile.id -> launcher

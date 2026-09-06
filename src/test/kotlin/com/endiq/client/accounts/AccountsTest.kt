@@ -24,6 +24,7 @@ class AccountsTest {
         reply(200,"""{"Token":"test-xbox-token"}"""),
         reply(200,"""{"Token":"test-xsts-token","DisplayClaims":{"xui":[{"uhs":"test-hash","xid":"123"}]}}"""),
         reply(200,"""{"access_token":"test-minecraft-token","expires_in":3600}"""),
+        reply(200,"""{"items":[{"name":"game_minecraft"}]}"""),
         reply(200,"""{"id":"123456781234123412341234567890ab","name":"TurtleTester"}""")
     )
     @Test fun completeOfficialFlowPreservesVerifiedIdentityWithoutPrintingSecrets() {
@@ -34,7 +35,7 @@ class AccountsTest {
         assertEquals(UUID.fromString("12345678-1234-1234-1234-1234567890ab"),result.profile.id)
         assertEquals("123",result.xuid);assertTrue(result.usable(clock));assertFalse(result.usable(clock+3600000))
         assertFalse(result.toString().contains("test-minecraft-token"));assertFalse(code.toString().contains("device-secret"))
-        assertEquals(6,http.calls.size);assertTrue(http.calls.all { it.scheme=="https" })
+        assertEquals(7,http.calls.size);assertTrue(http.calls.all { it.scheme=="https" })
     }
     @Test fun pollingHonorsPendingSlowDownAndCancellation() {
         var clock=0L;val sleeps=mutableListOf<Long>()
@@ -46,7 +47,7 @@ class AccountsTest {
         assertFailsWith<CancellationException> { auth.complete(clientId,MicrosoftLogin.DeviceChallenge("CODE","private",URI("https://microsoft.com/link"),100000,1),cancel) }
     }
     @Test fun unlicensedAccountIsRejectedRatherThanSilentlyChangedToOffline() {
-        val responses=exchange();responses[4]=reply(404,"{}");var clock=0L
+        val responses=exchange();responses[5]=reply(404,"{}");var clock=0L
         val auth=MicrosoftLogin(FakeTransport((listOf(device())+responses).toMutableList()),{clock},{clock+=it})
         val error=assertFailsWith<AccountProblem> { auth.complete(clientId,auth.begin(clientId),MicrosoftLogin.Cancellation()) }
         assertTrue(error.message.orEmpty().contains("licensed"))

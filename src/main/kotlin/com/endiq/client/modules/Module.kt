@@ -8,6 +8,8 @@ abstract class Module(
     val category: Category,
     var key: Int = GLFW.GLFW_KEY_UNKNOWN
 ) {
+    val unavailableReason get()=ModulePresentation.unavailable(this)
+    val visibleSettings get()=ModulePresentation.settings(this)
     var enabled: Boolean = false
         private set
     var keyWasDown: Boolean = false
@@ -38,7 +40,7 @@ abstract class Module(
         if (pressed && allowToggle) toggle()
     }
 
-    fun toggle() { enabled = !enabled; if (enabled) onEnable() else onDisable() }
+    fun toggle() { if(unavailableReason!=null)return;enabled = !enabled; if (enabled) onEnable() else onDisable() }
     fun enable()  { if (!enabled) toggle() }
     fun disable() { if (enabled)  toggle() }
 

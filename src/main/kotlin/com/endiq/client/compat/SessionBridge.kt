@@ -61,9 +61,9 @@ object SessionBridge {
 *///?} else if >=1.21.10 {
 /*        return GameSession(p.name,p.id,token,xuid,clientId)
 *///?} else if >=1.20.2 {
-        return GameSession(p.name,p.id,token,xuid,clientId,if(p.kind==AccountProfile.Kind.OFFLINE)GameAccountType.LEGACY else GameAccountType.MSA)
+        return GameSession(p.name,p.id,token,xuid,clientId,if(p.kind==AccountProfile.Kind.OFFLINE || token in listOf("","0"))GameAccountType.LEGACY else GameAccountType.MSA)
 //?} else {
-/*        return GameSession(p.name,p.id.toString(),token,xuid,clientId,if(p.kind==AccountProfile.Kind.OFFLINE)GameAccountType.LEGACY else GameAccountType.MSA)
+/*        return GameSession(p.name,p.id.toString(),token,xuid,clientId,if(p.kind==AccountProfile.Kind.OFFLINE || token in listOf("","0"))GameAccountType.LEGACY else GameAccountType.MSA)
 *///?}
     }
     private fun instanceFields(value:Any):List<Any> = runCatching {
@@ -112,6 +112,7 @@ object SessionBridge {
         // A fresh session service is used for profile validation and modern Services bundles.
         val sessionService=auth.createMinecraftSessionService();candidates+=sessionService
         auth.javaClass.methods.firstOrNull { it.name=="createFriendsService" && it.parameterCount==1 }?.let { candidates+=it.invoke(auth,credentials.tokenForSession()) }
+        try {
         // Services, social manager, telemetry, key-pair manager, reporting context and
         // (26.2) remote friends handler are rebuilt from their typed dependencies.
         repeat(3) {
@@ -150,7 +151,11 @@ object SessionBridge {
                 field.type.declaredMethods.any { m -> Modifier.isStatic(m.modifiers) && m.returnType==field.type && m.parameterTypes.any(dependency) }
             if(requiresAccount)throw AccountProblem("This game version could not rebuild an account service. The current account is unchanged.")
         }
-        return Prepared(changes.toList(),credentials.profile)
+            return Prepared(changes.toList(),credentials.profile)
+        } catch(error:Exception) {
+            changes.values.filterIsInstance<AutoCloseable>().distinct().forEach { runCatching { it.close() } }
+            throw error
+        }
     }
     fun commit(prepared:Prepared) {
         val mc=MinecraftClient.getInstance()

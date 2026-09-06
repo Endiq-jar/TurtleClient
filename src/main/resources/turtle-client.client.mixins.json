@@ -18,7 +18,8 @@
   "ChunkOcclusionCullingMixin",
   "GameplayMouseMixin",
   "FovMixin",
-  "BrightnessMixin"
+  "BrightnessMixin",
+  "CrosshairMixin"
  ],
  "injectors": {
   "defaultRequire": 1

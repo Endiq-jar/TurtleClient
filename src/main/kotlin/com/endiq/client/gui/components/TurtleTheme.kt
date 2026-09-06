@@ -78,7 +78,7 @@ object TurtleTheme {
         skin(ctx,rect,material)
         val value = fit(font, text, rect.width - 12)
         label(ctx, font, value, rect.x + (rect.width - font.getWidth(value)) / 2, rect.y + (rect.height - 8) / 2,
-            if(!enabled) SUBTLE else TEXT)
+            if(!enabled) SUBTLE else if(primary || (danger && hovered))BACKGROUND else TEXT)
     }
 
     fun actions(ctx:GuiContext,font:TextRenderer,buttons:ActionButtons,mx:Int,my:Int) {

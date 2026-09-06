@@ -100,6 +100,11 @@ class MicrosoftLogin(
         if(minecraft.status!=200) throw AccountProblem("Minecraft authorization failed. The app may require Minecraft API approval.")
         val access=minecraft.json["access_token"].asString
         cancel.check()
+        val ownership=transport.request("GET",URI("https://api.minecraftservices.com/entitlements/mcstore"),null,null,access)
+        if(ownership.status!=200 || ownership.json.getAsJsonArray("items")?.any {
+            it.asJsonObject.get("name")?.asString in setOf("game_minecraft","product_minecraft")
+        }!=true)throw AccountProblem("Minecraft Java ownership could not be verified. Check the license, Game Pass subscription and app approval.")
+        cancel.check()
         val profile=transport.request("GET",URI("https://api.minecraftservices.com/minecraft/profile"),null,null,access)
         if(profile.status==404) throw AccountProblem("No licensed Minecraft Java profile was found for this account.")
         if(profile.status!=200) throw AccountProblem("Minecraft could not verify this account. It has not been added.")
