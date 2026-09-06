@@ -36,7 +36,18 @@ object TurtleTheme {
         }
     }
 
+    fun skin(ctx: GuiContext, rect: UiRect, material: String, color: Int = -1) {
+        val h=if(material=="panel")64 else 32
+        val w=if(material=="panel")64 else 128
+        val texture=icons.getOrPut("button:$material") { identifier("turtle-client","textures/gui/buttons/$material.png") }
+        for (slice in nineSlices(rect,w,h)) {
+            val d=slice.destination;val source=slice.source
+            ctx.drawTextureRegion(texture,d.x,d.y,d.width,d.height,source.x.toFloat(),source.y.toFloat(),source.width,source.height,w,h,color)
+        }
+    }
+
     fun panel(ctx: GuiContext, rect: UiRect, color: Int = PANEL, border: Int = BORDER, radius: Int = 7) {
+        if (color==PANEL && border==BORDER) { skin(ctx,rect,"panel");return }
         rounded(ctx, rect, border, radius)
         rounded(ctx, rect.inset(1), color, (radius - 1).coerceAtLeast(0))
     }
@@ -55,12 +66,31 @@ object TurtleTheme {
         ctx.drawTextWithShadow(font, fit(font, text, maxWidth), x, y, color)
     }
 
-    fun button(ctx: GuiContext, font: TextRenderer, rect: UiRect, text: String, hovered: Boolean, primary: Boolean = false) {
-        val bg = if (primary) { if (hovered) 0xFFABF4D2.toInt() else ACCENT } else if (hovered) HOVER else CARD
-        panel(ctx, rect, bg, if (hovered || primary) ACCENT else BORDER, 5)
+    fun button(ctx: GuiContext, font: TextRenderer, rect: UiRect, text: String, hovered: Boolean, primary: Boolean = false,
+               enabled: Boolean = true, danger: Boolean = false) {
+        val material=when {
+            !enabled -> "disabled"
+            danger -> if(hovered) "danger_hover" else "danger"
+            primary -> if(hovered) "primary_hover" else "primary"
+            hovered -> "hover"
+            else -> "normal"
+        }
+        skin(ctx,rect,material)
         val value = fit(font, text, rect.width - 12)
         label(ctx, font, value, rect.x + (rect.width - font.getWidth(value)) / 2, rect.y + (rect.height - 8) / 2,
-            if (primary) BACKGROUND else TEXT)
+            if(!enabled) SUBTLE else if (primary) BACKGROUND else TEXT)
+    }
+
+    fun actions(ctx:GuiContext,font:TextRenderer,buttons:ActionButtons,mx:Int,my:Int) {
+        buttons.entries.forEach { entry -> button(ctx,font,entry.bounds,entry.action.label,entry.bounds.contains(mx.toDouble(),my.toDouble()),
+            entry.primary,entry.action.enabled(),entry.danger) }
+    }
+
+    fun tooltip(ctx:GuiContext,font:TextRenderer,text:String,mx:Int,my:Int,screenWidth:Int,screenHeight:Int) {
+        val value=fit(font,text,screenWidth-24);val w=font.getWidth(value)+12
+        val x=(mx+8).coerceIn(2,(screenWidth-w-2).coerceAtLeast(2))
+        val y=(my+16).coerceIn(2,(screenHeight-23).coerceAtLeast(2))
+        panel(ctx,UiRect(x,y,w,20),BACKGROUND,BORDER,4);label(ctx,font,value,x+6,y+6,TEXT)
     }
 
     fun scrollbar(ctx: GuiContext, state: ScrollState, track: UiRect, mx: Int, my: Int) {

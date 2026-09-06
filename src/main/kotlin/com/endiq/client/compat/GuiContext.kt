@@ -92,6 +92,43 @@ class GuiContext(val native: NativeGuiContext) {
 *///?}
     }
 
+    /** Scaled source region; used for small nine-slice textures and cape previews. */
+    fun drawTextureRegion(texture: Identifier, x: Int, y: Int, width: Int, height: Int,
+                          u: Float, v: Float, sourceWidth: Int, sourceHeight: Int,
+                          textureWidth: Int, textureHeight: Int, color: Int = -1) {
+        if (width <= 0 || height <= 0) return
+//? if >=26.1 {
+/*        native.blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, texture, x,y,u,v,width,height,
+            sourceWidth,sourceHeight,textureWidth,textureHeight,color)
+*///?} else if >=1.21.6 {
+/*        native.drawTexture(net.minecraft.client.gl.RenderPipelines.GUI_TEXTURED, texture, x,y,u,v,width,height,
+            sourceWidth,sourceHeight,textureWidth,textureHeight,color)
+*///?} else if >=1.21.2 {
+        native.drawTexture(net.minecraft.client.render.RenderLayer::getGuiTextured, texture, x,y,u,v,width,height,
+            sourceWidth,sourceHeight,textureWidth,textureHeight,color)
+//?} else {
+/*        com.mojang.blaze3d.systems.RenderSystem.enableBlend()
+        com.mojang.blaze3d.systems.RenderSystem.defaultBlendFunc()
+        com.mojang.blaze3d.systems.RenderSystem.setShaderColor((color ushr 16 and 255)/255f,(color ushr 8 and 255)/255f,(color and 255)/255f,(color ushr 24 and 255)/255f)
+        try {
+//? if >=1.20 {
+            native.drawTexture(texture,x,y,width,height,u,v,sourceWidth,sourceHeight,textureWidth,textureHeight)
+//?} else {
+//? if >=1.19.4 {
+            com.mojang.blaze3d.systems.RenderSystem.setShader { net.minecraft.client.render.GameRenderer.getPositionTexProgram() }
+//?} else {
+            com.mojang.blaze3d.systems.RenderSystem.setShader { net.minecraft.client.render.GameRenderer.getPositionTexShader() }
+//?}
+            com.mojang.blaze3d.systems.RenderSystem.setShaderTexture(0,texture)
+            net.minecraft.client.gui.DrawableHelper.drawTexture(native,x,y,width,height,u,v,sourceWidth,sourceHeight,textureWidth,textureHeight)
+//?}
+        } finally {
+            com.mojang.blaze3d.systems.RenderSystem.setShaderColor(1f,1f,1f,1f)
+            com.mojang.blaze3d.systems.RenderSystem.disableBlend()
+        }
+*///?}
+    }
+
     fun enableScissor(x1: Int, y1: Int, x2: Int, y2: Int) {
 //? if >=1.20 {
         native.enableScissor(x1, y1, x2, y2)

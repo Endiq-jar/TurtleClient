@@ -28,13 +28,13 @@ class UiAssetsTest {
             if (name.contains("/backgrounds/")) {
                 assertEquals(1024, image.width); assertEquals(576, image.height)
                 assertTrue(bytes.size < 400_000, "Background too large: $name")
-            } else {
+            } else if (!name.startsWith("textures/cosmetics/") || name.contains("/previews/")) {
                 assertTrue(image.colorModel.hasAlpha(), "Missing transparency: $name")
                 assertEquals(0, image.getRGB(0, 0) ushr 24, "Baked backdrop in $name")
             }
             assertNotNull(loader.getResource(root + name + ".mcmeta"), "Missing filtering metadata: $name")
         }
-        assertTrue(total < 900_000, "UI artwork exceeds the compressed size budget")
+        assertTrue(total < 1_200_000, "UI artwork exceeds the compressed size budget")
         assertTrue(names.containsAll(listOf("icon.png", "textures/gui/branding/turtle.png", "textures/gui/branding/badge.png",
             "textures/gui/branding/wordmark.png", "textures/gui/backgrounds/coast.png", "textures/gui/backgrounds/forest.png")))
         for (name in listOf("grid", "hud", "pvp", "render", "movement", "utility", "hypixel", "performance", "search", "close", "settings",

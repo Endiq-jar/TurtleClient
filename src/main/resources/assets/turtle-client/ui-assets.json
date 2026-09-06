@@ -47,141 +47,526 @@
       "path": "textures/gui/icons/camera.png",
       "width": 32,
       "height": 32,
-      "bytes": 840,
-      "sha256": "59e44565cc69ead3cb3ce405b32a57076291c49e4583e86e8d9b572d98c1da2a"
+      "bytes": 657,
+      "sha256": "bc06c269dce2effdef435ce7ccf95be68d233c219d4c0541f53c1fe386c16509"
     },
     {
       "path": "textures/gui/icons/cape.png",
       "width": 32,
       "height": 32,
-      "bytes": 984,
-      "sha256": "29b5f97c287620ecd4c26873190b40d7edd1d9ccd1a9ca191ed47ad4d8a96c6c"
+      "bytes": 838,
+      "sha256": "89a7a5259a0733082c0b91a34d397271650102cf66c96484a363a84cc79d84ab"
     },
     {
       "path": "textures/gui/icons/close.png",
       "width": 32,
       "height": 32,
-      "bytes": 391,
-      "sha256": "a652403ec4491c70b6e8513b8f47c8474a76e6fde4e09b36168718f4c5c31333"
+      "bytes": 568,
+      "sha256": "d8565a3443461ad612b3106fa4e5aa7a33a8eed4b0efca87719087481e2b9e0e"
     },
     {
       "path": "textures/gui/icons/folder.png",
       "width": 32,
       "height": 32,
-      "bytes": 627,
-      "sha256": "1fbd1b1c83ad9703ad1554148e3d441f25817c0e34c3e6fd448034b72405d071"
+      "bytes": 538,
+      "sha256": "ecfb685aa0df68761c4764ed32739e1db6bac734104175d20913e1e242833db2"
     },
     {
       "path": "textures/gui/icons/grid.png",
       "width": 32,
       "height": 32,
-      "bytes": 351,
-      "sha256": "6913496cb9a7c49ca85aa5188162fe57b731f38e5ff9b24021c114d1eb3b9b4c"
+      "bytes": 478,
+      "sha256": "22ec332bfaf8f54430d344c44a18e177e18f4624adf9080a8f3fe5923b2efda5"
     },
     {
       "path": "textures/gui/icons/hat.png",
       "width": 32,
       "height": 32,
-      "bytes": 520,
-      "sha256": "0f5d8363e5f95198f29908493fb1adc7c25df1814d0328276cfd0163b193369e"
+      "bytes": 773,
+      "sha256": "51acd26b9e4ff69bafc96a5fb46d4ad334fdb7d8838a6ef6892447ec8d6d00ec"
     },
     {
       "path": "textures/gui/icons/hud.png",
       "width": 32,
       "height": 32,
-      "bytes": 610,
-      "sha256": "8cd159c09991a243c62db6e23b927cfa197ba0d8d408a48a460289e1c6ac7d6b"
+      "bytes": 673,
+      "sha256": "68a476ee843d46c845db4cf2e073fda1a465268c65567d06d1f4df93220075a4"
     },
     {
       "path": "textures/gui/icons/hypixel.png",
       "width": 32,
       "height": 32,
-      "bytes": 727,
-      "sha256": "6edeabdfc9608345f41ed6fd9ca5be8910d876f0dd2f5c58c92d4d9cd73cc79a"
+      "bytes": 671,
+      "sha256": "21a15d2b5ad37b5deb7c2e02f9c658381c3caade419f43781d2a16cc58353c7b"
     },
     {
       "path": "textures/gui/icons/mask.png",
       "width": 32,
       "height": 32,
-      "bytes": 638,
-      "sha256": "cb430d8ff4732933871c074381d581c47de1d1f1438221ad88b53bbca2d17d47"
+      "bytes": 764,
+      "sha256": "bbdfbe4b6863820b793e818c557f3a5a1788ca06f54a028572ed2073133bc36f"
     },
     {
       "path": "textures/gui/icons/movement.png",
       "width": 32,
       "height": 32,
-      "bytes": 301,
-      "sha256": "c1938d44cdca2c0e925f20aa494cd0b02c60303f403a332994774211e5d6485a"
+      "bytes": 706,
+      "sha256": "55648f4d4003133c50edcbe3cf0e1e11bbcda874e0d833de9753b48e6496a7f0"
     },
     {
       "path": "textures/gui/icons/performance.png",
       "width": 32,
       "height": 32,
-      "bytes": 377,
-      "sha256": "115a8bf9274ae2a246385153e46acc11dc7393cd052553b2b777d63995936fa5"
+      "bytes": 475,
+      "sha256": "f31ee3a8918daa1134a2807ebb215452c5b766ad893faa66fda32a457a020641"
     },
     {
       "path": "textures/gui/icons/pet.png",
       "width": 32,
       "height": 32,
-      "bytes": 837,
-      "sha256": "69544fccc70dd1eaf5c5697c37adbc1f4ec024690a41493a11b0a41dcb82f05c"
+      "bytes": 701,
+      "sha256": "c546c941d24f538b1ab850a4330a0293173bf30f40d42328b584e6df622d9889"
     },
     {
       "path": "textures/gui/icons/pvp.png",
       "width": 32,
       "height": 32,
-      "bytes": 657,
-      "sha256": "0f37a66260f1270f3b335911a2bbb12da29bdd706fe1965cdcc0cead753bf9c4"
+      "bytes": 840,
+      "sha256": "4acd254a78c0a18cf3f43dd093c754f1a15b343e358a493916e15e594eb4c823"
     },
     {
       "path": "textures/gui/icons/refresh.png",
       "width": 32,
       "height": 32,
-      "bytes": 767,
-      "sha256": "98b7579652c990d9b6cd51f609ce8219a8963ee48d8d957e6876e55c65c70b76"
+      "bytes": 826,
+      "sha256": "2d9731162bd78b547e7884b72c367a76203a28a4276f26e4f717aa2cc183058c"
     },
     {
       "path": "textures/gui/icons/render.png",
       "width": 32,
       "height": 32,
-      "bytes": 746,
-      "sha256": "220d6c00fede0ed46ce775098a9d87a029533749e4f059d5d9194d50b9a8cc53"
+      "bytes": 622,
+      "sha256": "be4134edb2213316c46b0378251ae39ee6b88fba1b9f2617987425fbf400bbe0"
     },
     {
       "path": "textures/gui/icons/search.png",
       "width": 32,
       "height": 32,
-      "bytes": 655,
-      "sha256": "21c3bccd605c9857f6af2f49c035b84c2bac5a549a9f4629087d02dcb5b71848"
+      "bytes": 764,
+      "sha256": "5f0058d92c3bb00437c5b8f543bae68c19e3ef182c4872eebc3f64ced380864c"
     },
     {
       "path": "textures/gui/icons/settings.png",
       "width": 32,
       "height": 32,
-      "bytes": 1029,
-      "sha256": "aebf47a27a76e3d26a2f22fb13ace7b15f375832352ded0b0085151d73a165e4"
+      "bytes": 912,
+      "sha256": "b4a55091ea89ea2d9ae56c7d81dcd442566d65b609c50fda4277ed51bb6d776b"
     },
     {
       "path": "textures/gui/icons/suit.png",
       "width": 32,
       "height": 32,
-      "bytes": 837,
-      "sha256": "3a1f199211d6793ff09614d44cc5e10c632202ce89fe7a330335b1e23d101d12"
+      "bytes": 551,
+      "sha256": "329458d3728b4524bbf58e226e51642b969ea42b958880ce34fa3b36c85948ab"
     },
     {
       "path": "textures/gui/icons/utility.png",
       "width": 32,
       "height": 32,
-      "bytes": 541,
-      "sha256": "2f97a79a9e97b1c955cc3b1aedda9cd04ba1c0a27ff9c6779cc8d191a1a2165f"
+      "bytes": 630,
+      "sha256": "268e7da32c10c56da0f10e770a9af7c1b15f136025c18971ccd180549c0e1e9f"
     },
     {
       "path": "textures/gui/icons/wings.png",
       "width": 32,
       "height": 32,
-      "bytes": 748,
-      "sha256": "e81a55d6f438c942c4a4181c9bc73c20ce3cf6beb23ed8a9706a5ac5d6ff6a31"
+      "bytes": 804,
+      "sha256": "ce72997b15a07add3d2bec9fb91101412a750ec81a641f89d8d0b97086c0666f"
+    },
+    {
+      "path": "textures/gui/icons/account.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 602,
+      "sha256": "da3a86d0d9f97fac6fd314862329d7ebb585a9f7143707abe1adf271bf178186"
+    },
+    {
+      "path": "textures/gui/icons/add.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 457,
+      "sha256": "a90b1f07df553551f9ca8c38ab079931831c22a1a466e1475d45878a42809176"
+    },
+    {
+      "path": "textures/gui/icons/back.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 484,
+      "sha256": "114d069714d7f97b2c8d329597781e2e59e7e8fe23667ef5c40701458598b2e6"
+    },
+    {
+      "path": "textures/gui/icons/check.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 419,
+      "sha256": "e0b0c647ac529b10ff4ad4918e8f0fbb0f844073fbcb3d1ea80fe32641f30fec"
+    },
+    {
+      "path": "textures/gui/icons/logout.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 732,
+      "sha256": "e6509b6d9435da523c7183b2e1dcc379f0fbaf98d1d0a4ec10c2bfe7fd76aa24"
+    },
+    {
+      "path": "textures/gui/icons/delete.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 727,
+      "sha256": "c87b16536f0488a20ffbcb1aca884e93606602311a985ee05891ca94da0f5296"
+    },
+    {
+      "path": "textures/gui/icons/copy.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 557,
+      "sha256": "1c9e513f4ac978dbf3464141f27bf540ca10ba6639b5e8afa757784f32483870"
+    },
+    {
+      "path": "textures/gui/icons/external.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 695,
+      "sha256": "e56ee7b38e84b65ba7a8715bd046f5cb46f5797ece9f5892bb50cf291d63616b"
+    },
+    {
+      "path": "textures/gui/icons/play.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 516,
+      "sha256": "2fb6feb0c08372a37dcd9249868d9426ec7604a81f17f67a5151373299d220a6"
+    },
+    {
+      "path": "textures/gui/icons/pause.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 334,
+      "sha256": "0e92f478e1d3a5b8356f2527f96eda681bdd2d18bc67a489be2d88f62d9e05e2"
+    },
+    {
+      "path": "textures/gui/buttons/normal.png",
+      "width": 128,
+      "height": 32,
+      "bytes": 4275,
+      "sha256": "5576ccb57f94f3cf94ad7f3b155987a8da48b2f772fd5161c75ec0ed612d474d"
+    },
+    {
+      "path": "textures/gui/buttons/hover.png",
+      "width": 128,
+      "height": 32,
+      "bytes": 3929,
+      "sha256": "34a7775a76ea5f78aaabcebdb91d4ce1e8c9eb2ee2ebd626fabce1799a0d3b9f"
+    },
+    {
+      "path": "textures/gui/buttons/primary.png",
+      "width": 128,
+      "height": 32,
+      "bytes": 5079,
+      "sha256": "274a52bbeabb03e700068b99d7df36bd297991fad76160adace860f6ad791b0e"
+    },
+    {
+      "path": "textures/gui/buttons/primary_hover.png",
+      "width": 128,
+      "height": 32,
+      "bytes": 4845,
+      "sha256": "5ceb25bbd163b3de33341448e64b1567eafb8a9d74975a8457a91b58993a1c80"
+    },
+    {
+      "path": "textures/gui/buttons/disabled.png",
+      "width": 128,
+      "height": 32,
+      "bytes": 2911,
+      "sha256": "de922178eb2c69aa294b9d3e7b8d66aee0d79443d56e701a7d1fcfcc46736234"
+    },
+    {
+      "path": "textures/gui/buttons/danger.png",
+      "width": 128,
+      "height": 32,
+      "bytes": 4924,
+      "sha256": "49a74fee95d57a78be8c53d63b496ec45573586654d83f7297dad185b4fed2e0"
+    },
+    {
+      "path": "textures/gui/buttons/danger_hover.png",
+      "width": 128,
+      "height": 32,
+      "bytes": 5112,
+      "sha256": "14218acb5cc51e3633a562d78d88bec98f305df87fa1c6ffc415981c7ac7aa4e"
+    },
+    {
+      "path": "textures/gui/buttons/selected.png",
+      "width": 128,
+      "height": 32,
+      "bytes": 4742,
+      "sha256": "8a12971a342a22d473cb53ac3ca297b278c64ee6fe72bc12a989052e05e97e05"
+    },
+    {
+      "path": "textures/gui/buttons/panel.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 865,
+      "sha256": "1e0ca121937f523eda6d8bfcc39ea716065c501b11df6b48364099b95990f0ac"
+    },
+    {
+      "path": "textures/cosmetics/cape/jade.png",
+      "width": 128,
+      "height": 64,
+      "bytes": 2075,
+      "sha256": "1fe81e8fd9cc191e9272adfc8c5cb80a9a225cecde3ac79fa55ef31bc61402d8"
+    },
+    {
+      "path": "textures/cosmetics/previews/cape_jade.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 4097,
+      "sha256": "ecaf063c84125bfec20fda21b0e0625f357d22440c59908d35ec7cf194541cb7"
+    },
+    {
+      "path": "textures/cosmetics/hat/jade.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 5608,
+      "sha256": "3945299f1dc8492595afd3360402a549df61cbd2258091837ee30c3a1f2d3914"
+    },
+    {
+      "path": "textures/cosmetics/previews/hat_jade.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 3531,
+      "sha256": "69c5f56e98d87d461bf8bfded6d8ad42d3409009ed01d4c5cc03c6fb1c16158f"
+    },
+    {
+      "path": "textures/cosmetics/wings/jade.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 5608,
+      "sha256": "3945299f1dc8492595afd3360402a549df61cbd2258091837ee30c3a1f2d3914"
+    },
+    {
+      "path": "textures/cosmetics/previews/wings_jade.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 3910,
+      "sha256": "09cc32d45ba6df1fdb316c193da1fadc69192c620e7a29fa6a97c90f3e014654"
+    },
+    {
+      "path": "textures/cosmetics/mask/jade.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 5608,
+      "sha256": "3945299f1dc8492595afd3360402a549df61cbd2258091837ee30c3a1f2d3914"
+    },
+    {
+      "path": "textures/cosmetics/previews/mask_jade.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 3294,
+      "sha256": "4f94186a02288622bda9271f5f1e032ea337c237276a690aa42715ee68fe89fc"
+    },
+    {
+      "path": "textures/cosmetics/suit/jade.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 5608,
+      "sha256": "3945299f1dc8492595afd3360402a549df61cbd2258091837ee30c3a1f2d3914"
+    },
+    {
+      "path": "textures/cosmetics/previews/suit_jade.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 3503,
+      "sha256": "86d87b7de4abdba2036b31798e421e27da9bc32f9b7d4892863fe600fc041536"
+    },
+    {
+      "path": "textures/cosmetics/pet/jade.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 5608,
+      "sha256": "3945299f1dc8492595afd3360402a549df61cbd2258091837ee30c3a1f2d3914"
+    },
+    {
+      "path": "textures/cosmetics/previews/pet_jade.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 2855,
+      "sha256": "df4958d169f22da2f33d4de7765f11f314660283b7663f36668240ffd89a64c3"
+    },
+    {
+      "path": "textures/cosmetics/cape/aurora.png",
+      "width": 128,
+      "height": 64,
+      "bytes": 2015,
+      "sha256": "cd19f4fca5ef0157c6a99faf64fa0222427b8f7f25f872bf8db0bf7ab0745387"
+    },
+    {
+      "path": "textures/cosmetics/previews/cape_aurora.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 3985,
+      "sha256": "5343d8e17dee3ea56e796c95d4a45e58795b2b752cc825e808796a5183c0b5ea"
+    },
+    {
+      "path": "textures/cosmetics/hat/aurora.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 5071,
+      "sha256": "37aff1e6cb2f36733bbb654fced6f621c6690937714f9481dce5e36d2623bcc1"
+    },
+    {
+      "path": "textures/cosmetics/previews/hat_aurora.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 3426,
+      "sha256": "33bd4c1d9b86fd5453ba3b2dba937efc86f5ba2d12062cd46f4b330a74db68be"
+    },
+    {
+      "path": "textures/cosmetics/wings/aurora.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 5071,
+      "sha256": "37aff1e6cb2f36733bbb654fced6f621c6690937714f9481dce5e36d2623bcc1"
+    },
+    {
+      "path": "textures/cosmetics/previews/wings_aurora.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 3649,
+      "sha256": "262009b01460cbcdf652e4ac7d29c7527ca99b7c21a6fc7bca3b7677df2ce6d6"
+    },
+    {
+      "path": "textures/cosmetics/mask/aurora.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 5071,
+      "sha256": "37aff1e6cb2f36733bbb654fced6f621c6690937714f9481dce5e36d2623bcc1"
+    },
+    {
+      "path": "textures/cosmetics/previews/mask_aurora.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 3177,
+      "sha256": "683df26cb0dd4fa1c921e7e04a632f81658d3aa4b928afd7adf74d55731fdad3"
+    },
+    {
+      "path": "textures/cosmetics/suit/aurora.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 5071,
+      "sha256": "37aff1e6cb2f36733bbb654fced6f621c6690937714f9481dce5e36d2623bcc1"
+    },
+    {
+      "path": "textures/cosmetics/previews/suit_aurora.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 3345,
+      "sha256": "3493d6e935f87700b982157e33546a5e2797e8cf46616215da67fd1c5a91d188"
+    },
+    {
+      "path": "textures/cosmetics/pet/aurora.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 5071,
+      "sha256": "37aff1e6cb2f36733bbb654fced6f621c6690937714f9481dce5e36d2623bcc1"
+    },
+    {
+      "path": "textures/cosmetics/previews/pet_aurora.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 2765,
+      "sha256": "665a1f4853870a52eb611555597b163ea64402b8fdba42dd41f5536edda39f1f"
+    },
+    {
+      "path": "textures/cosmetics/cape/ember.png",
+      "width": 128,
+      "height": 64,
+      "bytes": 2046,
+      "sha256": "4742ac291d9ab9f059d2f6a4f4812f57ccb945a78a43d64ff4c703c65f091ab4"
+    },
+    {
+      "path": "textures/cosmetics/previews/cape_ember.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 3794,
+      "sha256": "d55e78c4db2cb9824e06b242a71ae11055ad1afd848dba0be9bb1b6cdc09be30"
+    },
+    {
+      "path": "textures/cosmetics/hat/ember.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 4840,
+      "sha256": "b34bea26036c7c545e5d1aa4c975a8d7f11463747c09d1d33b1cd9e9c1c98545"
+    },
+    {
+      "path": "textures/cosmetics/previews/hat_ember.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 3336,
+      "sha256": "3d6bde3dcb27b697b15f3e1d999575b78d18604f8c4247fe7d7f2da2c9e79ef1"
+    },
+    {
+      "path": "textures/cosmetics/wings/ember.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 4840,
+      "sha256": "b34bea26036c7c545e5d1aa4c975a8d7f11463747c09d1d33b1cd9e9c1c98545"
+    },
+    {
+      "path": "textures/cosmetics/previews/wings_ember.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 3588,
+      "sha256": "e2c5e260996ebd12cdc8246b95ce9297239b90c5ea567782eb88aa726bff5947"
+    },
+    {
+      "path": "textures/cosmetics/mask/ember.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 4840,
+      "sha256": "b34bea26036c7c545e5d1aa4c975a8d7f11463747c09d1d33b1cd9e9c1c98545"
+    },
+    {
+      "path": "textures/cosmetics/previews/mask_ember.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 3103,
+      "sha256": "29f9e9008ae6a70d2f2117b49a024cbdeb355198f968c5ab20ca2da5f4c10897"
+    },
+    {
+      "path": "textures/cosmetics/suit/ember.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 4840,
+      "sha256": "b34bea26036c7c545e5d1aa4c975a8d7f11463747c09d1d33b1cd9e9c1c98545"
+    },
+    {
+      "path": "textures/cosmetics/previews/suit_ember.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 3223,
+      "sha256": "75f2037eecad71d5ef16aea7a304d0094d8076bd04f9e5430835434eb8602484"
+    },
+    {
+      "path": "textures/cosmetics/pet/ember.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 4840,
+      "sha256": "b34bea26036c7c545e5d1aa4c975a8d7f11463747c09d1d33b1cd9e9c1c98545"
+    },
+    {
+      "path": "textures/cosmetics/previews/pet_ember.png",
+      "width": 64,
+      "height": 64,
+      "bytes": 2714,
+      "sha256": "5bfc57d76906303004d783cad8356738ec3daf7b7034893ce021e95c73b4c9de"
     }
   ]
 }

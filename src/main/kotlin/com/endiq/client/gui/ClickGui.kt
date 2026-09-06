@@ -72,7 +72,7 @@ class ClickGui(private val parent: Screen? = null, initialCosmetics: Boolean = f
             x += w + 4
         }
         val toolsY = y + 26
-        toolsButton = UiRect(panel.right - 82, toolsY, 74, 22)
+        toolsButton = UiRect(panel.right - 92, toolsY, 84, 22)
         searchBox = UiRect(panel.x + 8, toolsY, toolsButton.x - panel.x - 14, 22)
         val top = toolsY + 28
         val bottom = panel.bottom - 24
@@ -110,7 +110,9 @@ class ClickGui(private val parent: Screen? = null, initialCosmetics: Boolean = f
         Theme.label(ctx, textRenderer, if (query.isEmpty() && !searchFocused) placeholder else query + caret,
             searchBox.x + 25, searchBox.y + 7, if (query.isEmpty()) Theme.MUTED else Theme.TEXT, searchBox.width - 44)
         if (query.isNotEmpty()) ctx.drawTexture(Theme.icon("close"), searchBox.right - 18, searchBox.y + 5, 12, 12, Theme.MUTED)
-        if (cosmetics) Theme.button(ctx, textRenderer, toolsButton, "Reload files", toolsButton.contains(mx.toDouble(), my.toDouble()))
+        if (cosmetics) {
+            for ((index,name) in listOf("refresh","folder","delete").withIndex()) iconButton(ctx,UiRect(toolsButton.x+index*30,toolsButton.y,24,22),name,mx,my)
+        }
         else Theme.label(ctx, textRenderer, "${modules.size} modules", toolsButton.x + 4, toolsButton.y + 7, Theme.MUTED, toolsButton.width)
 
         updateBounds()
@@ -127,11 +129,15 @@ class ClickGui(private val parent: Screen? = null, initialCosmetics: Boolean = f
         Theme.scrollbar(ctx, scroll, track, mx, my)
         sidebar?.let { drawCosmeticSummary(ctx, it, mx, my) }
         ctx.fill(panel.x + 8, panel.bottom - 24, panel.right - 8, panel.bottom - 23, Theme.BORDER)
-        val hint = if (cosmetics) "Click to equip  /  Wheel to scroll" else "Right-click: settings  /  Wheel: scroll"
+        val hint = if (cosmetics) CosmeticManager.lastMessage else "Right-click: settings  /  Wheel: scroll"
         val footer = "MC $version"
         val reserved = textRenderer.getWidth(footer) + 20
         Theme.label(ctx, textRenderer, hint, panel.x + 10, panel.bottom - 15, Theme.MUTED, panel.width - reserved - 20)
         Theme.label(ctx, textRenderer, footer, panel.right - reserved + 8, panel.bottom - 15, Theme.SUBTLE)
+        if (cosmetics && toolsButton.contains(mx.toDouble(),my.toDouble())) {
+            val labels=listOf("Reload custom PNGs","Open cosmetic folder","Unequip all cosmetics")
+            labels.getOrNull((mx-toolsButton.x)/30)?.let { Theme.tooltip(ctx,textRenderer,it,mx,my,width,height) }
+        }
     }
 
     private fun drawModule(ctx: GuiContext, module: Module, rect: UiRect, mx: Int, my: Int) {
@@ -158,7 +164,9 @@ class ClickGui(private val parent: Screen? = null, initialCosmetics: Boolean = f
         val equipped = CosmeticManager.isEquipped(entry)
         val hover = viewport.contains(mx.toDouble(), my.toDouble()) && rect.contains(mx.toDouble(), my.toDouble())
         Theme.panel(ctx, rect, if (hover) Theme.HOVER else Theme.CARD, if (equipped) Theme.ACCENT else Theme.BORDER, 6)
-        ctx.drawTexture(Theme.icon(entry.type.name.lowercase()), rect.x + 10, rect.y + 10, 22, 22, if (equipped) Theme.ACCENT else Theme.MUTED)
+        if (entry.file != null && entry.type == CosmeticType.CAPE) {
+            ctx.drawTextureRegion(entry.texture,rect.x+14,rect.y+7,16,26,1f,1f,10,16,64,32)
+        } else ctx.drawTexture(entry.preview,rect.x+8,rect.y+6,28,28)
         Theme.label(ctx, textRenderer, entry.name, rect.x + 10, rect.y + if (rect.height < 68) 32 else 40, Theme.TEXT, rect.width - 20)
         Theme.label(ctx, textRenderer, if (equipped) "Equipped" else "Click to equip", rect.x + 10, rect.bottom - 16, if (equipped) Theme.ACCENT else Theme.SUBTLE, rect.width - 20)
     }
@@ -166,7 +174,7 @@ class ClickGui(private val parent: Screen? = null, initialCosmetics: Boolean = f
     private fun drawCosmeticSummary(ctx: GuiContext, rect: UiRect, mx: Int, my: Int) {
         Theme.panel(ctx, rect, Theme.BACKGROUND)
         ctx.drawTexture(Theme.LOGO, rect.x + (rect.width - 34) / 2, rect.y + 10, 34, 34)
-        Theme.label(ctx, textRenderer, "LOCAL COSMETICS", rect.x + 12, rect.y + 52, Theme.ACCENT, rect.width - 24)
+        Theme.label(ctx, textRenderer, "YOUR OUTFIT", rect.x + 12, rect.y + 52, Theme.ACCENT, rect.width - 24)
         var y = rect.y + 72
         for (type in types) {
             val entry = CosmeticManager.getEquipped(type) ?: continue
@@ -174,7 +182,7 @@ class ClickGui(private val parent: Screen? = null, initialCosmetics: Boolean = f
             Theme.label(ctx, textRenderer, "${type.displayName}: ${entry.name}", rect.x + 10, y, Theme.MUTED, rect.width - 20)
             y += 16
         }
-        if (rect.height > 168) Theme.label(ctx, textRenderer, "In-world preview: not yet", rect.x + 10, rect.bottom - 69, Theme.SUBTLE, rect.width - 20)
+        if (rect.height > 168) Theme.label(ctx, textRenderer, "Client-side / F5 to view", rect.x + 10, rect.bottom - 69, Theme.SUBTLE, rect.width - 20)
         if (rect.height > 114) {
             val folder = UiRect(rect.x + 8, rect.bottom - 54, rect.width - 16, 21)
             val clear = UiRect(rect.x + 8, rect.bottom - 28, rect.width - 16, 21)
@@ -212,7 +220,14 @@ class ClickGui(private val parent: Screen? = null, initialCosmetics: Boolean = f
                 if (mx >= searchBox.right - 22 && query.isNotEmpty()) { query = ""; changedSearch() }
                 return true
             }
-            if (cosmetics && toolsButton.contains(mx, my)) { CosmeticManager.reload(); refreshItems(); updateBounds(); return true }
+            if (cosmetics && toolsButton.contains(mx, my)) {
+                when (((mx-toolsButton.x)/30).toInt()) {
+                    0 -> { CosmeticManager.reload(); refreshItems(); updateBounds() }
+                    1 -> { val folder=java.io.File(CosmeticManager.baseDir(),cosmeticType.folderName);folder.mkdirs();openPath(folder) }
+                    2 -> CosmeticManager.unequipAll()
+                }
+                return true
+            }
             if (scroll.beginDrag(mx, my, track)) return true
             sidebar?.let { rect ->
                 if (rect.height > 114 && UiRect(rect.x + 8, rect.bottom - 54, rect.width - 16, 21).contains(mx, my)) {
@@ -220,7 +235,7 @@ class ClickGui(private val parent: Screen? = null, initialCosmetics: Boolean = f
                     folder.mkdirs(); openPath(folder); return true
                 }
                 if (rect.height > 114 && UiRect(rect.x + 8, rect.bottom - 28, rect.width - 16, 21).contains(mx, my)) {
-                    types.forEach { CosmeticManager.unequip(it) }; return true
+                    CosmeticManager.unequipAll(); return true
                 }
             }
         }

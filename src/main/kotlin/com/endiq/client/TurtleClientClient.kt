@@ -26,6 +26,10 @@ object TurtleClientClient : ClientModInitializer {
 
     override fun onInitializeClient() {
         ModuleManager.init()
+        CosmeticFeature.register()
+        net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents.CLIENT_STARTED.register {
+            com.endiq.client.cosmetics.CosmeticManager.initialize()
+        }
 
         // The callback's second argument changed from tick delta to a tracker;
         // the HUD does not consume it, so adapt only the native drawing context.
