@@ -286,11 +286,11 @@ publishing {
 // cannot download runner logs, so failing task names are echoed as GitHub check
 // annotations, which stay readable through the REST API.
 println("::warning::turtle diag loaded")
-gradle.taskGraph.afterTask { task ->
+gradle.taskGraph.afterTask(org.gradle.api.Action<org.gradle.api.Task> { task ->
     try {
         val failure = task.state.failure
         if (failure != null) {
             println("::error::FAILED ${task.path} :: ${failure.javaClass.simpleName} :: ${failure.message?.lineSequence()?.firstOrNull()}")
         }
     } catch (_: Throwable) { /* diagnostics must never break the build */ }
-}
+})
