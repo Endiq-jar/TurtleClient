@@ -27,20 +27,20 @@ class UiAssetsTest {
             val image = ImageIO.read(bytes.inputStream()) ?: fail("Invalid PNG: $name")
             assertEquals(spec["width"].asInt, image.width, name)
             assertEquals(spec["height"].asInt, image.height, name)
-            if (name.contains("/backgrounds/")) {
-                assertEquals(1024, image.width); assertEquals(576, image.height)
-                assertTrue(bytes.size < 400_000, "Background too large: $name")
-            } else if (!name.startsWith("textures/cosmetics/") || name.contains("/previews/")) {
-                assertTrue(image.colorModel.hasAlpha(), "Missing transparency: $name")
-                assertEquals(0, image.getRGB(0, 0) ushr 24, "Baked backdrop in $name")
-            }
+            assertTrue(image.colorModel.hasAlpha(), "Missing transparency: $name")
+            assertEquals(0, image.getRGB(0, 0) ushr 24, "Baked backdrop in $name")
             assertNotNull(loader.getResource(root + name + ".mcmeta"), "Missing filtering metadata: $name")
         }
         assertTrue(total < 250_000, "Vector artwork exceeds the compressed size budget")
         assertTrue(names.containsAll(listOf("icon.png", "textures/gui/branding/turtle.png", "textures/gui/branding/badge.png",
-            "textures/gui/branding/wordmark.png", "textures/gui/backgrounds/coast.png", "textures/gui/backgrounds/forest.png")))
-        for (name in listOf("grid", "hud", "pvp", "render", "movement", "utility", "hypixel", "performance", "search", "close", "settings",
-            "cape", "hat", "wings", "mask", "suit", "pet")) assertTrue("textures/gui/icons/$name.png" in names, "Missing $name icon")
+            "textures/gui/branding/wordmark.png")))
+        // Every icon the screens draw: a missing one renders as an empty square.
+        for (name in listOf("account", "search", "close", "check", "settings", "refresh", "folder", "delete",
+            "grid", "hud", "pvp", "render", "movement", "utility", "hypixel", "performance"))
+            assertTrue("textures/gui/icons/$name.png" in names, "Missing $name icon")
+        // Capes are downloaded, and menus are flat: neither ships pixels any more.
+        assertTrue(names.none { it.startsWith("textures/cosmetics/") }, "Bundled cosmetics are back")
+        assertTrue(names.none { it.contains("/backgrounds/") }, "Menu backdrop images are back")
         assertNull(loader.getResource(root + "textures/gui/menu/logo.png"), "Old Lunar logo is still bundled")
     }
 }

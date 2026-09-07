@@ -1,8 +1,8 @@
 package com.endiq.client.gui
 
+import com.endiq.client.capes.CapeManager
+import com.endiq.client.capes.CapeSource
 import com.endiq.client.compat.*
-import com.endiq.client.cosmetics.CosmeticManager
-import com.endiq.client.cosmetics.CosmeticManager.CosmeticType
 import com.endiq.client.gui.components.*
 import com.endiq.client.gui.components.TurtleTheme as Theme
 import com.endiq.client.gui.settings.ModSettingsGui
@@ -10,43 +10,43 @@ import com.endiq.client.modules.Module
 import com.endiq.client.modules.ModuleManager
 import org.lwjgl.glfw.GLFW
 
-class ClickGui(private val parent: Screen? = null, initialCosmetics: Boolean = false, private var favoritesOnly: Boolean = false) : ClientScreen("TurtleClient") {
+class ClickGui(private val parent: Screen? = null, initialCapes: Boolean = false, private var favoritesOnly: Boolean = false) : ClientScreen("TurtleClient") {
     private var category = Module.Category.ALL
-    private var cosmeticType = CosmeticType.CAPE
-    private var cosmetics = initialCosmetics
+    private var source: CapeSource? = null
+    private var capes = initialCapes
     private var query = ""
     private var feedback=""
     private var searchFocused = false
     private val moduleScroll = ScrollState()
-    private val cosmeticScroll = ScrollState()
-    private val scroll get() = if (cosmetics) cosmeticScroll else moduleScroll
+    private val capeScroll = ScrollState()
+    private val scroll get() = if (capes) capeScroll else moduleScroll
     private var modules = emptyList<Module>()
-    private var entries = emptyList<CosmeticManager.CosmeticEntry>()
+    private var entries = emptyList<CapeManager.Cape>()
     private var panel = UiRect(0, 0, 1, 1)
     private var viewport = panel
     private var track = panel
     private var searchBox = panel
     private var toolsButton = panel
     private var modsButton = panel
-    private var cosmeticsButton = panel
+    private var capesButton = panel
     private var closeButton = panel
-    private var sidebar: UiRect? = null
     private var grid = UiGrid(panel)
     private val tabs = mutableListOf<Pair<UiRect, Int>>()
     private val categories = listOf(Module.Category.ALL, Module.Category.HUD, Module.Category.PVP,
         Module.Category.RENDER, Module.Category.MOVEMENT, Module.Category.UTILITY,
         Module.Category.HYPIXEL, Module.Category.PERFORMANCE)
-    private val types = CosmeticType.values().toList()
+    /** Where a cape came from doubles as the list filter; null means every source. */
+    private val sources: List<CapeSource?> = listOf(null) + CapeSource.values().toList()
     private val version = gameVersion()
 
     override fun init() {
-        moduleScroll.endDrag(); cosmeticScroll.endDrag()
-        CosmeticManager.reload()
+        moduleScroll.endDrag(); capeScroll.endDrag()
+        CapeManager.loadFromDisk()
         refreshItems()
         layout() // Preserve scroll when returning from settings; only clamp after a resize.
     }
 
-    private fun tabLabel(index: Int): String = if (cosmetics) types[index].displayName else when (categories[index]) {
+    private fun tabLabel(index: Int): String = if (capes) sources[index]?.displayName ?: "All" else when (categories[index]) {
         Module.Category.ALL -> if (favoritesOnly) "Favorites" else "All"
         Module.Category.MOVEMENT -> "Move"
         Module.Category.PERFORMANCE -> "Perf"
@@ -55,18 +55,18 @@ class ClickGui(private val parent: Screen? = null, initialCosmetics: Boolean = f
 
     private fun refreshItems() {
         modules = ModuleManager.getByCategory(category).filter { it.name.contains(query, true) && (!favoritesOnly || it.favorited) }
-        entries = CosmeticManager.getByType(cosmeticType).filter { it.name.contains(query, true) }
+        entries = CapeManager.bySource(source).filter { it.name.contains(query, true) }
     }
 
     private fun layout() {
         panel = centeredPanel(width, height, 680, 430)
         closeButton = UiRect(panel.right - 29, panel.y + 8, 21, 22)
-        cosmeticsButton = UiRect(closeButton.x - 77, closeButton.y, 72, 22)
-        modsButton = UiRect(cosmeticsButton.x - 47, closeButton.y, 42, 22)
+        capesButton = UiRect(closeButton.x - 62, closeButton.y, 57, 22)
+        modsButton = UiRect(capesButton.x - 47, closeButton.y, 42, 22)
         var x = panel.x + 8
         var y = panel.y + 40
         tabs.clear()
-        for (i in 0 until if (cosmetics) types.size else categories.size) {
+        for (i in 0 until if (capes) sources.size else categories.size) {
             val w = textRenderer.getWidth(tabLabel(i)) + 14
             if (x + w > panel.right - 8 && x > panel.x + 8) { x = panel.x + 8; y += 22 }
             tabs.add(UiRect(x, y, w, 19) to i)
@@ -77,18 +77,17 @@ class ClickGui(private val parent: Screen? = null, initialCosmetics: Boolean = f
         searchBox = UiRect(panel.x + 8, toolsY, toolsButton.x - panel.x - 14, 22)
         val top = toolsY + 28
         val bottom = panel.bottom - 24
-        val sidebarWidth = if (cosmetics && panel.width >= 520) 142 else 0
-        sidebar = if (sidebarWidth > 0) UiRect(panel.right - sidebarWidth - 8, top, sidebarWidth, (bottom - top).coerceAtLeast(1)) else null
-        track = UiRect((sidebar?.x ?: (panel.right - 3)) - 8, top + 4, 6, (bottom - top - 8).coerceAtLeast(1))
+        track = UiRect(panel.right - 11, top + 4, 6, (bottom - top - 8).coerceAtLeast(1))
         viewport = UiRect(panel.x + 1, top, (track.x - panel.x - 3).coerceAtLeast(1), (bottom - top).coerceAtLeast(1))
-        grid = UiGrid(viewport, minimumCardWidth = if (cosmetics) 116 else 132)
+        grid = UiGrid(viewport, minimumCardWidth = if (capes) 116 else 132)
         updateBounds()
     }
 
-    private fun updateBounds() = scroll.update(grid.contentHeight(if (cosmetics) entries.size else modules.size), viewport.height)
+    private fun updateBounds() = scroll.update(grid.contentHeight(if (capes) entries.size else modules.size), viewport.height)
 
     override fun renderGui(ctx: GuiContext, mx: Int, my: Int, delta: Float) {
         super.renderGui(ctx, mx, my, delta)
+        CapeManager.syncIfPending()
         ctx.fill(0, 0, width, height, 0xB00A120D.toInt())
         Theme.panel(ctx, UiRect(panel.x - 3, panel.y + 4, panel.width + 6, panel.height), 0x55000000, 0x11000000, 10)
         Theme.panel(ctx, panel)
@@ -96,22 +95,22 @@ class ClickGui(private val parent: Screen? = null, initialCosmetics: Boolean = f
         if (modsButton.x - panel.x > 135) {
             ctx.drawTexture(Theme.WORDMARK, panel.x + 40, panel.y + 12, 96, 18)
         } else Theme.label(ctx, textRenderer, "TURTLE", panel.x + 39, panel.y + 15, Theme.TEXT, modsButton.x - panel.x - 44)
-        Theme.button(ctx, textRenderer, modsButton, "Mods", modsButton.contains(mx.toDouble(), my.toDouble()), !cosmetics)
-        Theme.button(ctx, textRenderer, cosmeticsButton, "Cosmetics", cosmeticsButton.contains(mx.toDouble(), my.toDouble()), cosmetics)
+        Theme.button(ctx, textRenderer, modsButton, "Mods", modsButton.contains(mx.toDouble(), my.toDouble()), !capes)
+        Theme.button(ctx, textRenderer, capesButton, "Capes", capesButton.contains(mx.toDouble(), my.toDouble()), capes)
         iconButton(ctx, closeButton, "close", mx, my)
         for ((rect, index) in tabs) {
-            val selected = if (cosmetics) types[index] == cosmeticType else categories[index] == category
+            val selected = if (capes) sources[index] == source else categories[index] == category
             if (selected || rect.contains(mx.toDouble(), my.toDouble())) Theme.rounded(ctx, rect, if (selected) Theme.ACTIVE else Theme.CARD, 4)
             Theme.label(ctx, textRenderer, tabLabel(index), rect.x + 7, rect.y + 6, if (selected) Theme.ACCENT else Theme.MUTED)
         }
         Theme.panel(ctx, searchBox, Theme.BACKGROUND, if (searchFocused) Theme.ACCENT else Theme.BORDER, 5)
         ctx.drawTexture(Theme.icon("search"), searchBox.x + 6, searchBox.y + 4, 14, 14, Theme.MUTED)
-        val placeholder = if (cosmetics) "Search cosmetics" else "Search modules"
+        val placeholder = if (capes) "Search capes" else "Search modules"
         val caret = if (searchFocused && System.currentTimeMillis() / 500 % 2 == 0L) "_" else ""
         Theme.label(ctx, textRenderer, if (query.isEmpty() && !searchFocused) placeholder else query + caret,
             searchBox.x + 25, searchBox.y + 7, if (query.isEmpty()) Theme.MUTED else Theme.TEXT, searchBox.width - 44)
         if (query.isNotEmpty()) ctx.drawTexture(Theme.icon("close"), searchBox.right - 18, searchBox.y + 5, 12, 12, Theme.MUTED)
-        if (cosmetics) {
+        if (capes) {
             for ((index,name) in listOf("refresh","folder","delete").withIndex()) iconButton(ctx,UiRect(toolsButton.x+index*30,toolsButton.y,24,22),name,mx,my)
         }
         else Theme.label(ctx, textRenderer, "${modules.size} modules", toolsButton.x + 4, toolsButton.y + 7, Theme.MUTED, toolsButton.width)
@@ -119,29 +118,35 @@ class ClickGui(private val parent: Screen? = null, initialCosmetics: Boolean = f
         updateBounds()
         ctx.enableScissor(viewport.x, viewport.y, viewport.right, viewport.bottom)
         try {
-            if (cosmetics) entries.forEachIndexed { i, entry -> drawCosmetic(ctx, entry, grid.card(i, scroll.pixels), mx, my) }
+            if (capes) entries.forEachIndexed { i, entry -> drawCape(ctx, entry, grid.card(i, scroll.pixels), mx, my) }
             else modules.forEachIndexed { i, module -> drawModule(ctx, module, grid.card(i, scroll.pixels), mx, my) }
-            if ((cosmetics && entries.isEmpty()) || (!cosmetics && modules.isEmpty())) {
-                val message = if (query.isNotEmpty()) "No matches. Try another search." else if (cosmetics) "No local ${cosmeticType.displayName.lowercase()} files yet." else "No modules in this category."
+            if ((capes && entries.isEmpty()) || (!capes && modules.isEmpty())) {
+                val message = when {
+                    query.isNotEmpty() -> "No matches. Try another search."
+                    capes && CapeManager.busy -> "Downloading capes..."
+                    capes -> "No capes yet."
+                    else -> "No modules in this category."
+                }
                 Theme.label(ctx, textRenderer, message, viewport.x + 12, viewport.y + 20, Theme.MUTED, viewport.width - 24)
-                if (cosmetics && query.isEmpty()) Theme.label(ctx, textRenderer, "Add PNGs to custom_cosmetics/${cosmeticType.folderName}", viewport.x + 12, viewport.y + 36, Theme.SUBTLE, viewport.width - 24)
+                if (capes && query.isEmpty() && !CapeManager.busy)
+                    Theme.label(ctx, textRenderer, "Use the download button, or drop PNGs into turtle-client/capes/local",
+                        viewport.x + 12, viewport.y + 36, Theme.SUBTLE, viewport.width - 24)
             }
         } finally { ctx.disableScissor() }
         Theme.scrollbar(ctx, scroll, track, mx, my)
-        sidebar?.let { drawCosmeticSummary(ctx, it, mx, my) }
         ctx.fill(panel.x + 8, panel.bottom - 24, panel.right - 8, panel.bottom - 23, Theme.BORDER)
-        val hint = if (cosmetics) CosmeticManager.lastMessage else feedback.ifEmpty { "Right-click: settings  /  Wheel: scroll" }
+        val hint = if (capes) CapeManager.status else feedback.ifEmpty { "Right-click: settings  /  Wheel: scroll" }
         val footer = "MC $version"
         val reserved = textRenderer.getWidth(footer) + 20
         Theme.label(ctx, textRenderer, hint, panel.x + 10, panel.bottom - 15, Theme.MUTED, panel.width - reserved - 20)
         Theme.label(ctx, textRenderer, footer, panel.right - reserved + 8, panel.bottom - 15, Theme.SUBTLE)
-        if (!cosmetics && viewport.contains(mx.toDouble(), my.toDouble())) {
+        if (!capes && viewport.contains(mx.toDouble(), my.toDouble())) {
             grid.hit(mx.toDouble(), my.toDouble(), modules.size, scroll.pixels)?.let { index ->
                 Theme.tooltip(ctx, textRenderer, com.endiq.client.modules.ModulePresentation.note(modules[index]), mx, my, width, height)
             }
         }
-        if (cosmetics && toolsButton.contains(mx.toDouble(),my.toDouble())) {
-            val labels=listOf("Reload custom PNGs","Open cosmetic folder","Unequip all cosmetics")
+        if (capes && toolsButton.contains(mx.toDouble(),my.toDouble())) {
+            val labels=listOf("Download capes","Open local cape folder","Unequip cape")
             labels.getOrNull((mx-toolsButton.x)/30)?.let { Theme.tooltip(ctx,textRenderer,it,mx,my,width,height) }
         }
     }
@@ -167,36 +172,17 @@ class ClickGui(private val parent: Screen? = null, initialCosmetics: Boolean = f
         Theme.rounded(ctx, UiRect(switch.x + if (module.enabled) 16 else 3, switch.y + 2, 9, 9), if (module.enabled) Theme.ACCENT else Theme.SUBTLE, 4)
     }
 
-    private fun drawCosmetic(ctx: GuiContext, entry: CosmeticManager.CosmeticEntry, rect: UiRect, mx: Int, my: Int) {
+    /** The cape's own back panel, sampled from the real texture: no separate preview art. */
+    private fun drawCape(ctx: GuiContext, cape: CapeManager.Cape, rect: UiRect, mx: Int, my: Int) {
         if (rect.bottom <= viewport.y || rect.y >= viewport.bottom) return
-        val equipped = CosmeticManager.isEquipped(entry)
+        val equipped = CapeManager.isEquipped(cape)
         val hover = viewport.contains(mx.toDouble(), my.toDouble()) && rect.contains(mx.toDouble(), my.toDouble())
         Theme.panel(ctx, rect, if (hover) Theme.HOVER else Theme.CARD, if (equipped) Theme.ACCENT else Theme.BORDER, 6)
-        if (entry.file != null && entry.type == CosmeticType.CAPE) {
-            ctx.drawTextureRegion(entry.texture,rect.x+14,rect.y+7,16,26,1f,1f,10,16,64,32)
-        } else ctx.drawTexture(entry.preview,rect.x+8,rect.y+6,28,28)
-        Theme.label(ctx, textRenderer, entry.name, rect.x + 10, rect.y + if (rect.height < 68) 32 else 40, Theme.TEXT, rect.width - 20)
-        Theme.label(ctx, textRenderer, if (equipped) "Equipped" else "Click to equip", rect.x + 10, rect.bottom - 16, if (equipped) Theme.ACCENT else Theme.SUBTLE, rect.width - 20)
-    }
-
-    private fun drawCosmeticSummary(ctx: GuiContext, rect: UiRect, mx: Int, my: Int) {
-        Theme.panel(ctx, rect, Theme.BACKGROUND)
-        ctx.drawTexture(Theme.LOGO, rect.x + (rect.width - 34) / 2, rect.y + 10, 34, 34)
-        Theme.label(ctx, textRenderer, "YOUR OUTFIT", rect.x + 12, rect.y + 52, Theme.ACCENT, rect.width - 24)
-        var y = rect.y + 72
-        for (type in types) {
-            val entry = CosmeticManager.getEquipped(type) ?: continue
-            if (y + 12 >= rect.bottom - 64) break
-            Theme.label(ctx, textRenderer, "${type.displayName}: ${entry.name}", rect.x + 10, y, Theme.MUTED, rect.width - 20)
-            y += 16
-        }
-        if (rect.height > 168) Theme.label(ctx, textRenderer, "Client-side / F5 to view", rect.x + 10, rect.bottom - 69, Theme.SUBTLE, rect.width - 20)
-        if (rect.height > 114) {
-            val folder = UiRect(rect.x + 8, rect.bottom - 54, rect.width - 16, 21)
-            val clear = UiRect(rect.x + 8, rect.bottom - 28, rect.width - 16, 21)
-            Theme.button(ctx, textRenderer, folder, "Open folder", folder.contains(mx.toDouble(), my.toDouble()))
-            Theme.button(ctx, textRenderer, clear, "Unequip all", clear.contains(mx.toDouble(), my.toDouble()))
-        }
+        ctx.drawTextureRegion(cape.texture, rect.x + 14, rect.y + 7, 16, 26, 1f, 1f,
+            cape.previewWidth, cape.previewHeight, cape.width, cape.height)
+        Theme.label(ctx, textRenderer, cape.name, rect.x + 10, rect.y + if (rect.height < 68) 32 else 40, Theme.TEXT, rect.width - 20)
+        Theme.label(ctx, textRenderer, if (equipped) "Equipped" else cape.source.displayName, rect.x + 10, rect.bottom - 16,
+            if (equipped) Theme.ACCENT else Theme.SUBTLE, rect.width - 20)
     }
 
     private fun iconButton(ctx: GuiContext, rect: UiRect, icon: String, mx: Int, my: Int) {
@@ -206,8 +192,8 @@ class ClickGui(private val parent: Screen? = null, initialCosmetics: Boolean = f
     }
 
     private fun changeView(value: Boolean) {
-        cosmetics = value; favoritesOnly = false; query = ""; searchFocused = false
-        moduleScroll.endDrag(); cosmeticScroll.endDrag()
+        capes = value; favoritesOnly = false; query = ""; searchFocused = false
+        moduleScroll.endDrag(); capeScroll.endDrag()
         refreshItems(); layout()
     }
 
@@ -218,9 +204,9 @@ class ClickGui(private val parent: Screen? = null, initialCosmetics: Boolean = f
         if (button == 0) {
             if (closeButton.contains(mx, my)) { closeGui(); return true }
             if (modsButton.contains(mx, my)) { changeView(false); return true }
-            if (cosmeticsButton.contains(mx, my)) { changeView(true); return true }
+            if (capesButton.contains(mx, my)) { changeView(true); return true }
             for ((rect, index) in tabs) if (rect.contains(mx, my)) {
-                if (cosmetics) cosmeticType = types[index] else category = categories[index]
+                if (capes) source = sources[index] else category = categories[index]
                 scroll.reset(); refreshItems(); updateBounds(); return true
             }
             searchFocused = searchBox.contains(mx, my)
@@ -228,35 +214,26 @@ class ClickGui(private val parent: Screen? = null, initialCosmetics: Boolean = f
                 if (mx >= searchBox.right - 22 && query.isNotEmpty()) { query = ""; changedSearch() }
                 return true
             }
-            if (cosmetics && toolsButton.contains(mx, my)) {
+            if (capes && toolsButton.contains(mx, my)) {
                 when (((mx-toolsButton.x)/30).toInt()) {
-                    0 -> { CosmeticManager.reload(); refreshItems(); updateBounds() }
-                    1 -> { val folder=java.io.File(CosmeticManager.baseDir(),cosmeticType.folderName);folder.mkdirs();openPath(folder) }
-                    2 -> CosmeticManager.unequipAll()
+                    0 -> CapeManager.downloadAsync()
+                    1 -> { CapeManager.localDir().mkdirs(); openPath(CapeManager.localDir()) }
+                    2 -> CapeManager.unequip()
                 }
                 return true
             }
             if (scroll.beginDrag(mx, my, track)) return true
-            sidebar?.let { rect ->
-                if (rect.height > 114 && UiRect(rect.x + 8, rect.bottom - 54, rect.width - 16, 21).contains(mx, my)) {
-                    val folder = MinecraftClient.getInstance().runDirectory.resolve("custom_cosmetics/${cosmeticType.folderName}")
-                    folder.mkdirs(); openPath(folder); return true
-                }
-                if (rect.height > 114 && UiRect(rect.x + 8, rect.bottom - 28, rect.width - 16, 21).contains(mx, my)) {
-                    CosmeticManager.unequipAll(); return true
-                }
-            }
         }
         // Clipped rows and the footer are deliberately not clickable.
         if (!viewport.contains(mx, my)) return super.onMouseClicked(mx, my, button)
-        val index = grid.hit(mx, my, if (cosmetics) entries.size else modules.size, scroll.pixels)
+        val index = grid.hit(mx, my, if (capes) entries.size else modules.size, scroll.pixels)
             ?: return super.onMouseClicked(mx, my, button)
-        if (cosmetics && button == 0) {
-            val entry = entries[index]
-            if (CosmeticManager.isEquipped(entry)) CosmeticManager.unequip(entry.type) else CosmeticManager.equip(entry)
+        if (capes && button == 0) {
+            val cape = entries[index]
+            if (CapeManager.isEquipped(cape)) CapeManager.unequip() else CapeManager.equip(cape)
             return true
         }
-        if (!cosmetics) {
+        if (!capes) {
             val module = modules[index]
             val rect = grid.card(index, scroll.pixels)
             if (button == 1 || (button == 0 && UiRect(rect.right - 29, rect.y + 7, 22, 22).contains(mx, my))) {

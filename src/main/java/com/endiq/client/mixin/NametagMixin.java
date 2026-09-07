@@ -51,7 +51,7 @@ public class NametagMixin {
 /*    @Inject(method = "extractRenderState", at = @At("TAIL"))
     private void turtleClient$badgeState(Entity entity, EntityRenderState state, float tickDelta, CallbackInfo ci) {
         ((BadgeRenderState) state).turtleClient$setBadge(ClientCompatKt.isLocalPlayer(entity));
-        ((com.endiq.client.compat.CosmeticRenderState) state).turtleClient$setCosmetics(com.endiq.client.cosmetics.CosmeticManager.capture(entity, tickDelta));
+        ((com.endiq.client.compat.CapeRenderState) state).turtleClient$setCape(com.endiq.client.capes.CapeManager.capture(entity, tickDelta));
     }
 
     // Select the four-argument entrypoint, not its offset-taking overload.
@@ -78,7 +78,7 @@ public class NametagMixin {
 /*    @Inject(method = "updateRenderState", at = @At("TAIL"))
     private void turtleClient$badgeState(Entity entity, EntityRenderState state, float tickDelta, CallbackInfo ci) {
         ((BadgeRenderState) state).turtleClient$setBadge(ClientCompatKt.isLocalPlayer(entity));
-        ((com.endiq.client.compat.CosmeticRenderState) state).turtleClient$setCosmetics(com.endiq.client.cosmetics.CosmeticManager.capture(entity, tickDelta));
+        ((com.endiq.client.compat.CapeRenderState) state).turtleClient$setCape(com.endiq.client.capes.CapeManager.capture(entity, tickDelta));
     }
 
     @Inject(method = "renderLabelIfPresent", at = @At("TAIL"))
@@ -102,7 +102,7 @@ public class NametagMixin {
     @Inject(method = "updateRenderState", at = @At("TAIL"))
     private void turtleClient$badgeState(Entity entity, EntityRenderState state, float tickDelta, CallbackInfo ci) {
         ((BadgeRenderState) state).turtleClient$setBadge(ClientCompatKt.isLocalPlayer(entity));
-        ((com.endiq.client.compat.CosmeticRenderState) state).turtleClient$setCosmetics(com.endiq.client.cosmetics.CosmeticManager.capture(entity, tickDelta));
+        ((com.endiq.client.compat.CapeRenderState) state).turtleClient$setCape(com.endiq.client.capes.CapeManager.capture(entity, tickDelta));
     }
 
     @Inject(method = "renderLabelIfPresent", at = @At("TAIL"))

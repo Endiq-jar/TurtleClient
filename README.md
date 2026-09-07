@@ -1,10 +1,11 @@
 # 🐢 TurtleClient — Fabric, multi-version
 
-## Controls, cosmetics and accounts
+## Controls, capes and accounts
 
-- **New vector visual identity:** matte controls, a flat turtle mark, clean pixel materials and **52 distinct built-in module icons**. Editable SVG sources are included.
+- **New vector visual identity:** matte controls, a flat turtle mark and **52 distinct built-in module icons**. Editable SVG sources are included.
 - **Remade startup/resource loading:** real percentage, per-reload time-based smoothing, responsive placement and font-independent loading captions. Vanilla completion/error handling is retained.
-- **18 client-side cosmetics:** three colorways each of capes, hats, wings, masks, shell suits and turtle pets. Equip in Cosmetics and use **F5** in a world. See [cosmetic formats and limits](COSMETICS_README.txt).
+- **Capes from the internet:** your Mojang profile cape, your LabyMod cape and NameMC's public cape index are downloaded on demand and cached — no capes are bundled. Equip one in **Capes** and press **F5** in a world. See [cape sources and limits](CAPES_README.txt).
+- **Minimal title screen:** a flat backdrop and a bare text menu. The old scene switcher and its two backdrop images are gone.
 - **Account switcher:** click the name at the top right of the title menu. Offline profiles and the launcher account are available; official Microsoft device sign-in requires your own approved public application ID. Tokens are memory-only. See [setup and security](docs/ACCOUNTS.md).
 - Repaired HUD lookups, CPS input, live FOV/zoom/brightness, timer/utility actions, crosshair customization, RGBA editing and saved preferences.
 - **Not every legacy prototype is implemented.** Unavailable modules and basic fixed-layout overlays are explicitly identified instead of presenting fake working controls. See the [button audit and manual test checklist](docs/BUTTON_AUDIT.md).
@@ -36,7 +37,7 @@ Quick reference:
   and the existing culling/adaptive view-distance/VSync controls.
 - **Utility:** timer start/pause/reset, clean PNG screenshots, session waypoints,
   opt-in Auto Text, popup notifications and forward auto-sprint.
-- **Cosmetics/accounts:** the six cosmetic categories and account modes described above.
+- **Capes/accounts:** the downloaded cape list and the account modes described above.
 
 The old README advertised KillAura, NoFall, a movement-speed potion, working
 weather/time controls and freecam. Those are **not implemented features in this
@@ -48,7 +49,7 @@ Twelve incomplete legacy prototypes are marked **Unavailable**. See the
 Press **Right Shift** in-game to open the GUI.
 - Left click a module to toggle it
 - Right-click a module (or click its gear) to open settings
-- Use the mouse wheel or drag the scrollbar in modules, cosmetics, and settings
+- Use the mouse wheel or drag the scrollbar in modules, capes, and settings
 - Page Up / Page Down and Home / End also scroll
 - Search or choose a category to filter modules; Escape returns to the previous screen
 
@@ -84,6 +85,8 @@ Drop the non-sources TurtleClient jar for your Minecraft version into `.minecraf
 
 ## Artwork
 
-The menu uses editable, code-authored Turtle vector branding and flat coast/forest artwork.
-Runtime PNG data totals about 178 KB; no image-model masters or runtime SVG renderer are required.
+The menu uses editable, code-authored Turtle vector branding over a single photographic
+night-sky panorama backdrop (slowly panned and veiled so text stays readable).
+Vector PNG data totals about 178 KB; the panorama ships separately and is credited in
+docs/ARTWORK.md. No image-model masters or runtime SVG renderer are required.
 See [docs/ARTWORK.md](docs/ARTWORK.md) for texture budgets and generation details.
