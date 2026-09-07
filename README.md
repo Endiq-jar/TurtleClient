@@ -85,6 +85,8 @@ Drop the non-sources TurtleClient jar for your Minecraft version into `.minecraf
 
 ## Artwork
 
-The menu uses editable, code-authored Turtle vector branding and flat coast/forest artwork.
-Runtime PNG data totals about 178 KB; no image-model masters or runtime SVG renderer are required.
+The menu uses editable, code-authored Turtle vector branding over a single photographic
+night-sky panorama backdrop (slowly panned and veiled so text stays readable).
+Vector PNG data totals about 178 KB; the panorama ships separately and is credited in
+docs/ARTWORK.md. No image-model masters or runtime SVG renderer are required.
 See [docs/ARTWORK.md](docs/ARTWORK.md) for texture budgets and generation details.

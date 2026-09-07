@@ -103,3 +103,15 @@ appearance still need in-game checks.
 Both sheets are explicitly **design references, not in-game screenshots**. Menus
 continue to use Minecraft's own text renderer; preview-sheet captions are typeset
 by the preparation script.
+
+## Title-screen panorama
+
+The home screen's backdrop is a single 1024x512 photographic night panorama
+(`textures/gui/panorama/panorama.png`), panned slowly and darkened with a translucent
+veil so the bare text menu stays legible. It replaces the earlier flat forest/coast
+scenes; no cube-map or per-version rendering code is needed because it is drawn with
+the same cover-fit `drawTextureRegion` helper the cape previews use.
+
+Source: a Milky-Way-over-mountains photograph published on Unsplash, which is free to
+use without permission. The image was cropped to a 2:1 band, downscaled and lightly
+blurred for compression; the original is not bundled.

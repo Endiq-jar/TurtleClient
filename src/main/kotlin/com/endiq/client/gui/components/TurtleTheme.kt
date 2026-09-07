@@ -18,6 +18,8 @@ object TurtleTheme {
     val DANGER = 0xFFE49B8C.toInt()
     val LOGO = identifier("turtle-client", "textures/gui/branding/turtle.png")
     val WORDMARK = identifier("turtle-client", "textures/gui/branding/wordmark.png")
+    /** The downloaded, veiled title backdrop; drawn as a slow horizontal pan. */
+    val PANORAMA = identifier("turtle-client", "textures/gui/panorama/panorama.png")
     private val icons = mutableMapOf<String, Identifier>()
     fun icon(name: String) = icons.getOrPut(name) { identifier("turtle-client", "textures/gui/icons/$name.png") }
 

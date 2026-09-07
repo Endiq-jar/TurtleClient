@@ -22,6 +22,11 @@ class CustomTitleScreen : ClientScreen("TurtleClient") {
     private var favoritesButton: UiRect? = null
     private val favoritesLabel = "Favorites"
 
+    private const val PANORAMA_WIDTH = 1024
+    private const val PANORAMA_HEIGHT = 512
+    private const val PAN_MS = 90_000L
+    private const val PANORAMA_VEIL = 0x72000000
+
     override fun init() {
         buttons.clear()
         val gap = if (height < 260) 15 else 20
@@ -43,9 +48,29 @@ class CustomTitleScreen : ClientScreen("TurtleClient") {
         keyboardFocus = -1
     }
 
+    /**
+     * The internet-sourced backdrop, panned slowly left-to-right and veiled so the
+     * bare text buttons stay readable. Cover-fits the screen; the pan ping-pongs so
+     * no seam is ever visible.
+     */
+    private fun drawPanorama(ctx: GuiContext) {
+        val aspect = width.toFloat() / height.coerceAtLeast(1)
+        var srcH = PANORAMA_HEIGHT
+        var srcW = (srcH * aspect).toInt()
+        if (srcW > PANORAMA_WIDTH) { srcW = PANORAMA_WIDTH; srcH = (srcW / aspect).toInt() }
+        val maxPan = (PANORAMA_WIDTH - srcW).coerceAtLeast(0)
+        val cycle = (System.currentTimeMillis() % PAN_MS) / PAN_MS.toFloat()
+        val tri = if (cycle < 0.5f) cycle * 2f else (1f - cycle) * 2f
+        val u = (maxPan * tri).toInt()
+        val v = (PANORAMA_HEIGHT - srcH) / 2
+        ctx.drawTextureRegion(Theme.PANORAMA, 0, 0, width, height, u.toFloat(), v.toFloat(),
+            srcW.coerceAtLeast(1), srcH.coerceAtLeast(1), PANORAMA_WIDTH, PANORAMA_HEIGHT)
+        ctx.fill(0, 0, width, height, PANORAMA_VEIL)
+    }
+
     override fun renderGui(ctx: GuiContext, mx: Int, my: Int, delta: Float) {
         super.renderGui(ctx, mx, my, delta)
-        ctx.fill(0, 0, width, height, Theme.BACKGROUND)
+        drawPanorama(ctx)
         ctx.drawTexture(Theme.LOGO, 12, 11, 16, 16)
         Theme.label(ctx, textRenderer, "TURTLE CLIENT", 34, 15, Theme.MUTED)
 
