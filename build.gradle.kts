@@ -281,3 +281,25 @@ publishing {
         }
     }
 }
+
+// TEMPORARY CI diagnostics (remove once the build is green): the sandbox that
+// edits this repo cannot read runner logs, so compile errors are mirrored into
+// GitHub check annotations, which are readable through the REST API.
+val ciErrors = StringBuilder()
+allprojects {
+    logging.addStandardErrorListener { text ->
+        text.lineSequence().forEach { line ->
+            if (line.startsWith("e: ") || line.contains("error: ") || line.startsWith("FAILURE:")) {
+                synchronized(ciErrors) { ciErrors.append(line.trim()).append('\n') }
+            }
+        }
+    }
+}
+gradle.taskGraph.afterTask { task ->
+    val failure = task.state.failure ?: return@afterTask
+    synchronized(ciErrors) {
+        println("::error::${task.path} failed: ${failure.message?.lineSequence()?.firstOrNull()}")
+        ciErrors.lineSequence().filter { it.isNotBlank() }.take(60).forEach { println("::error::$it") }
+        ciErrors.setLength(0)
+    }
+}
