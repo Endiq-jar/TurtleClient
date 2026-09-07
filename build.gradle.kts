@@ -281,17 +281,3 @@ publishing {
         }
     }
 }
-
-// TEMPORARY CI diagnostics (remove once the build is green): the editing sandbox
-// cannot download runner logs, so failing task names are echoed as GitHub check
-// annotations, which stay readable through the REST API.
-println("::warning::turtle diag loaded")
-gradle.taskGraph.afterTask(org.gradle.api.Action<org.gradle.api.Task> {
-    try {
-        val failed = this
-        val failure = failed.state.failure
-        if (failure != null) {
-            println("::error::FAILED ${failed.path} :: ${failure.javaClass.simpleName} :: ${failure.message?.lineSequence()?.firstOrNull()}")
-        }
-    } catch (_: Throwable) { /* diagnostics must never break the build */ }
-})
