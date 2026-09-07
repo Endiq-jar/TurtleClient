@@ -22,10 +22,12 @@ class CustomTitleScreen : ClientScreen("TurtleClient") {
     private var favoritesButton: UiRect? = null
     private val favoritesLabel = "Favorites"
 
-    private const val PANORAMA_WIDTH = 1024
-    private const val PANORAMA_HEIGHT = 512
-    private const val PAN_MS = 90_000L
-    private const val PANORAMA_VEIL = 0x72000000
+    private companion object {
+        const val PANORAMA_WIDTH = 1024
+        const val PANORAMA_HEIGHT = 512
+        const val PAN_MS = 90_000L
+        const val PANORAMA_VEIL = 0x72000000
+    }
 
     override fun init() {
         buttons.clear()
