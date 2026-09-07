@@ -63,13 +63,20 @@ object CapeCatalog {
         return found.map { (hash, name) -> Reference(hash, name.ifBlank { "Cape ${hash.take(6)}" }) }
     }
 
-    /** The visible label of the anchor that started at [from]: text first, attributes second. */
+    /**
+     * The visible label of the anchor whose href ended at [from]: text first, attributes second.
+     * [from] sits inside the opening tag, so the rest of that tag is skipped before any
+     * text is read -- otherwise the trailing `">` of the attribute leaks into the name.
+     */
     private fun anchorText(html: String, from: Int): String {
-        val end = html.indexOf("</a>", from).takeIf { it in 0..from + 1200 } ?: (from + 900).coerceAtMost(html.length)
-        val inner = unescape(TAG.matcher(html.substring(from, end.coerceAtMost(html.length))).replaceAll(" "))
-        val words = inner.split(Regex("\\s+")).filter { it.isNotBlank() && !COUNT.matcher(it).matches() }
+        val open = html.indexOf('>', from)
+        val start = if (open in 0..from + 400) open + 1 else from
+        val end = (html.indexOf("</a>", start).takeIf { it in 0..start + 1200 } ?: start + 900).coerceAtMost(html.length)
+        val body = html.substring(start.coerceAtMost(html.length), end)
+        val words = unescape(TAG.matcher(body).replaceAll(" ")).split(Regex("\\s+"))
+            .filter { it.isNotBlank() && !COUNT.matcher(it).matches() }
         if (words.isNotEmpty()) return words.joinToString(" ").take(48)
-        val attributes = LABEL.matcher(html.substring(from, end.coerceAtMost(html.length)))
+        val attributes = LABEL.matcher(html.substring(from, end))
         return if (attributes.find()) unescape(attributes.group(1)) else ""
     }
 
