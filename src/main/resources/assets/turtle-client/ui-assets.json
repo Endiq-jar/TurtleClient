@@ -11,348 +11,6 @@
       "sourceSha256": "195206d4841c74eb2ca58387c3cb614c06283f5ca88790b76a078c2eb8d1deaa"
     },
     {
-      "path": "textures/cosmetics/cape/aurora.png",
-      "width": 128,
-      "height": 64,
-      "bytes": 347,
-      "sha256": "c7aa96f0501fa58706bd33393943e2033cc9f32a6f3fdc533afb45ca5528485e",
-      "source": "artwork/cosmetics/cape/aurora.svg",
-      "sourceSha256": "acbb732b8981bcfe1ff4211287f02b6a59da179a5677aad16c784cc0b48e4fa4"
-    },
-    {
-      "path": "textures/cosmetics/cape/ember.png",
-      "width": 128,
-      "height": 64,
-      "bytes": 343,
-      "sha256": "815255a5743c668f15841e739c3df53f4b32410b71bdabfc62296bebbdcd2a6a",
-      "source": "artwork/cosmetics/cape/ember.svg",
-      "sourceSha256": "133221bd3ec2550afb6e39b4232ad0c044c3f8ca372e3884448fbf6e1feb8190"
-    },
-    {
-      "path": "textures/cosmetics/cape/jade.png",
-      "width": 128,
-      "height": 64,
-      "bytes": 344,
-      "sha256": "52e51e3a0efb27e133a073f4f0b0a21a3561dc6b8ead323a6824f18b6d178387",
-      "source": "artwork/cosmetics/cape/jade.svg",
-      "sourceSha256": "2bb8febc2ce8c49a4b31754eed706d2ee67e637257a833914fdcc940179ebd5e"
-    },
-    {
-      "path": "textures/cosmetics/hat/aurora.png",
-      "width": 64,
-      "height": 64,
-      "bytes": 291,
-      "sha256": "658f854eb94415abae954fde254b98b7b8f878cc4281843fc17d0c27e24c206e",
-      "source": "artwork/cosmetics/hat/aurora.svg",
-      "sourceSha256": "a7c3397e1431bf07ea40c8ca5b22c84bd923d251811cafc3b175595eb153d174"
-    },
-    {
-      "path": "textures/cosmetics/hat/ember.png",
-      "width": 64,
-      "height": 64,
-      "bytes": 294,
-      "sha256": "8511c5bc4946b29724745578409d5e2172d47e777d283bd66cfcee61e49dc610",
-      "source": "artwork/cosmetics/hat/ember.svg",
-      "sourceSha256": "a5b3b7ad2c7ff43dbc92682869ec5bd2ed0959bdb889f5fdea92d2c83b96b4e4"
-    },
-    {
-      "path": "textures/cosmetics/hat/jade.png",
-      "width": 64,
-      "height": 64,
-      "bytes": 292,
-      "sha256": "bb6560c1342625ed9fe2fb8998c5879f7b15aa90eb726e883ca7670a71d04537",
-      "source": "artwork/cosmetics/hat/jade.svg",
-      "sourceSha256": "73037a1e868c3b5282d646f7e3fb858aee42baa1d2c4af55b93417262fd24eaa"
-    },
-    {
-      "path": "textures/cosmetics/mask/aurora.png",
-      "width": 64,
-      "height": 64,
-      "bytes": 291,
-      "sha256": "658f854eb94415abae954fde254b98b7b8f878cc4281843fc17d0c27e24c206e",
-      "source": "artwork/cosmetics/mask/aurora.svg",
-      "sourceSha256": "a7c3397e1431bf07ea40c8ca5b22c84bd923d251811cafc3b175595eb153d174"
-    },
-    {
-      "path": "textures/cosmetics/mask/ember.png",
-      "width": 64,
-      "height": 64,
-      "bytes": 294,
-      "sha256": "8511c5bc4946b29724745578409d5e2172d47e777d283bd66cfcee61e49dc610",
-      "source": "artwork/cosmetics/mask/ember.svg",
-      "sourceSha256": "a5b3b7ad2c7ff43dbc92682869ec5bd2ed0959bdb889f5fdea92d2c83b96b4e4"
-    },
-    {
-      "path": "textures/cosmetics/mask/jade.png",
-      "width": 64,
-      "height": 64,
-      "bytes": 292,
-      "sha256": "bb6560c1342625ed9fe2fb8998c5879f7b15aa90eb726e883ca7670a71d04537",
-      "source": "artwork/cosmetics/mask/jade.svg",
-      "sourceSha256": "73037a1e868c3b5282d646f7e3fb858aee42baa1d2c4af55b93417262fd24eaa"
-    },
-    {
-      "path": "textures/cosmetics/pet/aurora.png",
-      "width": 64,
-      "height": 64,
-      "bytes": 291,
-      "sha256": "658f854eb94415abae954fde254b98b7b8f878cc4281843fc17d0c27e24c206e",
-      "source": "artwork/cosmetics/pet/aurora.svg",
-      "sourceSha256": "a7c3397e1431bf07ea40c8ca5b22c84bd923d251811cafc3b175595eb153d174"
-    },
-    {
-      "path": "textures/cosmetics/pet/ember.png",
-      "width": 64,
-      "height": 64,
-      "bytes": 294,
-      "sha256": "8511c5bc4946b29724745578409d5e2172d47e777d283bd66cfcee61e49dc610",
-      "source": "artwork/cosmetics/pet/ember.svg",
-      "sourceSha256": "a5b3b7ad2c7ff43dbc92682869ec5bd2ed0959bdb889f5fdea92d2c83b96b4e4"
-    },
-    {
-      "path": "textures/cosmetics/pet/jade.png",
-      "width": 64,
-      "height": 64,
-      "bytes": 292,
-      "sha256": "bb6560c1342625ed9fe2fb8998c5879f7b15aa90eb726e883ca7670a71d04537",
-      "source": "artwork/cosmetics/pet/jade.svg",
-      "sourceSha256": "73037a1e868c3b5282d646f7e3fb858aee42baa1d2c4af55b93417262fd24eaa"
-    },
-    {
-      "path": "textures/cosmetics/previews/cape_aurora.png",
-      "width": 64,
-      "height": 64,
-      "bytes": 1491,
-      "sha256": "11c8449f106bab9ac141509aacce7370425346e33bd817e75f09fccea373405f",
-      "source": "artwork/cosmetics/previews/cape_aurora.svg",
-      "sourceSha256": "331ebcec311b8d04237b95bbf1b545511c7ba79fc2c7992aec919baf82dfabdc"
-    },
-    {
-      "path": "textures/cosmetics/previews/cape_ember.png",
-      "width": 64,
-      "height": 64,
-      "bytes": 1633,
-      "sha256": "5ab89a97577364604663f983a568be8aa1cb8d202e5c5a98479f6a2d911b29c3",
-      "source": "artwork/cosmetics/previews/cape_ember.svg",
-      "sourceSha256": "ec27a3fc8121269972bd0c862318521566b8e3c160fcd0b87130ad0b635ba0b1"
-    },
-    {
-      "path": "textures/cosmetics/previews/cape_jade.png",
-      "width": 64,
-      "height": 64,
-      "bytes": 1593,
-      "sha256": "5872f5014a31dd206250a8b135bf21af51d26e27e312cd59a891b3f1eb94e3e8",
-      "source": "artwork/cosmetics/previews/cape_jade.svg",
-      "sourceSha256": "6e57298610ee869ca47603c73448141ed4bc03d8cf341ea266728382d00751f1"
-    },
-    {
-      "path": "textures/cosmetics/previews/hat_aurora.png",
-      "width": 64,
-      "height": 64,
-      "bytes": 774,
-      "sha256": "c940e7551c7193c6386303d281860116755886fdab29d1a1e72d7dca45cd55d5",
-      "source": "artwork/cosmetics/previews/hat_aurora.svg",
-      "sourceSha256": "23d8db6dc6df09d13e6672ee64b013bd4f45ce8b823b8b35eb43a0e5c9ba7cd4"
-    },
-    {
-      "path": "textures/cosmetics/previews/hat_ember.png",
-      "width": 64,
-      "height": 64,
-      "bytes": 808,
-      "sha256": "0a0dd0275274d01406065e6a2f6d6fc2e277db23c2d41d01dcb4d9a6f953ab35",
-      "source": "artwork/cosmetics/previews/hat_ember.svg",
-      "sourceSha256": "6cfb8192538335aab053cc758041a9a13ac586de6dc847ae40749f40d6a38499"
-    },
-    {
-      "path": "textures/cosmetics/previews/hat_jade.png",
-      "width": 64,
-      "height": 64,
-      "bytes": 799,
-      "sha256": "ae2a3e9b2cce0dc9a5a39ec953fd908294d0527f2155596e538cb05d3a564903",
-      "source": "artwork/cosmetics/previews/hat_jade.svg",
-      "sourceSha256": "49e36d919adf0af837bdc44b1099e45fadcc54d1ba74d4a3ddc5fe2cce50ec5d"
-    },
-    {
-      "path": "textures/cosmetics/previews/mask_aurora.png",
-      "width": 64,
-      "height": 64,
-      "bytes": 1308,
-      "sha256": "5efee226b0d073937bac56aa448d0f89526f404322f0ede1d677c2e6a0d3a897",
-      "source": "artwork/cosmetics/previews/mask_aurora.svg",
-      "sourceSha256": "0b551341473ca4f5d853d8e1b4724e4d1c96cc5aa05b8628feb5b8df54f02496"
-    },
-    {
-      "path": "textures/cosmetics/previews/mask_ember.png",
-      "width": 64,
-      "height": 64,
-      "bytes": 1415,
-      "sha256": "63a0fef95e52b113b17b46569296483fa432c2bb0e54599fa1192595a260c475",
-      "source": "artwork/cosmetics/previews/mask_ember.svg",
-      "sourceSha256": "29da2a0b380ccb5e92689a58606d4259484e62ffaa11eb4f9c47ce728fbb0d31"
-    },
-    {
-      "path": "textures/cosmetics/previews/mask_jade.png",
-      "width": 64,
-      "height": 64,
-      "bytes": 1397,
-      "sha256": "3857b80410444e17b0d4ecb8aa3c0b9c298a9aadf71b83e69cbb4b2e18898565",
-      "source": "artwork/cosmetics/previews/mask_jade.svg",
-      "sourceSha256": "43b9f4a816f0d0fb899f2638771b6af3b31a8a1e8586fdd80b916a193b9cfe44"
-    },
-    {
-      "path": "textures/cosmetics/previews/pet_aurora.png",
-      "width": 64,
-      "height": 64,
-      "bytes": 2108,
-      "sha256": "9ff999f07e4294d37ecadf436b4ecc877996a403cddc8958f1c87744c0e59d20",
-      "source": "artwork/cosmetics/previews/pet_aurora.svg",
-      "sourceSha256": "fea0b55d6d0e7f386d3ce5a1710cb7e54a64ff45acefa06a0d9a4e698ea4f04c"
-    },
-    {
-      "path": "textures/cosmetics/previews/pet_ember.png",
-      "width": 64,
-      "height": 64,
-      "bytes": 2239,
-      "sha256": "419ab79b4d76af9f317421a01c15140cd58da57e20b6f13af33c1e881b8f3523",
-      "source": "artwork/cosmetics/previews/pet_ember.svg",
-      "sourceSha256": "9afe129ab9e863ca2f8a42a0ab01c12e3de9ff477db78ba4ee782b45e12a6f35"
-    },
-    {
-      "path": "textures/cosmetics/previews/pet_jade.png",
-      "width": 64,
-      "height": 64,
-      "bytes": 2270,
-      "sha256": "5fd57dfca5f9e847b061f45ac547905f15dc0213d8ce2239c93371c7e43292b7",
-      "source": "artwork/cosmetics/previews/pet_jade.svg",
-      "sourceSha256": "d7275f2059f48390c955a23bcfcec9a53277782b9b14eda7fa1ab818dc19f24f"
-    },
-    {
-      "path": "textures/cosmetics/previews/suit_aurora.png",
-      "width": 64,
-      "height": 64,
-      "bytes": 1040,
-      "sha256": "ad134185e0132c935cf10907bca165be2f6d41b4831c9fd2d29e3fc9b7a07818",
-      "source": "artwork/cosmetics/previews/suit_aurora.svg",
-      "sourceSha256": "27e6bcf7310faf65c3144f46dc1c131fcef14818b8eb2bafc10946ae58ba70e5"
-    },
-    {
-      "path": "textures/cosmetics/previews/suit_ember.png",
-      "width": 64,
-      "height": 64,
-      "bytes": 1114,
-      "sha256": "e37dca9f2820a8cbdfb572d697d59c629df2909fa667f8c8976acfeb29980aa7",
-      "source": "artwork/cosmetics/previews/suit_ember.svg",
-      "sourceSha256": "2acf121a207f012933a0a3c333e97defe063817f5f650ccc4a7869145e94f2d9"
-    },
-    {
-      "path": "textures/cosmetics/previews/suit_jade.png",
-      "width": 64,
-      "height": 64,
-      "bytes": 1084,
-      "sha256": "26686fed734e34f2320334125650956d2cb0eb0cca914bdcb896f2c4766bf6b4",
-      "source": "artwork/cosmetics/previews/suit_jade.svg",
-      "sourceSha256": "c53053bcc77e483a7ce498e5ca434cee29b76a1bf5dc15fd94236bb9bd59764e"
-    },
-    {
-      "path": "textures/cosmetics/previews/wings_aurora.png",
-      "width": 64,
-      "height": 64,
-      "bytes": 1591,
-      "sha256": "cb1dca1ce7132cc5b7f6ab3954269ec5414bea46a4e9055af3ca953932f56eab",
-      "source": "artwork/cosmetics/previews/wings_aurora.svg",
-      "sourceSha256": "ee0e054b278b230eee38826efcc545a882f48811c494bd9a60c0a91561bc6892"
-    },
-    {
-      "path": "textures/cosmetics/previews/wings_ember.png",
-      "width": 64,
-      "height": 64,
-      "bytes": 1747,
-      "sha256": "95f7ddd3bbf2d34e998b203a40f434b3f91c513aba113f03bbe4b16ebe093941",
-      "source": "artwork/cosmetics/previews/wings_ember.svg",
-      "sourceSha256": "2c1ba7fb9f4fb40effcce3193e976725f3fa479ab2d5d1ab621066bdde630153"
-    },
-    {
-      "path": "textures/cosmetics/previews/wings_jade.png",
-      "width": 64,
-      "height": 64,
-      "bytes": 1744,
-      "sha256": "fb15e238dc3a58d56ccda13d4d1da759d3bc409ffd4970f15366d9306c68d1b5",
-      "source": "artwork/cosmetics/previews/wings_jade.svg",
-      "sourceSha256": "5b03145698432cc12ab14eabaac104e1f92d0bf06f5d24c30ee3731b383d33ce"
-    },
-    {
-      "path": "textures/cosmetics/suit/aurora.png",
-      "width": 64,
-      "height": 64,
-      "bytes": 291,
-      "sha256": "658f854eb94415abae954fde254b98b7b8f878cc4281843fc17d0c27e24c206e",
-      "source": "artwork/cosmetics/suit/aurora.svg",
-      "sourceSha256": "a7c3397e1431bf07ea40c8ca5b22c84bd923d251811cafc3b175595eb153d174"
-    },
-    {
-      "path": "textures/cosmetics/suit/ember.png",
-      "width": 64,
-      "height": 64,
-      "bytes": 294,
-      "sha256": "8511c5bc4946b29724745578409d5e2172d47e777d283bd66cfcee61e49dc610",
-      "source": "artwork/cosmetics/suit/ember.svg",
-      "sourceSha256": "a5b3b7ad2c7ff43dbc92682869ec5bd2ed0959bdb889f5fdea92d2c83b96b4e4"
-    },
-    {
-      "path": "textures/cosmetics/suit/jade.png",
-      "width": 64,
-      "height": 64,
-      "bytes": 292,
-      "sha256": "bb6560c1342625ed9fe2fb8998c5879f7b15aa90eb726e883ca7670a71d04537",
-      "source": "artwork/cosmetics/suit/jade.svg",
-      "sourceSha256": "73037a1e868c3b5282d646f7e3fb858aee42baa1d2c4af55b93417262fd24eaa"
-    },
-    {
-      "path": "textures/cosmetics/wings/aurora.png",
-      "width": 64,
-      "height": 64,
-      "bytes": 291,
-      "sha256": "658f854eb94415abae954fde254b98b7b8f878cc4281843fc17d0c27e24c206e",
-      "source": "artwork/cosmetics/wings/aurora.svg",
-      "sourceSha256": "a7c3397e1431bf07ea40c8ca5b22c84bd923d251811cafc3b175595eb153d174"
-    },
-    {
-      "path": "textures/cosmetics/wings/ember.png",
-      "width": 64,
-      "height": 64,
-      "bytes": 294,
-      "sha256": "8511c5bc4946b29724745578409d5e2172d47e777d283bd66cfcee61e49dc610",
-      "source": "artwork/cosmetics/wings/ember.svg",
-      "sourceSha256": "a5b3b7ad2c7ff43dbc92682869ec5bd2ed0959bdb889f5fdea92d2c83b96b4e4"
-    },
-    {
-      "path": "textures/cosmetics/wings/jade.png",
-      "width": 64,
-      "height": 64,
-      "bytes": 292,
-      "sha256": "bb6560c1342625ed9fe2fb8998c5879f7b15aa90eb726e883ca7670a71d04537",
-      "source": "artwork/cosmetics/wings/jade.svg",
-      "sourceSha256": "73037a1e868c3b5282d646f7e3fb858aee42baa1d2c4af55b93417262fd24eaa"
-    },
-    {
-      "path": "textures/gui/backgrounds/coast.png",
-      "width": 1024,
-      "height": 576,
-      "bytes": 4374,
-      "sha256": "5bae689a38cbf516ede6b156dc4c5a947ec4051ab39cbeb594cd1b7f0b2d554d",
-      "source": "artwork/backgrounds/coast.svg",
-      "sourceSha256": "c4ffeebf225c0fbe9dc421f37cc94e911f80863fd0475119dc4f27146387d45a"
-    },
-    {
-      "path": "textures/gui/backgrounds/forest.png",
-      "width": 1024,
-      "height": 576,
-      "bytes": 9577,
-      "sha256": "7372aae27a9dcc305e012ea3029c1c7f8a211db1297ac14311b3956bf8b16e98",
-      "source": "artwork/backgrounds/forest.svg",
-      "sourceSha256": "4ec73a9d35c75a7df14de86188359edabc6cf9c6729824a1baaf5bbe61e25860"
-    },
-    {
       "path": "textures/gui/branding/badge.png",
       "width": 64,
       "height": 64,
@@ -497,15 +155,6 @@
       "sourceSha256": "5f8b18b5d116fda5d661fe1912e08eaac691c11c47768f3de69680b3068b6f18"
     },
     {
-      "path": "textures/gui/icons/cape.png",
-      "width": 32,
-      "height": 32,
-      "bytes": 986,
-      "sha256": "08f5ee9323b123fc2fe1cb28bfc47724458583dfef8c9669d62f6952dc810601",
-      "source": "artwork/icons/cape.svg",
-      "sourceSha256": "f3308595ea6e8ef80180315695588e1dfb04dfd44c895b875f0444deb1f06401"
-    },
-    {
       "path": "textures/gui/icons/check.png",
       "width": 32,
       "height": 32,
@@ -569,15 +218,6 @@
       "sourceSha256": "66bbc894a5d511340fcd7150666ff0fa2a8533f777bc8c834e1ed4ecab4a0d94"
     },
     {
-      "path": "textures/gui/icons/hat.png",
-      "width": 32,
-      "height": 32,
-      "bytes": 661,
-      "sha256": "7ef1d4b825e284ebeee6a6ac56bfe584784d2d2829886b6f985bc7537ae9d852",
-      "source": "artwork/icons/hat.svg",
-      "sourceSha256": "0f51fab9b06cf1cbcafcf21a5075bf27e59e955cf1e04891d25d6035394cbf7a"
-    },
-    {
       "path": "textures/gui/icons/hud.png",
       "width": 32,
       "height": 32,
@@ -605,15 +245,6 @@
       "sourceSha256": "a1dabb68daa93bfe510ea6d7b5263e046c68abb0323ec4e2e7215ec304027043"
     },
     {
-      "path": "textures/gui/icons/mask.png",
-      "width": 32,
-      "height": 32,
-      "bytes": 785,
-      "sha256": "445d0521f04c711e89552d455fdc50ca0b6d02a1b3d8f554c36c2105e1e7c317",
-      "source": "artwork/icons/mask.svg",
-      "sourceSha256": "2c6fb4eafb3794dbf479d74660e02a071b1522c49a401d56010bb7dd98aaeadd"
-    },
-    {
       "path": "textures/gui/icons/movement.png",
       "width": 32,
       "height": 32,
@@ -639,15 +270,6 @@
       "sha256": "de67ca10d3c097fc5ff67ab7ab0e0c918a86ca67603883100b4940d2d924c736",
       "source": "artwork/icons/performance.svg",
       "sourceSha256": "dcfee52aba82f010420c2e8c409f4d49d3ced5c82affbe05d4cd5b89f02e25a8"
-    },
-    {
-      "path": "textures/gui/icons/pet.png",
-      "width": 32,
-      "height": 32,
-      "bytes": 1069,
-      "sha256": "c35eb36f5a1e9d8f11c718f8ee0cc730b24baf8314f4327f4ed923c90367f433",
-      "source": "artwork/icons/pet.svg",
-      "sourceSha256": "aaacb9360795f0b4937d7534cf0acf5634cb076a3bca827a5999711dc567c953"
     },
     {
       "path": "textures/gui/icons/play.png",
@@ -704,15 +326,6 @@
       "sourceSha256": "01f2919b7a7c91917ede4cb31007fdd42f4d074ad1871e3d653762b5978447da"
     },
     {
-      "path": "textures/gui/icons/suit.png",
-      "width": 32,
-      "height": 32,
-      "bytes": 841,
-      "sha256": "636539284e8b324b0f7562c938075528a1dd5b93d38e8f5153fc4f17bfe3faa9",
-      "source": "artwork/icons/suit.svg",
-      "sourceSha256": "6cc53385753440e519c33171492d4db2f0c8910bf4871426b4f425817ddb5f76"
-    },
-    {
       "path": "textures/gui/icons/utility.png",
       "width": 32,
       "height": 32,
@@ -720,15 +333,6 @@
       "sha256": "71fa92c5f8cd385e2a6e16733607a113b0aaf3ad9eb3653b8a5d255cbb2acc0e",
       "source": "artwork/icons/utility.svg",
       "sourceSha256": "cd573b0b498b6693e03718d5477371e9261acfae7d412b3037383e314ad250ee"
-    },
-    {
-      "path": "textures/gui/icons/wings.png",
-      "width": 32,
-      "height": 32,
-      "bytes": 886,
-      "sha256": "38a324a16fb06c3e583f6f8b24d0ba5541cfb531cbddbc83830ffe6c11620190",
-      "source": "artwork/icons/wings.svg",
-      "sourceSha256": "946f1a9f085302ccd87bcc0bc85e804a841b7ca6ebf726bbbdc6c655e9079b66"
     },
     {
       "path": "textures/gui/loading/contours.png",

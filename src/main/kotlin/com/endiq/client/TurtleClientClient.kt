@@ -26,10 +26,11 @@ object TurtleClientClient : ClientModInitializer {
 
     override fun onInitializeClient() {
         ModuleManager.init()
-        CosmeticFeature.register()
+        CapeFeature.register()
         net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents.CLIENT_STARTED.register {
-            com.endiq.client.cosmetics.CosmeticManager.initialize()
+            // Accounts first: the cape download looks up the active profile's UUID.
             com.endiq.client.accounts.Accounts.initialize()
+            com.endiq.client.capes.CapeManager.initialize()
             com.endiq.client.config.ModulePreferences.initialize()
         }
         net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents.CLIENT_STOPPING.register {
@@ -58,6 +59,8 @@ object TurtleClientClient : ClientModInitializer {
             }
             HudRenderer.onTick()
             com.endiq.client.config.ModulePreferences.tick()
+            // A finished cape download uploads its textures here, on the client thread.
+            com.endiq.client.capes.CapeManager.syncIfPending()
         }
 
         // Local attack detection -- drives Combo Counter and Hit Color flash.

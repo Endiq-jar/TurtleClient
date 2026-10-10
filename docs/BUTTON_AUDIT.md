@@ -8,8 +8,9 @@ The repair is not just replacement artwork. Source-level checks found missing ha
 | Built-in module identity | All cards reused category icons | 52 dedicated SVG pictograms, mapped by stable class and used in cards/settings; registration/wiring tests |
 | Title account pill | Decorative only | Account screen, offline profiles, Microsoft device flow and disconnected session switching |
 | Title navigation | No account-permission gate/error feedback | Multiplayer permission check; folder failures are visible |
-| Cosmetics | Registry/equip flags only | Six textured player-layer meshes, 18 built-ins, persistent selection, bounded custom PNG uploads |
-| Compact cosmetics menu | Folder/clear actions disappeared | Reload, folder and unequip-all in the persistent toolbar, with tooltips |
+| Title screen chrome | Scene switcher plus two bundled 1024x576 backdrop images | Flat backdrop and a bare text menu; the switcher and both images are removed |
+| Capes | Registry/equip flags only; the 18 bundled cosmetics were invented art | Capes only, downloaded from Mojang/LabyMod/NameMC and cached on disk; persistent selection, bounded local PNGs |
+| Compact cape menu | Folder/clear actions disappeared | Download, folder and unequip in the persistent toolbar, with tooltips |
 | FPS/CPS/ping/timer/auto-hide | Display-name mismatches silently returned null | Typed module lookup instead of string lookup in HUD |
 | CPS | No click registration; stale counts | Mouse callback hook and one-second expiry, left/right tracking |
 | FOV/zoom | New vanilla options rejected out-of-range values | Render-time FOV override, live zoom, scroll adjustment, sensitivity/cinematic controls; no option-file pollution |
@@ -44,7 +45,8 @@ Automated tests cover action dispatch, scrolling, editable text, settings persis
 - [ ] All title actions and account restrictions on a normal and offline launcher account.
 - [ ] Account cancel/expiry, app setup, approved Microsoft sign-in, switch/restore and signed multiplayer chat.
 - [ ] Screen resize/GUI scale, fractional wheel input, dragging and keyboard navigation.
-- [ ] Every cosmetic in third person/inventory; walking, crouching, slim skin, armor, elytra and invisibility.
+- [ ] The equipped cape in third person/inventory; walking, crouching, slim skin, armor, elytra and invisibility.
+- [ ] Cape download with no connection, with NameMC blocked, and with an offline (name-only) profile.
 - [ ] Reload/remove/invalid PNG, selection restart persistence and texture cleanup.
 - [ ] FOV, zoom/scroll/sensitivity, brightness, crosshair replacement and disable/restore behavior.
 - [ ] CPS decay, timer actions/completion, camera PNG/notification, waypoint lifetime, Auto Text opt-in and live repeat cancellation.

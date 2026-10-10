@@ -18,8 +18,8 @@ object TurtleTheme {
     val DANGER = 0xFFE49B8C.toInt()
     val LOGO = identifier("turtle-client", "textures/gui/branding/turtle.png")
     val WORDMARK = identifier("turtle-client", "textures/gui/branding/wordmark.png")
-    val COAST = identifier("turtle-client", "textures/gui/backgrounds/coast.png")
-    val FOREST = identifier("turtle-client", "textures/gui/backgrounds/forest.png")
+    /** The downloaded, veiled title backdrop; drawn as a slow horizontal pan. */
+    val PANORAMA = identifier("turtle-client", "textures/gui/panorama/panorama.png")
     private val icons = mutableMapOf<String, Identifier>()
     fun icon(name: String) = icons.getOrPut(name) { identifier("turtle-client", "textures/gui/icons/$name.png") }
 
@@ -98,20 +98,24 @@ object TurtleTheme {
         panel(ctx,UiRect(x,y,w,20),BACKGROUND,BORDER,4);label(ctx,font,value,x+6,y+6,TEXT)
     }
 
+    /** Bounds for [textButton]: 5 pixels of padding, 14 pixels tall, centred on [centerX]. */
+    fun textButtonBounds(textWidth: Int, centerX: Int, y: Int) =
+        UiRect(centerX - textWidth / 2 - 5, y - 3, textWidth + 10, 14)
+
+    /**
+     * Bare text button: no skin, no panel, no shadow — just text and a hover rule.
+     * [rect] comes from [textButtonBounds] so hit testing and drawing always agree.
+     */
+    fun textButton(ctx: GuiContext, font: TextRenderer, rect: UiRect, text: String, hovered: Boolean, enabled: Boolean = true) {
+        val color = if (!enabled) SUBTLE else if (hovered) ACCENT else TEXT
+        label(ctx, font, text, rect.x + (rect.width - font.getWidth(text)) / 2, rect.y + 3, color)
+        if (hovered && enabled) ctx.fill(rect.x + 5, rect.bottom - 2, rect.right - 5, rect.bottom - 1, color)
+    }
+
     fun scrollbar(ctx: GuiContext, state: ScrollState, track: UiRect, mx: Int, my: Int) {
         if (state.maximum <= 0) return
         rounded(ctx, track, CARD, 3)
         rounded(ctx, state.thumb(track), if (state.dragging || track.contains(mx.toDouble(), my.toDouble())) ACCENT else SUBTLE, 3)
-    }
-
-    fun backdrop(ctx: GuiContext, width: Int, height: Int, texture: Identifier = COAST) {
-        // Cover preserves the 16:9 art: no stretched square panorama faces.
-        val bounds = coverBounds(width, height, 1024, 576)
-        ctx.enableScissor(0, 0, width, height)
-        try {
-            ctx.drawTexture(texture, bounds.x, bounds.y, bounds.width, bounds.height)
-        } finally { ctx.disableScissor() }
-        ctx.fill(0, 0, width, height, 0x280B140E)
     }
 }
 

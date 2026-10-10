@@ -9,9 +9,7 @@ They are not runtime Minecraft resources and are not packed into game jars.
 - `modules/`: one 24-unit pictogram for every registered built-in module.
 - `modules.json`: stable class/key/label catalog; keep it in sync with `ModuleIcons.kt`.
 - `buttons/`: text-free, flat nine-slice skins; no baked labels/shadows.
-- `backgrounds/`: flat coast/forest compositions.
 - `loading/`: contour motif, outlined captions and fixed-cell percentage digits.
-- `cosmetics/`: pixel-aligned materials, conventional cape UVs and type/color previews.
 
 Shapes follow the repository license. Outlined DejaVu lettering retains its notice
 in `licenses/DejaVu.txt`; no font binary is bundled. This folder describes an
