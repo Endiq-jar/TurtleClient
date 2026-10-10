@@ -47,7 +47,30 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
 
       - name: Build ${{ matrix.mc_version }}
-        run: ./gradlew "${{ matrix.mc_version }}:buildAndCollect" --stacktrace
+        run: |
+          set +e
+          ./gradlew "${{ matrix.mc_version }}:buildAndCollect" --stacktrace --console=plain > build.log 2>&1
+          status=$?
+          cat build.log
+          if [ "$status" -ne 0 ]; then
+            python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          lines = Path("build.log").read_text(errors="replace").splitlines()
+          markers = re.compile(r"(^e: |error:|FAILURE:|What went wrong:|Execution failed for task|Unresolved reference|Type mismatch|^> Task .* FAILED)", re.I)
+          selected = []
+          for index, line in enumerate(lines):
+              if markers.search(line):
+                  selected.extend(lines[max(0, index - 1):min(len(lines), index + 2)])
+          if not selected:
+              selected = lines[-24:]
+          text = "\n".join(dict.fromkeys(selected[-48:]))
+          text = text.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
+          print(f"::error title=Gradle build diagnostics::{text}")
+          PY
+          fi
+          exit "$status"
 
       - name: Locate output jar
         id: jar
