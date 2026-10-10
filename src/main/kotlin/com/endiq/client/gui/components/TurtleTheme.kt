@@ -50,8 +50,8 @@ object TurtleTheme {
     }
     val LOGO = identifier("turtle-client", "textures/gui/branding/turtle.png")
     val WORDMARK = identifier("turtle-client", "textures/gui/branding/wordmark.png")
-    val COAST = identifier("turtle-client", "textures/gui/backgrounds/coast.png")
-    val FOREST = identifier("turtle-client", "textures/gui/backgrounds/forest.png")
+    /** The downloaded, veiled title backdrop; drawn as a slow horizontal pan. */
+    val PANORAMA = identifier("turtle-client", "textures/gui/panorama/panorama.png")
     private val icons = mutableMapOf<String, Identifier>()
     fun icon(name: String) = icons.getOrPut(name) { identifier("turtle-client", "textures/gui/icons/$name.png") }
 
@@ -89,25 +89,6 @@ object TurtleTheme {
         rounded(ctx, rect.inset(1), color, (radius - 1).coerceAtLeast(0))
     }
 
-    /** Shared dim layer and raised modal surface for every in-game Turtle screen. */
-    fun modalBackdrop(ctx: GuiContext, screenWidth: Int, screenHeight: Int, panelRect: UiRect) {
-        ctx.fill(0, 0, screenWidth, screenHeight, (0xB8 shl 24) or (BACKGROUND and 0x00FFFFFF))
-        panel(ctx, UiRect(panelRect.x - 3, panelRect.y + 4, panelRect.width + 6, panelRect.height),
-            0x55000000, 0x11000000, 10)
-        panel(ctx, panelRect)
-        rounded(ctx, UiRect(panelRect.x + 1, panelRect.y + 1, (panelRect.width - 2).coerceAtLeast(1), 2), ACCENT, 1)
-    }
-
-    fun divider(ctx: GuiContext, x: Int, y: Int, width: Int) {
-        if (width > 0) ctx.fill(x, y, x + width, y + 1, BORDER)
-    }
-
-    fun chip(ctx: GuiContext, font: TextRenderer, rect: UiRect, text: String, active: Boolean = false) {
-        rounded(ctx, rect, if (active) ACTIVE else CARD, minOf(6, rect.height / 2))
-        label(ctx, font, text, rect.x + 7, rect.y + (rect.height - 8) / 2,
-            if (active) ACCENT else MUTED, rect.width - 14)
-    }
-
     fun fit(font: TextRenderer, text: String, width: Int): String {
         if (width <= 0) return ""
         if (font.getWidth(text) <= width) return text
@@ -124,24 +105,40 @@ object TurtleTheme {
 
     fun button(ctx: GuiContext, font: TextRenderer, rect: UiRect, text: String, hovered: Boolean, primary: Boolean = false,
                enabled: Boolean = true, danger: Boolean = false) {
-        val fill = when {
-            !enabled -> BACKGROUND
-            danger -> if (hovered) DANGER else 0x33201816
-            primary -> if (hovered) ACCENT else ACTIVE
-            hovered -> HOVER
-            else -> CARD
+        if (paletteIndex == 0) {
+            val material = when {
+                !enabled -> "disabled"
+                danger -> if (hovered) "danger_hover" else "danger"
+                primary -> if (hovered) "primary_hover" else "primary"
+                hovered -> "hover"
+                else -> "normal"
+            }
+            skin(ctx, rect, material)
+        } else {
+            val fill = when {
+                !enabled -> BACKGROUND
+                danger -> if (hovered) DANGER else 0x33201816
+                primary -> if (hovered) ACCENT else ACTIVE
+                hovered -> HOVER
+                else -> CARD
+            }
+            val border = when {
+                !enabled -> BORDER
+                danger || primary || hovered -> ACCENT
+                else -> BORDER
+            }
+            panel(ctx, rect, fill, border, 5)
         }
-        val border = when {
-            !enabled -> BORDER
-            danger -> DANGER
-            primary -> ACCENT
-            hovered -> ACCENT
-            else -> BORDER
-        }
-        panel(ctx, rect, fill, border, 5)
         val value = fit(font, text, rect.width - 12)
-        label(ctx, font, value, rect.x + (rect.width - font.getWidth(value)) / 2, rect.y + (rect.height - 8) / 2,
-            if (!enabled) SUBTLE else if (primary && hovered) BACKGROUND else if (primary) ACCENT else if (danger) DANGER else TEXT)
+        val textColor = when {
+            !enabled -> SUBTLE
+            danger && hovered -> BACKGROUND
+            danger -> DANGER
+            primary && hovered -> BACKGROUND
+            primary -> ACCENT
+            else -> TEXT
+        }
+        label(ctx, font, value, rect.x + (rect.width - font.getWidth(value)) / 2, rect.y + (rect.height - 8) / 2, textColor)
     }
 
     fun actions(ctx:GuiContext,font:TextRenderer,buttons:ActionButtons,mx:Int,my:Int) {
@@ -156,20 +153,24 @@ object TurtleTheme {
         panel(ctx,UiRect(x,y,w,20),BACKGROUND,BORDER,4);label(ctx,font,value,x+6,y+6,TEXT)
     }
 
+    /** Bounds for [textButton]: 5 pixels of padding, 14 pixels tall, centred on [centerX]. */
+    fun textButtonBounds(textWidth: Int, centerX: Int, y: Int) =
+        UiRect(centerX - textWidth / 2 - 5, y - 3, textWidth + 10, 14)
+
+    /**
+     * Bare text button: no skin, no panel, no shadow — just text and a hover rule.
+     * [rect] comes from [textButtonBounds] so hit testing and drawing always agree.
+     */
+    fun textButton(ctx: GuiContext, font: TextRenderer, rect: UiRect, text: String, hovered: Boolean, enabled: Boolean = true) {
+        val color = if (!enabled) SUBTLE else if (hovered) ACCENT else TEXT
+        label(ctx, font, text, rect.x + (rect.width - font.getWidth(text)) / 2, rect.y + 3, color)
+        if (hovered && enabled) ctx.fill(rect.x + 5, rect.bottom - 2, rect.right - 5, rect.bottom - 1, color)
+    }
+
     fun scrollbar(ctx: GuiContext, state: ScrollState, track: UiRect, mx: Int, my: Int) {
         if (state.maximum <= 0) return
         rounded(ctx, track, CARD, 3)
         rounded(ctx, state.thumb(track), if (state.dragging || track.contains(mx.toDouble(), my.toDouble())) ACCENT else SUBTLE, 3)
-    }
-
-    fun backdrop(ctx: GuiContext, width: Int, height: Int, texture: Identifier = COAST) {
-        // Cover preserves the 16:9 art: no stretched square panorama faces.
-        val bounds = coverBounds(width, height, 1024, 576)
-        ctx.enableScissor(0, 0, width, height)
-        try {
-            ctx.drawTexture(texture, bounds.x, bounds.y, bounds.width, bounds.height)
-        } finally { ctx.disableScissor() }
-        ctx.fill(0, 0, width, height, (0x38 shl 24) or (BACKGROUND and 0x00FFFFFF))
     }
 }
 

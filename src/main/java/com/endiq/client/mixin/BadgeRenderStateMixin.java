@@ -7,11 +7,11 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(EntityRenderState.class)
-public class BadgeRenderStateMixin implements BadgeRenderState, com.endiq.client.compat.CosmeticRenderState {
+public class BadgeRenderStateMixin implements BadgeRenderState, com.endiq.client.compat.CapeRenderState {
     @Unique private boolean turtleClient$badge;
-    @Unique private com.endiq.client.cosmetics.CosmeticManager.Loadout turtleClient$cosmetics = com.endiq.client.cosmetics.CosmeticManager.Loadout.EMPTY;
-    @Override public com.endiq.client.cosmetics.CosmeticManager.Loadout turtleClient$getCosmetics() { return turtleClient$cosmetics; }
-    @Override public void turtleClient$setCosmetics(com.endiq.client.cosmetics.CosmeticManager.Loadout value) { turtleClient$cosmetics = value; }
+    @Unique private com.endiq.client.capes.CapeManager.Outfit turtleClient$cape = com.endiq.client.capes.CapeManager.Outfit.EMPTY;
+    @Override public com.endiq.client.capes.CapeManager.Outfit turtleClient$getCape() { return turtleClient$cape; }
+    @Override public void turtleClient$setCape(com.endiq.client.capes.CapeManager.Outfit value) { turtleClient$cape = value; }
 
     @Override public boolean turtleClient$hasBadge() { return turtleClient$badge; }
     @Override public void turtleClient$setBadge(boolean value) { turtleClient$badge = value; }
@@ -23,11 +23,11 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(EntityRenderState.class)
-public class BadgeRenderStateMixin implements BadgeRenderState, com.endiq.client.compat.CosmeticRenderState {
+public class BadgeRenderStateMixin implements BadgeRenderState, com.endiq.client.compat.CapeRenderState {
     @Unique private boolean turtleClient$badge;
-    @Unique private com.endiq.client.cosmetics.CosmeticManager.Loadout turtleClient$cosmetics = com.endiq.client.cosmetics.CosmeticManager.Loadout.EMPTY;
-    @Override public com.endiq.client.cosmetics.CosmeticManager.Loadout turtleClient$getCosmetics() { return turtleClient$cosmetics; }
-    @Override public void turtleClient$setCosmetics(com.endiq.client.cosmetics.CosmeticManager.Loadout value) { turtleClient$cosmetics = value; }
+    @Unique private com.endiq.client.capes.CapeManager.Outfit turtleClient$cape = com.endiq.client.capes.CapeManager.Outfit.EMPTY;
+    @Override public com.endiq.client.capes.CapeManager.Outfit turtleClient$getCape() { return turtleClient$cape; }
+    @Override public void turtleClient$setCape(com.endiq.client.capes.CapeManager.Outfit value) { turtleClient$cape = value; }
 
     @Override public boolean turtleClient$hasBadge() { return turtleClient$badge; }
     @Override public void turtleClient$setBadge(boolean value) { turtleClient$badge = value; }

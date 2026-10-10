@@ -26,7 +26,7 @@ ASSETS = ROOT / "src/main/resources/assets/turtle-client"
 def produce(destination):
     manifest = []
 
-    def image(source, target, size, blur=True, palette=False):
+    def image(source, target, size, blur=True):
         svg = (SOURCE / source).read_bytes()
         # Supersample small line icons, then strip all PNG metadata.
         samples = 3 if source.startswith(("icons/", "modules/", "buttons/")) else 1
@@ -37,8 +37,6 @@ def produce(destination):
             im = im.resize(size, Image.Resampling.LANCZOS)
         # A tiny resampling fringe must not become an opaque legacy font/GUI pixel.
         im.putalpha(im.getchannel("A").point(lambda alpha: 0 if alpha < 4 else alpha))
-        if palette:
-            im = im.convert("RGB").quantize(colors=128, dither=Image.Dither.NONE)
         out = destination / target
         out.parent.mkdir(parents=True, exist_ok=True)
         im.save(out, optimize=True, compress_level=9)
@@ -60,18 +58,12 @@ def produce(destination):
     for path in sorted((SOURCE / "buttons").glob("*.svg")):
         image(f"buttons/{path.name}", f"textures/gui/buttons/{path.stem}.png",
               (64, 64) if path.stem == "panel" else (128, 32))
-    for name in ("coast", "forest"):
-        image(f"backgrounds/{name}.svg", f"textures/gui/backgrounds/{name}.png", (1024, 576), palette=True)
+    # No menu backdrops: the title screen is a flat fill, so nothing here needs a
+    # 1024x576 landscape, and capes are downloaded at runtime instead of bundled.
     sizes = {"resources": (224, 24), "finishing": (252, 24), "numbers": (176, 24),
              "edition": (192, 20), "startup": (200, 20), "contours": (512, 288)}
     for name, size in sizes.items():
         image(f"loading/{name}.svg", f"textures/gui/loading/{name}.png", size)
-    for path in sorted((SOURCE / "cosmetics").rglob("*.svg")):
-        relative = path.relative_to(SOURCE)
-        preview = "previews" in path.parts
-        size = (128, 64) if path.parent.name == "cape" else (64, 64)
-        image(relative.as_posix(), "textures/" + relative.with_suffix(".png").as_posix(), size, blur=preview)
-
     manifest.sort(key=lambda entry: entry["path"])
     (destination / "ui-assets.json").write_text(json.dumps({"schema": 2, "assets": manifest}, indent=2) + "\n")
     modules = json.loads((SOURCE / "modules.json").read_text())["modules"]
