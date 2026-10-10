@@ -5,6 +5,7 @@ import com.endiq.client.cosmetics.CosmeticManager
 import com.endiq.client.modules.Module
 import com.endiq.client.modules.impl.utility.TimerClock
 import com.endiq.client.modules.impl.hud.CpsModule
+import com.endiq.client.gui.components.TurtleTheme
 import com.google.gson.JsonParser
 import java.nio.ByteBuffer
 import kotlin.test.*
@@ -25,6 +26,22 @@ class WorkingControlsTest {
         assertEquals(8f,restored.slider.value);assertTrue(restored.flag.value);assertEquals(128,restored.tint.a)
         assertEquals(1,restored.mode.selected);assertEquals("Turtle",restored.message.value)
     }
+    @Test fun turtleColorThemeIsSelectableAndPersistsWithTheClientProfile() {
+        val original = TurtleTheme.paletteName
+        try {
+            assertTrue(TurtleTheme.setPalette("Lagoon"))
+            val profile = ModulePreferenceCodec.encode(emptyList())
+            assertEquals("Lagoon", profile["uiTheme"].asString)
+            assertTrue(TurtleTheme.setPalette("Ember"))
+            ModulePreferenceCodec.restore(emptyList(), profile)
+            assertEquals("Lagoon", TurtleTheme.paletteName)
+            assertFalse(TurtleTheme.setPalette("Not a Turtle theme"))
+            assertEquals("Lagoon", TurtleTheme.paletteName)
+        } finally {
+            TurtleTheme.setPalette(original)
+        }
+    }
+
     @Test fun invalidPersistedValuesCannotEscapeControlBounds() {
         val mod=Example()
         ModulePreferenceCodec.restore(listOf(mod),JsonParser.parseString("""{"modules":{"Example":{"key":9999,"settings":{"Amount":999,"Mode":999,"Tint":[-4,400,50,0],"Text":"123456789abc"}}}}""").asJsonObject)

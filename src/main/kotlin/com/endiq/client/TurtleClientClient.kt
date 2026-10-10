@@ -1,6 +1,7 @@
 package com.endiq.client
 
 import com.endiq.client.gui.ClickGui
+import com.endiq.client.gui.HudEditorScreen
 import com.endiq.client.hud.HudRenderer
 import com.endiq.client.modules.ModuleManager
 import com.endiq.client.modules.impl.utility.AutoTextModule
@@ -48,6 +49,7 @@ object TurtleClientClient : ClientModInitializer {
         //?}
 
         val guiKey = registerGuiKey()
+        val hudEditorKey = registerHudEditorKey()
 
         ClientTickEvents.END_CLIENT_TICK.register { client ->
             ModuleManager.modules.forEach { mod ->
@@ -55,6 +57,11 @@ object TurtleClientClient : ClientModInitializer {
             }
             while (guiKey.wasPressed()) {
                 if (client.currentScreen == null) client.setScreen(ClickGui())
+            }
+            while (hudEditorKey.wasPressed()) {
+                val screen = client.currentScreen
+                if (screen == null) client.setScreen(HudEditorScreen())
+                else if (screen is HudEditorScreen) screen.closeGui()
             }
             HudRenderer.onTick()
             com.endiq.client.config.ModulePreferences.tick()

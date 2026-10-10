@@ -31,7 +31,7 @@ Quick reference:
 - **HUD:** FPS, CPS, ping/history, coordinates, speed, memory, clock, direction,
   server/resource-pack labels, crosshair, attack cooldown, attack-distance readout
   and combo counter. Nearby-player and scoreboard-team tables have layout/filter controls.
-- **Basic fixed-layout overlays:** keystrokes, armor, potion status and UHC readouts.
+- **HUD layout editor:** drag live HUD widgets directly; percentage positions and scale are saved with the existing module preferences. Keystrokes, armor status/bar, potion effects and UHC overlays have editable positions and working scale controls.
 - **Visual controls:** FOV, hold-to-zoom with scroll adjustment, full-bright lightmap,
   and the existing culling/adaptive view-distance/VSync controls.
 - **Utility:** timer start/pause/reset, clean PNG screenshots, session waypoints,
@@ -44,13 +44,18 @@ checkout**. Reach Display reports attack distance; it does not extend attack rea
 Twelve incomplete legacy prototypes are marked **Unavailable**. See the
 [control audit](docs/BUTTON_AUDIT.md) for the precise limits and manual checks.
 
-## ClickGUI
-Press **Right Shift** in-game to open the GUI.
-- Left click a module to toggle it
-- Right-click a module (or click its gear) to open settings
-- Use the mouse wheel or drag the scrollbar in modules, cosmetics, and settings
-- Page Up / Page Down and Home / End also scroll
-- Search or choose a category to filter modules; Escape returns to the previous screen
+## Turtle interface
+The client UI uses Turtle artwork, responsive panels, a category sidebar, readable status cards, and three saved color presets: **Canopy**, **Lagoon**, and **Ember**. Change the palette from the ClickGUI header; the same theme carries through the title screen, accounts, module settings, and editors.
+
+Press **Right Shift** in-game to open the module library; press **Right Alt** (or use the ClickGUI's **HUD Editor** button) to open the direct-drag HUD layout editor.
+- Drag active HUD elements to reposition them; the editor writes the existing percentage-based module settings, so positions persist across resolution changes
+- Select an item in the editor to preview a disabled HUD module, or toggle it in the item list; use **Revert** to restore the layout as it was when the editor opened
+- Browse modules by category or Favorites; favorite a module directly on its card
+- Left-click a card to toggle it; right-click or use its gear to open settings
+- Search with **/** or **Ctrl+F**; the search field supports selection, paste, copy, and deletion
+- Use the mouse wheel, drag the scrollbar, Up / Down for categories, or Page Up / Page Down / Home / End to navigate
+- Switch to Cosmetics for local outfit selection and custom PNG tools; Escape returns to the previous screen
+- In compact game windows, category navigation reflows into tabs instead of shrinking text
 
 ---
 

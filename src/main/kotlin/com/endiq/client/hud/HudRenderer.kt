@@ -1,6 +1,9 @@
 package com.endiq.client.hud
 
 import com.endiq.client.compat.*
+import com.endiq.client.gui.HudEditorScreen
+import com.endiq.client.gui.components.*
+import com.endiq.client.gui.components.TurtleTheme as Theme
 import com.endiq.client.modules.ModuleManager
 import com.endiq.client.modules.impl.hud.*
 import com.endiq.client.modules.impl.pvp.*
@@ -14,8 +17,6 @@ object HudRenderer {
     private val GREEN  = 0xFF3D9970.toInt()
     private val RED    = 0xFFE05252.toInt()
     private val YELLOW = 0xFFFFFF55.toInt()
-    private val BLACK  = 0x88000000.toInt()
-    private val BLUE   = 0xFF5B9BD5.toInt()
 
     private inline fun <reified T : com.endiq.client.modules.Module> mod(): T? = ModuleManager.get<T>()
 
@@ -74,6 +75,7 @@ object HudRenderer {
 
     fun onHudRender(ctx: GuiContext) {
         val client = MinecraftClient.getInstance() ?: return
+        if (client.currentScreen is HudEditorScreen) return
         val player = client.player
         val tr = client.textRenderer
         val sw = ctx.scaledWindowWidth
@@ -166,36 +168,76 @@ object HudRenderer {
             }
         }
 
-        // Armor bar
+        // Armor bar: position is a center anchor so it remains easy to place near the hotbar.
         mod<ArmorBarModule>()?.let {
             if (it.enabled && player != null && player.armor > 0) {
-                val bx = sw/2-40; val by = sh-34
-                ctx.fill(bx, by, bx+80, by+3, BLACK)
-                ctx.fill(bx, by, bx+player.armor*4, by+3, BLUE)
-            }
-        }
-
-        // Potion status (top right)
-        mod<PotionStatusModule>()?.let {
-            if (it.enabled && player != null) {
-                var py = 2
-                for (e in player.statusEffects) {
-                    val s = e.duration/20
-                    val lbl = "${effectName(e)} ${s/60}:${"%02d".format(s%60)}"
-                    val w = tr.getWidth(lbl)+4
-                    ctx.fill(sw-w-2, py, sw-2, py+10, BLACK)
-                    ctx.drawTextWithShadow(tr, lbl, sw-w, py+1, WHITE)
-                    py += 12
+                val scale = it.scale.value.coerceIn(.5f, 3f)
+                val barWidth = it.barWidth.value.toInt().coerceAtLeast(1)
+                val barHeight = it.barHeight.value.toInt().coerceAtLeast(1)
+                val x = (sw * it.posX.value / 100f - barWidth * scale / 2f).coerceIn(0f, (sw - barWidth * scale).coerceAtLeast(0f))
+                val y = (sh * it.posY.value / 100f).coerceIn(0f, (sh - barHeight * scale).coerceAtLeast(0f))
+                ctx.transformed(x, y, scale) {
+                    ctx.fill(0, 0, barWidth, barHeight, it.bgColor.toArgb())
+                    val fraction = (player.armor / 20f).coerceIn(0f, 1f)
+                    ctx.fill(0, 0, (barWidth * fraction).toInt(), barHeight, it.barColor.toArgb())
                 }
             }
         }
 
-        // UHC overlay
-        mod<UhcOverlayModule>()?.let {
-            if (it.enabled && player != null) {
-                val hp  = "%.1f".format(player.health)
-                val sat = "%.1f".format(player.hungerManager.saturationLevel)
-                ctx.drawTextWithShadow(tr, "HP: $hp  SAT: $sat", sw/2-40, sh-50, RED)
+        // Potion status: right-edge anchor, scaled with the same percentages used by the HUD editor.
+        mod<PotionStatusModule>()?.let { effects ->
+            if (effects.enabled && player != null) {
+                val lines = player.statusEffects.take(effects.maxEffects.value.toInt().coerceIn(1, 20)).map { effect ->
+                    val seconds = effect.duration / 20
+                    buildString {
+                        if (effects.showName.value) append(effectName(effect))
+                        if (effects.showAmp.value && effect.amplifier > 0) append(" ${effect.amplifier + 1}")
+                        if (effects.showTimer.value) {
+                            if (isNotEmpty()) append(' ')
+                            append("${seconds / 60}:${"%02d".format(seconds % 60)}")
+                        }
+                    }
+                }.filter { it.isNotBlank() }
+                if (lines.isNotEmpty()) {
+                    val scale = effects.scale.value.coerceIn(.5f, 3f)
+                    val boxWidth = lines.maxOf { tr.getWidth(it) + 4 }
+                    val boxHeight = lines.size * 12
+                    val anchorX = sw * effects.posX.value / 100f
+                    val x = (anchorX - boxWidth * scale).coerceIn(0f, (sw - boxWidth * scale).coerceAtLeast(0f))
+                    val y = (sh * effects.posY.value / 100f).coerceIn(0f, (sh - boxHeight * scale).coerceAtLeast(0f))
+                    ctx.transformed(x, y, scale) {
+                        lines.forEachIndexed { index, line ->
+                            val py = index * 12
+                            if (effects.showBg.value) Theme.rounded(ctx, UiRect(-2, py, boxWidth + 2, 11), effects.bgColor.toArgb(), 2)
+                            if (effects.shadow.value) ctx.drawTextWithShadow(tr, line, 0, py + 1, effects.textColor.toArgb())
+                            else ctx.drawText(tr, line, 0, py + 1, effects.textColor.toArgb(), false)
+                        }
+                    }
+                }
+            }
+        }
+
+        // UHC summary has a centered position anchor and remains purely informational.
+        mod<UhcOverlayModule>()?.let { overlay ->
+            if (overlay.enabled && player != null) {
+                val precision = overlay.precision.value.toInt().coerceIn(0, 3)
+                val format = "% .${precision}f"
+                val pieces = buildList {
+                    if (overlay.showHp.value) add("HP: ${String.format(java.util.Locale.ROOT, format, player.health).trim()}")
+                    if (overlay.showSat.value) add("SAT: ${String.format(java.util.Locale.ROOT, format, player.hungerManager.saturationLevel).trim()}")
+                }
+                val label = pieces.joinToString("  ")
+                if (label.isEmpty()) return@let
+                val scale = overlay.scale.value.coerceIn(.5f, 3f)
+                val textWidth = tr.getWidth(label)
+                val x = (sw * overlay.posX.value / 100f - textWidth * scale / 2f).coerceIn(0f, (sw - textWidth * scale).coerceAtLeast(0f))
+                val y = (sh * overlay.posY.value / 100f).coerceIn(0f, (sh - 12 * scale).coerceAtLeast(0f))
+                ctx.transformed(x, y, scale) {
+                    if (overlay.showBg.value) Theme.rounded(ctx, UiRect(-3, -2, textWidth + 6, 12), overlay.bgColor.toArgb(), 3)
+                    val color = if (overlay.showHp.value) overlay.hpColor.toArgb() else overlay.satColor.toArgb()
+                    if (overlay.shadow.value) ctx.drawTextWithShadow(tr, label, 0, 0, color)
+                    else ctx.drawText(tr, label, 0, 0, color, false)
+                }
             }
         }
 
@@ -248,29 +290,70 @@ object HudRenderer {
             }
         }
 
-        // Keystrokes
-        mod<KeystrokesModule>()?.let {
-            if (it.enabled) {
-                val o = client.options; val bx = 4; val by = sh-52
-                drawKey(ctx, "W", bx+13, by,      o.forwardKey.isPressed)
-                drawKey(ctx, "A", bx,    by+13, o.leftKey.isPressed)
-                drawKey(ctx, "S", bx+13, by+13, o.backKey.isPressed)
-                drawKey(ctx, "D", bx+26, by+13, o.rightKey.isPressed)
-                drawKey(ctx, "^", bx+13, by+26, o.jumpKey.isPressed)
+        // Keystrokes: HUD-editor percentages define the group's top-left anchor.
+        mod<KeystrokesModule>()?.let { keys ->
+            if (keys.enabled) {
+                val o = client.options
+                val scale = keys.scale.value.coerceIn(.5f, 3f)
+                val size = keys.keySize.value.toInt().coerceIn(8, 40)
+                val gap = keys.keyGap.value.toInt().coerceIn(0, 8)
+                val keyWidth = size * 3 + gap * 2
+                val groupWidth = keyWidth + if (keys.showSpace.value) size + gap else 0
+                val groupHeight = size * 3 + gap * 2
+                val x = (sw * keys.posX.value / 100f).coerceIn(0f, (sw - groupWidth * scale).coerceAtLeast(0f))
+                val y = (sh * keys.posY.value / 100f).coerceIn(0f, (sh - groupHeight * scale).coerceAtLeast(0f))
+                ctx.transformed(x, y, scale) {
+                    if (keys.showWASD.value) {
+                        drawKey(ctx, "W", size + gap, 0, size, o.forwardKey.isPressed, keys)
+                        drawKey(ctx, "A", 0, size + gap, size, o.leftKey.isPressed, keys)
+                        drawKey(ctx, "S", size + gap, size + gap, size, o.backKey.isPressed, keys)
+                        drawKey(ctx, "D", (size + gap) * 2, size + gap, size, o.rightKey.isPressed, keys)
+                    }
+                    if (keys.showSpace.value) drawKey(ctx, "SPACE", size + gap,
+                        (size + gap) * 2, size, o.jumpKey.isPressed, keys, keyWidth)
+                }
             }
         }
 
-        // Armor Status
-        mod<ArmorStatusModule>()?.let {
-            if (it.enabled && player != null) {
-                var ax = 2; val ay = sh-68
-                for (stack in armorStacks(player)) {
-                    if (stack.isEmpty) continue
-                    ctx.drawItem(stack, ax, ay)
-                    val pct = if (stack.maxDamage > 0) (stack.maxDamage-stack.damage)*100/stack.maxDamage else 100
-                    val col = when { pct > 60 -> 0xFF55FF55.toInt(); pct > 30 -> YELLOW; else -> RED }
-                    ctx.drawTextWithShadow(tr, "$pct", ax+1, ay+9, col)
-                    ax += 18
+        // Armor Status: draggable icon/durability strip, with the selected scale and layout.
+        mod<ArmorStatusModule>()?.let { armor ->
+            if (armor.enabled && player != null) {
+                val stacks = armorStacks(player)
+                if (!armor.showEmpty.value && stacks.none { !it.isEmpty }) return@let
+                val horizontal = armor.layout.selected == 0
+                val iconScale = (armor.scale.value.coerceIn(.5f, 3f) * armor.iconSize.value.coerceIn(8f, 32f) / 16f)
+                val slotStep = 18
+                val visibleCount = if (armor.showEmpty.value) stacks.size else stacks.count { !it.isEmpty }
+                val contentWidth = if (horizontal) (visibleCount * slotStep).coerceAtLeast(1) else slotStep
+                val contentHeight = if (horizontal) 28 else (visibleCount * slotStep).coerceAtLeast(1)
+                val x = (sw * armor.posX.value / 100f).coerceIn(0f, (sw - contentWidth * iconScale).coerceAtLeast(0f))
+                val y = (sh * armor.posY.value / 100f).coerceIn(0f, (sh - contentHeight * iconScale).coerceAtLeast(0f))
+                ctx.transformed(x, y, iconScale) {
+                    val pad = armor.bgPadding.value.toInt().coerceIn(0, 10)
+                    if (armor.showBg.value) Theme.rounded(ctx, UiRect(-pad, -pad, contentWidth + pad * 2, contentHeight + pad * 2),
+                        armor.bgColor.toArgb(), armor.bgRadius.value.toInt())
+                    var slot = 0
+                    stacks.forEach { stack ->
+                        if (stack.isEmpty && !armor.showEmpty.value) return@forEach
+                        val ix = if (horizontal) slot * slotStep else 0
+                        val iy = if (horizontal) 0 else slot * slotStep
+                        if (!stack.isEmpty) {
+                            ctx.drawItem(stack, ix, iy)
+                            val pct = if (stack.maxDamage > 0) (stack.maxDamage - stack.damage) * 100 / stack.maxDamage else 100
+                            val col = when { pct > armor.goodThresh.value -> armor.colorGood.toArgb(); pct > armor.badThresh.value -> armor.colorMid.toArgb(); else -> armor.colorBad.toArgb() }
+                            if (armor.showDurNum.value) {
+                                val label = if (armor.showPercent.value) "$pct%" else "$pct"
+                                if (armor.shadow.value) ctx.drawTextWithShadow(tr, label, ix + 1, iy + 9, col)
+                                else ctx.drawText(tr, label, ix + 1, iy + 9, col, false)
+                            }
+                            if (armor.showDurBar.value && stack.maxDamage > 0) {
+                                val barY = iy + 16
+                                ctx.fill(ix, barY, ix + 16, barY + 2, 0x88000000.toInt())
+                                ctx.fill(ix, barY, ix + (16 * pct / 100), barY + 2, col)
+                            }
+                        }
+                        slot++
+                    }
                 }
             }
         }
@@ -338,9 +421,16 @@ object HudRenderer {
         }
     }
 
-    private fun drawKey(ctx: GuiContext, label: String, x: Int, y: Int, pressed: Boolean) {
-        ctx.fill(x, y, x+12, y+12, if (pressed) 0xCC3D9970.toInt() else 0x88000000.toInt())
-        ctx.drawTextWithShadow(MinecraftClient.getInstance().textRenderer, label,
-            x+2, y+2, if (pressed) 0xFF000000.toInt() else WHITE)
+    private fun drawKey(ctx: GuiContext, label: String, x: Int, y: Int, size: Int, pressed: Boolean,
+                        module: KeystrokesModule, width: Int = size) {
+        val color = if (pressed) module.pressedColor.toArgb() else module.keyColor.toArgb()
+        val textColor = if (pressed) module.pressedText.toArgb() else module.textColor.toArgb()
+        Theme.rounded(ctx, UiRect(x, y, width, size), color, module.bgRadius.value.toInt())
+        val font = MinecraftClient.getInstance().textRenderer
+        val fitted = Theme.fit(font, label, width - 4)
+        val textX = x + ((width - font.getWidth(fitted)) / 2).coerceAtLeast(2)
+        val textY = y + ((size - 8) / 2).coerceAtLeast(1)
+        if (module.shadow.value) ctx.drawTextWithShadow(font, fitted, textX, textY, textColor)
+        else ctx.drawText(font, fitted, textX, textY, textColor, false)
     }
 }

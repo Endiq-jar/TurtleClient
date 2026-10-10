@@ -21,8 +21,9 @@ class ColorEditorScreen(private val setting:ColorSetting,private val parent:Scre
         buttons.add(UiRect(panel.x+18+w,panel.bottom-32,w,22),UiAction("color.cancel","Cancel") { closeGui() })
     }
     override fun renderGui(ctx:GuiContext,mx:Int,my:Int,delta:Float) {
-        super.renderGui(ctx,mx,my,delta);ctx.fill(0,0,width,height,0xD00B1418.toInt());Theme.panel(ctx,panel)
+        super.renderGui(ctx,mx,my,delta);Theme.modalBackdrop(ctx,width,height,panel)
         Theme.label(ctx,textRenderer,setting.name,panel.x+12,panel.y+12,Theme.TEXT,panel.width-24)
+        Theme.label(ctx,textRenderer,"COLOR & OPACITY",panel.x+12,panel.y+25,Theme.SUBTLE,panel.width-24)
         val labels=listOf("Red","Green","Blue","Opacity");val colors=listOf(0xFFEF9F99.toInt(),Theme.ACCENT,0xFF83C9F2.toInt(),Theme.TEXT)
         tracks.forEachIndexed { i,track ->
             Theme.label(ctx,textRenderer,"${labels[i]}  ${values[i]}",track.x,track.y-13,colors[i])

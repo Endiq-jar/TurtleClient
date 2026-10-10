@@ -23,21 +23,26 @@ The repair is not just replacement artwork. Source-level checks found missing ha
 | Colors | Six fixed presets only; tiny text alpha became opaque on old fonts | RGBA editor with opacity/preview; transparent text is skipped consistently |
 | Clock/memory/speed/direction/server HUD | Setting-name mismatches and unconsumed format controls | Actual setting names, working date/units/labels/direction/custom address; velocity converted from blocks/tick to blocks/second |
 | Popup Events | Nothing generated notifications; lifetime counted render frames | World-join and opt-in game-message events, test action, bounded queue, monotonic fade/lifetime and live style controls |
+| HUD layout | Position sliders required manual guesswork; several overlays were hard-coded | Right-Alt/ClickGUI drag editor edits the existing percentage sliders, previews disabled widgets, and saves on drag release; armor bar/status, keystrokes, potion and UHC renderers now honor position/scale |
 | Block Overlay | Depended on Block Indicator being enabled | Independent target sampling, offsets, scale, colors and coordinate layouts |
 | Attack/PvP/team/combo HUD | Fixed drawing ignored available controls | Configurable cooldown bar, player filters/fields/sorting, styled team table, tick-based combo pop |
 | Sprint/Auto GG | Unused modes and incorrectly hidden Auto GG checkbox | Forward/sneak/minimum-input controls; correctly exposed Auto /gg, restricted to Hypixel with duplicate suppression |
 | Preferences | Toggles/favorites/settings lost on restart | Bounded JSON codec, atomic writes, saved module settings/favorites/keybinds |
+| ClickGUI navigation | Dense horizontal filters and settings-only favorites | Responsive category sidebar, compact tab fallback, per-category counts, card favorites and keyboard category navigation |
+| Search | Basic substring field with limited editing | Unicode-aware caret/selection, paste/copy, clear action, `/` and Ctrl+F quick focus |
+| Appearance | Fixed forest-green controls | Canopy, Lagoon and Ember palettes persisted in the client preferences and shared by menus/editors |
+| Settings affordances | Setting descriptions were difficult to discover | Hover feedback and contextual description tooltips, with shared modal panels |
 | Action buttons | Inactive controls appeared clickable | Shared callback IDs, disabled-state reasons and visible errors |
 
 ## Honest limits, not fake working switches
 
 Several **pre-existing prototypes** never had a usable implementation. They are now labelled **Unavailable** and cannot be enabled through clicks, keybinds or saved configuration: Animations, Freelook, Weather Changer, Time Changer, Chat, Nick Hider, Boss Bar, Scoreboard, Team Circles, Skyblock Addons, TabStat and Motion Blur. In particular, the old black-screen overlay is not described as real motion blur, and Nick Hider is not allowed to imply privacy protection.
 
-Armor icons/bar, keystrokes, potion status and UHC currently use their basic fixed layouts; their unconsumed customization controls are not exposed. Other legacy modules remain basic implementations; this change is not a claim that every historical setting/prototype has become a complete feature. Unsupported circle/icon cooldown modes, alternate sprint modes and entity-tint controls are also not exposed as working controls. Toggle Sprint is explicitly a **status display**, not a movement keybinding. Auto Hide affects Turtle overlays, not the vanilla HUD. The UI presentation policy is centralized in `ModulePresentation.kt`.
+Armor icons/bar, keystrokes, potion status and UHC now have draggable percentage positions and working scale controls; armor status also supports configurable durability numbers/bars. Some legacy style options remain intentionally hidden (for example, armor offhand warnings and potion icon/grid layouts). Other legacy modules remain basic implementations; this change is not a claim that every historical setting/prototype has become a complete feature. Unsupported circle/icon cooldown modes, alternate sprint modes and entity-tint controls are also not exposed as working controls. Toggle Sprint is explicitly a **status display**, not a movement keybinding. Auto Hide affects Turtle overlays, not the vanilla HUD. The UI presentation policy is centralized in `ModulePresentation.kt`.
 
 ## Runtime acceptance checklist
 
-Automated tests cover action dispatch, scrolling, editable text, settings persistence/bounds, CPS expiry, clock behavior, PNG bounds, six mesh types, authentication transitions and version-specific bytecode contracts. **Minecraft has not been launched in the build sandbox.** Manually verify:
+Automated tests cover action dispatch, scrolling, editable text, settings and palette persistence/bounds, CPS expiry, clock behavior, PNG bounds, six mesh types, authentication transitions and version-specific bytecode contracts. **Minecraft has not been launched in the build sandbox.** Manually verify:
 
 - [ ] Cold startup and repeated F3+T/resource-pack reloads: progress, captions, completion/error handling and overlay removal.
 - [ ] All 52 module icons in cards/settings, including muted unavailable entries and small GUI scales.
@@ -49,3 +54,4 @@ Automated tests cover action dispatch, scrolling, editable text, settings persis
 - [ ] FOV, zoom/scroll/sensitivity, brightness, crosshair replacement and disable/restore behavior.
 - [ ] CPS decay, timer actions/completion, camera PNG/notification, waypoint lifetime, Auto Text opt-in and live repeat cancellation.
 - [ ] Popup test/join/game events, fade/queue limits, transparent colors, clock/units, target overlay, cooldown bar and PvP/team/combo layouts.
+- [ ] HUD editor from Right Alt and ClickGUI, drag anchors for left/center/right widgets, preview/toggle, revert, resolution changes, and saved positions for armor/status/potion/UHC widgets.

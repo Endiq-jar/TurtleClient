@@ -15,6 +15,7 @@ class CustomTitleScreen : ClientScreen("TurtleClient") {
     private var keyboardFocus = -1
     private var card = UiRect(0, 0, 1, 1)
     private var compact = false
+    private var wide = false
     private var feedback=""
     private var sceneButton = card
     private var quitButton = card
@@ -25,13 +26,18 @@ class CustomTitleScreen : ClientScreen("TurtleClient") {
     override fun init() {
         buttons.clear()
         compact = height < 330
-        val header = if (compact) 38 else 82
+        wide = width >= 760 && height >= 400
+        val header = if (compact) 38 else if (wide) 52 else 82
         val primaryHeight = if (compact) 24 else 30
         val secondaryHeight = if (compact) 22 else 26
         val cardHeight = 24 + header + primaryHeight * 2 + secondaryHeight * 2 + 18
-        val cardWidth = minOf(268, (width - 36).coerceAtLeast(1))
-        val left = if (width >= 680) (width * 0.12).toInt() else (width - cardWidth) / 2
-        card = UiRect(left, (height - cardHeight) / 2, cardWidth, cardHeight)
+        val cardWidth = minOf(280, (width - 36).coerceAtLeast(1))
+        val left = when {
+            wide -> width - cardWidth - (width * 0.11).toInt()
+            width >= 680 -> (width * 0.12).toInt()
+            else -> (width - cardWidth) / 2
+        }
+        card = UiRect(left.coerceAtLeast(0), (height - cardHeight) / 2, cardWidth, cardHeight)
         val x = card.x + 12
         val w = card.width - 24
         var y = card.y + 12 + header
@@ -65,7 +71,12 @@ class CustomTitleScreen : ClientScreen("TurtleClient") {
         Theme.label(ctx, textRenderer, name, account.x + 23, account.y + 7, Theme.TEXT)
         if(account.contains(mx.toDouble(),my.toDouble()))Theme.tooltip(ctx,textRenderer,"Manage and switch accounts",mx,my,width,height)
         Theme.panel(ctx, card, Theme.PANEL, Theme.BORDER, 8)
-        if (compact) {
+        if (wide) {
+            Theme.rounded(ctx, UiRect(card.x + 1, card.y + 1, card.width - 2, 51), Theme.BACKGROUND, 7)
+            ctx.drawTexture(Theme.LOGO, card.x + 12, card.y + 12, 25, 25)
+            Theme.label(ctx, textRenderer, "QUICK PLAY", card.x + 45, card.y + 13, Theme.TEXT)
+            Theme.label(ctx, textRenderer, "Choose a world or server", card.x + 45, card.y + 27, Theme.SUBTLE, card.width - 58)
+        } else if (compact) {
             val brandX = card.x + (card.width - 168) / 2
             ctx.drawTexture(Theme.LOGO, brandX, card.y + 13, 30, 30)
             ctx.drawTexture(Theme.WORDMARK, brandX + 40, card.y + 19, 128, 24)
@@ -73,6 +84,7 @@ class CustomTitleScreen : ClientScreen("TurtleClient") {
             ctx.drawTexture(Theme.LOGO, card.x + (card.width - 40) / 2, card.y + 12, 40, 40)
             ctx.drawTexture(Theme.WORDMARK, card.x + (card.width - 144) / 2, card.y + 57, 144, 27)
         }
+        if (wide) drawHero(ctx)
         buttons.forEachIndexed { index, button ->
             Theme.button(ctx, textRenderer, button.bounds, button.label,
                 button.bounds.contains(mx.toDouble(), my.toDouble()) || keyboardFocus == index, button.primary,button.enabled())
@@ -83,6 +95,35 @@ class CustomTitleScreen : ClientScreen("TurtleClient") {
         if(feedback.isNotEmpty())Theme.label(ctx,textRenderer,feedback,card.x,card.bottom+8,Theme.DANGER,card.width)
         val footer = "Fabric  /  Minecraft $version"
         if (width > 390 && (favoritesButton == null || width >= 560)) Theme.label(ctx, textRenderer, footer, (width - textRenderer.getWidth(footer)) / 2, height - 23, Theme.MUTED)
+    }
+
+    private fun drawHero(ctx: GuiContext) {
+        val x = (width * 0.11).toInt()
+        val heroWidth = (card.x - x - 26).coerceAtLeast(160).coerceAtMost(560)
+        val y = card.y + 22
+        ctx.drawTexture(Theme.LOGO, x, y + 1, 60, 60)
+        val wordX = x + 72
+        val wordWidth = (heroWidth - 76).coerceAtLeast(110)
+        ctx.drawTexture(Theme.WORDMARK, wordX, y + 9, minOf(wordWidth, 250), 45)
+        Theme.label(ctx, textRenderer, "A calmer, cleaner Minecraft client.", x, y + 72, Theme.TEXT, heroWidth)
+        Theme.label(ctx, textRenderer, "HUD tools  ·  performance  ·  Turtle cosmetics", x, y + 87, Theme.MUTED, heroWidth)
+
+        val summary = UiRect(x, y + 114, heroWidth, 72)
+        Theme.panel(ctx, summary, Theme.PANEL, Theme.BORDER, 7)
+        Theme.label(ctx, textRenderer, "CLIENT OVERVIEW", summary.x + 10, summary.y + 8, Theme.SUBTLE)
+        val columns = listOf(
+            ModuleManager.modules.size.toString() to "MODULES",
+            ModuleManager.getEnabled().count { it.unavailableReason == null }.toString() to "ENABLED",
+            ModuleManager.modules.count { it.favorited }.toString() to "FAVORITES"
+        )
+        val columnWidth = (summary.width - 20) / columns.size
+        columns.forEachIndexed { index, (value, label) ->
+            val cx = summary.x + 10 + index * columnWidth
+            Theme.label(ctx, textRenderer, value, cx, summary.y + 26, Theme.ACCENT)
+            Theme.label(ctx, textRenderer, label, cx, summary.y + 42, Theme.MUTED, columnWidth - 6)
+        }
+        Theme.chip(ctx, textRenderer, UiRect(x, summary.bottom + 10, minOf(126, heroWidth), 21), "Theme · ${Theme.paletteName}", true)
+        Theme.label(ctx, textRenderer, "Right Shift opens the module library", x, summary.bottom + 42, Theme.SUBTLE, heroWidth)
     }
 
     override fun onMouseClicked(mx: Double, my: Double, button: Int): Boolean {

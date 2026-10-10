@@ -8,6 +8,7 @@ import com.endiq.client.compat.SessionBridge
 import com.endiq.client.config.ModulePreferenceCodec
 import com.endiq.client.modules.impl.hud.*
 import com.endiq.client.modules.impl.hypixel.HypixelAddonsModule
+import com.endiq.client.modules.impl.hypixel.UhcOverlayModule
 import com.endiq.client.modules.impl.movement.SprintModule
 import com.endiq.client.modules.impl.utility.*
 import com.google.gson.JsonParser
@@ -25,6 +26,15 @@ class ControlAuditTest {
         val attack=AttackIndicatorModule();assertTrue(attack.readyColor in attack.visibleSettings);assertFalse(attack.style in attack.visibleSettings)
         val sprint=SprintModule();assertTrue(sprint.cancelSneak in sprint.visibleSettings);assertFalse(sprint.mode in sprint.visibleSettings)
     }
+    @Test fun movableOverlaysExposeTheExistingPositionAndScaleSettings() {
+        listOf(ArmorBarModule(), ArmorStatusModule(), KeystrokesModule(), PotionStatusModule(), UhcOverlayModule()).forEach { module ->
+            val names = module.visibleSettings.map { it.name }.toSet()
+            assertTrue("Position X" in names, "${module.name} must expose its horizontal layout setting")
+            assertTrue("Position Y" in names, "${module.name} must expose its vertical layout setting")
+            assertTrue("Scale" in names, "${module.name} must expose its rendered scale")
+        }
+    }
+
     @Test fun unavailablePrivacyPrototypeCannotEnableThroughClickKeyOrConfiguration() {
         val nick=NickHiderModule();assertNotNull(nick.unavailableReason)
         nick.enable();nick.updateKeyState(true,true);assertFalse(nick.enabled)

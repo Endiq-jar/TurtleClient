@@ -42,7 +42,7 @@ class ModSettingsGui(private val mod: Module, private val parent: Screen) : Clie
 
     override fun init() {
         scroll.endDrag()
-        panel = centeredPanel(width, height, 380, 386)
+        panel = centeredPanel(width, height, 420, 414)
         closeButton = UiRect(panel.right - 30, panel.y + 9, 22, 22)
         enableButton = UiRect(panel.x + 10, panel.y + 43, 100, 23)
         favoriteButton = UiRect(panel.right - 106, panel.y + 43, 96, 23)
@@ -56,11 +56,10 @@ class ModSettingsGui(private val mod: Module, private val parent: Screen) : Clie
 
     override fun renderGui(ctx: GuiContext, mx: Int, my: Int, delta: Float) {
         super.renderGui(ctx, mx, my, delta)
-        ctx.fill(0, 0, width, height, 0xB8071013.toInt())
-        Theme.panel(ctx, panel)
+        Theme.modalBackdrop(ctx, width, height, panel)
         ctx.drawTexture(Theme.moduleIcon(mod), panel.x + 10, panel.y + 9, 25, 25, Theme.ACCENT)
-        Theme.label(ctx, textRenderer, mod.name, panel.x + 43, panel.y + 12, Theme.TEXT, panel.width - 84)
-        Theme.label(ctx, textRenderer, "MODULE SETTINGS", panel.x + 43, panel.y + 25, Theme.SUBTLE, panel.width - 84)
+        Theme.label(ctx, textRenderer, mod.name, panel.x + 43, panel.y + 10, Theme.TEXT, panel.width - 84)
+        Theme.label(ctx, textRenderer, "${mod.category.displayName.uppercase()}  ·  MODULE SETTINGS", panel.x + 43, panel.y + 25, Theme.SUBTLE, panel.width - 84)
         if (closeButton.contains(mx.toDouble(), my.toDouble())) Theme.rounded(ctx, closeButton, Theme.HOVER)
         ctx.drawTexture(Theme.icon("close"), closeButton.x + 4, closeButton.y + 4, 14, 14, Theme.MUTED)
         Theme.button(ctx, textRenderer, enableButton, if(mod.unavailableReason!=null)"Unavailable" else if (mod.enabled) "Enabled" else "Disabled", enableButton.contains(mx.toDouble(), my.toDouble()), mod.enabled,mod.unavailableReason==null)
@@ -72,12 +71,16 @@ class ModSettingsGui(private val mod: Module, private val parent: Screen) : Clie
         try {
             for ((setting, rect) in rows()) {
                 if (rect.bottom <= viewport.y || rect.y >= viewport.bottom) continue
-                drawSetting(ctx, setting, rect)
+                drawSetting(ctx, setting, rect, mx, my)
             }
             if (mod.visibleSettings.isEmpty()) Theme.label(ctx, textRenderer, "No extra settings for this module.", viewport.x + 10, viewport.y + 18, Theme.MUTED, viewport.width - 20)
         } finally { ctx.disableScissor() }
         Theme.scrollbar(ctx, scroll, scrollbar, mx, my)
-        ctx.fill(panel.x + 10, panel.bottom - 52, panel.right - 10, panel.bottom - 51, Theme.BORDER)
+        if (viewport.contains(mx.toDouble(), my.toDouble())) {
+            rows().firstOrNull { (setting, rect) -> rect.contains(mx.toDouble(), my.toDouble()) && setting.description.isNotBlank() }
+                ?.first?.description?.let { Theme.tooltip(ctx, textRenderer, it, mx, my, width, height) }
+        }
+        Theme.divider(ctx, panel.x + 10, panel.bottom - 52, panel.width - 20)
         Theme.label(ctx, textRenderer, "Keybind", panel.x + 10, keyButton.y + 8, Theme.MUTED)
         val keyLabel = if (waitingForKey) "Press a key..." else keyName(mod.key)
         Theme.button(ctx, textRenderer, keyButton, keyLabel, keyButton.contains(mx.toDouble(), my.toDouble()), waitingForKey)
@@ -86,12 +89,16 @@ class ModSettingsGui(private val mod: Module, private val parent: Screen) : Clie
             panel.x + 10, panel.bottom - 12, Theme.SUBTLE, panel.width - 20)
     }
 
-    private fun drawSetting(ctx: GuiContext, setting: Setting, rect: UiRect) {
+    private fun drawSetting(ctx: GuiContext, setting: Setting, rect: UiRect, mx: Int, my: Int) {
+        val hovered = rect.contains(mx.toDouble(), my.toDouble())
+        if (hovered) Theme.rounded(ctx, rect, Theme.HOVER, 4)
         when (setting) {
-            is ActionSetting -> Theme.button(ctx,textRenderer,UiRect(rect.x,rect.y+2,rect.width,24),setting.name,false,false,setting.available())
+            is ActionSetting -> Theme.button(ctx,textRenderer,UiRect(rect.x,rect.y+2,rect.width,24),setting.name,
+                hovered, false, setting.available())
             is TextSetting -> {
                 Theme.label(ctx,textRenderer,setting.name,rect.x,rect.y+2,Theme.TEXT,rect.width)
-                Theme.button(ctx,textRenderer,UiRect(rect.x,rect.y+16,rect.width,22),setting.value.ifEmpty { "Click to edit" },false)
+                val field = UiRect(rect.x,rect.y+16,rect.width,22)
+                Theme.button(ctx,textRenderer,field,setting.value.ifEmpty { "Click to edit" },field.contains(mx.toDouble(),my.toDouble()))
             }
             is SliderSetting -> {
                 val value = String.format(Locale.ROOT, if (setting.max >= 100f && setting.suffix.isEmpty()) "%.0f" else "%.2f", setting.value) + setting.suffix

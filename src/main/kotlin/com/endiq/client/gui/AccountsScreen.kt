@@ -91,7 +91,7 @@ class AccountsScreen(private val parent:Screen) : ClientScreen("Accounts") {
     override fun renderGui(ctx:GuiContext,mx:Int,my:Int,delta:Float) {
         super.renderGui(ctx,mx,my,delta)
         if(mode==Mode.DEVICE && !Accounts.busy && Accounts.challenge==null) { selected=Accounts.lastAdded ?: selected;mode(Mode.LIST);updateBounds() }
-        ctx.fill(0,0,width,height,0xD00B1418.toInt());Theme.panel(ctx,panel)
+        Theme.modalBackdrop(ctx,width,height,panel)
         ctx.drawTexture(Theme.icon("account"),panel.x+12,panel.y+12,22,22,Theme.ACCENT)
         Theme.label(ctx,textRenderer,when(mode){Mode.LIST->"ACCOUNTS";Mode.OFFLINE->"OFFLINE PROFILE";Mode.SETUP->"MICROSOFT SETUP";Mode.DEVICE->"MICROSOFT SIGN-IN"},panel.x+42,panel.y+13)
         Theme.label(ctx,textRenderer,"Active: ${Accounts.active?.name.orEmpty()}",panel.x+42,panel.y+27,Theme.MUTED,panel.width-58)

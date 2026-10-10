@@ -6,6 +6,7 @@ class ArmorBarModule : Module("Armor Bar", "Shows armor points as a bar", Catego
     val textColor   = color("Text Color", r=255, g=255, b=255)
     val barWidth    = slider("Bar Width", default=80f, min=20f, max=200f)
     val barHeight   = slider("Bar Height", default=4f, min=2f, max=12f)
+    val scale       = slider("Scale", default=1f, min=0.5f, max=3f, suffix="x")
     val posX        = slider("Position X", default=50f, min=0f, max=100f, suffix="%")
     val posY        = slider("Position Y", default=90f, min=0f, max=100f, suffix="%")
     val showText    = bool("Show Text", default=true)

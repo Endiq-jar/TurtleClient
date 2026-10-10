@@ -20,6 +20,8 @@ class ArmorStatusModule : Module("Armor Status", "Shows armor items and durabili
     val warnLow      = bool("Flash When Low", default=true)
     val warnThresh   = slider("Warn Threshold", default=20f, min=5f, max=50f, suffix="%")
     val bgColor      = color("Background", r=0, g=0, b=0, a=100)
+    val bgPadding    = slider("BG Padding", default=2f, min=0f, max=10f)
+    val bgRadius     = slider("BG Radius", default=4f, min=0f, max=10f)
     val showBg       = bool("Show Background", default=false)
     init { enable() }
 }

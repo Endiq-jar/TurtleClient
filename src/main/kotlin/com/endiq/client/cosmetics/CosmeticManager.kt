@@ -87,6 +87,7 @@ object CosmeticManager {
             else "${registry.values.sumOf { it.size }} cosmetics ready. Client-side; use F5 to see them."
     }
     fun getByType(type: CosmeticType) = registry[type].orEmpty()
+    fun getEquippedCount() = equipped.size
     fun getEquipped(type: CosmeticType) = equipped[type]
     fun isEquipped(entry: CosmeticEntry) = equipped[entry.type]?.id == entry.id
     fun equip(entry: CosmeticEntry) { equipped[entry.type]=entry; wanted[entry.type]=entry.id; changed() }

@@ -5,17 +5,49 @@ import kotlin.math.sqrt
 
 /** Small reusable primitives; no screenshot-sized button textures or per-frame image decoding. */
 object TurtleTheme {
-    val BACKGROUND = 0xFF0E1611.toInt()
-    val PANEL = 0xFA151F19.toInt()
-    val CARD = 0xFF18221D.toInt()
-    val HOVER = 0xFF213128.toInt()
-    val BORDER = 0xFF344239.toInt()
-    val ACCENT = 0xFF96CCA9.toInt()
-    val ACTIVE = 0xFF263F30.toInt()
-    val TEXT = 0xFFE7EEE9.toInt()
-    val MUTED = 0xFFA6B5AA.toInt()
-    val SUBTLE = 0xFF748779.toInt()
-    val DANGER = 0xFFE49B8C.toInt()
+    private data class Palette(
+        val name: String, val background: Int, val panel: Int, val card: Int, val hover: Int,
+        val border: Int, val accent: Int, val active: Int, val text: Int, val muted: Int,
+        val subtle: Int, val danger: Int
+    )
+
+    private val palettes = listOf(
+        Palette("Canopy", 0xFF0E1611.toInt(), 0xFA151F19.toInt(), 0xFF18221D.toInt(),
+            0xFF213128.toInt(), 0xFF344239.toInt(), 0xFF96CCA9.toInt(), 0xFF263F30.toInt(),
+            0xFFE7EEE9.toInt(), 0xFFA6B5AA.toInt(), 0xFF748779.toInt(), 0xFFE49B8C.toInt()),
+        Palette("Lagoon", 0xFF0D1519.toInt(), 0xFA131F24.toInt(), 0xFF17272B.toInt(),
+            0xFF20363A.toInt(), 0xFF354F51.toInt(), 0xFF78D2C0.toInt(), 0xFF213F3B.toInt(),
+            0xFFE6F1ED.toInt(), 0xFFA8BDB7.toInt(), 0xFF718B84.toInt(), 0xFFE99A91.toInt()),
+        Palette("Ember", 0xFF17120F.toInt(), 0xFA211A16.toInt(), 0xFF29201A.toInt(),
+            0xFF35291F.toInt(), 0xFF574336.toInt(), 0xFFF0B783.toInt(), 0xFF453225.toInt(),
+            0xFFF3ECE5.toInt(), 0xFFC7B7A8.toInt(), 0xFF8F7D6C.toInt(), 0xFFE58E83.toInt())
+    )
+    private var paletteIndex = 0
+    val paletteName get() = palettes[paletteIndex].name
+    val paletteNames get() = palettes.map { it.name }
+    val BACKGROUND get() = palettes[paletteIndex].background
+    val PANEL get() = palettes[paletteIndex].panel
+    val CARD get() = palettes[paletteIndex].card
+    val HOVER get() = palettes[paletteIndex].hover
+    val BORDER get() = palettes[paletteIndex].border
+    val ACCENT get() = palettes[paletteIndex].accent
+    val ACTIVE get() = palettes[paletteIndex].active
+    val TEXT get() = palettes[paletteIndex].text
+    val MUTED get() = palettes[paletteIndex].muted
+    val SUBTLE get() = palettes[paletteIndex].subtle
+    val DANGER get() = palettes[paletteIndex].danger
+
+    fun setPalette(name: String): Boolean {
+        val index = palettes.indexOfFirst { it.name.equals(name, ignoreCase = true) }
+        if (index < 0) return false
+        paletteIndex = index
+        return true
+    }
+
+    fun cyclePalette(): String {
+        paletteIndex = (paletteIndex + 1) % palettes.size
+        return paletteName
+    }
     val LOGO = identifier("turtle-client", "textures/gui/branding/turtle.png")
     val WORDMARK = identifier("turtle-client", "textures/gui/branding/wordmark.png")
     val COAST = identifier("turtle-client", "textures/gui/backgrounds/coast.png")
@@ -52,9 +84,28 @@ object TurtleTheme {
     }
 
     fun panel(ctx: GuiContext, rect: UiRect, color: Int = PANEL, border: Int = BORDER, radius: Int = 7) {
-        if (color==PANEL && border==BORDER) { skin(ctx,rect,"panel");return }
+        if (paletteIndex == 0 && color == PANEL && border == BORDER) { skin(ctx,rect,"panel");return }
         rounded(ctx, rect, border, radius)
         rounded(ctx, rect.inset(1), color, (radius - 1).coerceAtLeast(0))
+    }
+
+    /** Shared dim layer and raised modal surface for every in-game Turtle screen. */
+    fun modalBackdrop(ctx: GuiContext, screenWidth: Int, screenHeight: Int, panelRect: UiRect) {
+        ctx.fill(0, 0, screenWidth, screenHeight, (0xB8 shl 24) or (BACKGROUND and 0x00FFFFFF))
+        panel(ctx, UiRect(panelRect.x - 3, panelRect.y + 4, panelRect.width + 6, panelRect.height),
+            0x55000000, 0x11000000, 10)
+        panel(ctx, panelRect)
+        rounded(ctx, UiRect(panelRect.x + 1, panelRect.y + 1, (panelRect.width - 2).coerceAtLeast(1), 2), ACCENT, 1)
+    }
+
+    fun divider(ctx: GuiContext, x: Int, y: Int, width: Int) {
+        if (width > 0) ctx.fill(x, y, x + width, y + 1, BORDER)
+    }
+
+    fun chip(ctx: GuiContext, font: TextRenderer, rect: UiRect, text: String, active: Boolean = false) {
+        rounded(ctx, rect, if (active) ACTIVE else CARD, minOf(6, rect.height / 2))
+        label(ctx, font, text, rect.x + 7, rect.y + (rect.height - 8) / 2,
+            if (active) ACCENT else MUTED, rect.width - 14)
     }
 
     fun fit(font: TextRenderer, text: String, width: Int): String {
@@ -73,17 +124,24 @@ object TurtleTheme {
 
     fun button(ctx: GuiContext, font: TextRenderer, rect: UiRect, text: String, hovered: Boolean, primary: Boolean = false,
                enabled: Boolean = true, danger: Boolean = false) {
-        val material=when {
-            !enabled -> "disabled"
-            danger -> if(hovered) "danger_hover" else "danger"
-            primary -> if(hovered) "primary_hover" else "primary"
-            hovered -> "hover"
-            else -> "normal"
+        val fill = when {
+            !enabled -> BACKGROUND
+            danger -> if (hovered) DANGER else 0x33201816
+            primary -> if (hovered) ACCENT else ACTIVE
+            hovered -> HOVER
+            else -> CARD
         }
-        skin(ctx,rect,material)
+        val border = when {
+            !enabled -> BORDER
+            danger -> DANGER
+            primary -> ACCENT
+            hovered -> ACCENT
+            else -> BORDER
+        }
+        panel(ctx, rect, fill, border, 5)
         val value = fit(font, text, rect.width - 12)
         label(ctx, font, value, rect.x + (rect.width - font.getWidth(value)) / 2, rect.y + (rect.height - 8) / 2,
-            if(!enabled) SUBTLE else if(primary || (danger && hovered))BACKGROUND else TEXT)
+            if (!enabled) SUBTLE else if (primary && hovered) BACKGROUND else if (primary) ACCENT else if (danger) DANGER else TEXT)
     }
 
     fun actions(ctx:GuiContext,font:TextRenderer,buttons:ActionButtons,mx:Int,my:Int) {
@@ -111,7 +169,7 @@ object TurtleTheme {
         try {
             ctx.drawTexture(texture, bounds.x, bounds.y, bounds.width, bounds.height)
         } finally { ctx.disableScissor() }
-        ctx.fill(0, 0, width, height, 0x280B140E)
+        ctx.fill(0, 0, width, height, (0x38 shl 24) or (BACKGROUND and 0x00FFFFFF))
     }
 }
 
