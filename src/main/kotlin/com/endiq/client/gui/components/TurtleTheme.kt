@@ -89,6 +89,26 @@ object TurtleTheme {
         rounded(ctx, rect.inset(1), color, (radius - 1).coerceAtLeast(0))
     }
 
+    /** Shared dim layer and raised modal surface for every in-game Turtle screen. */
+    fun modalBackdrop(ctx: GuiContext, screenWidth: Int, screenHeight: Int, panelRect: UiRect) {
+        ctx.fill(0, 0, screenWidth, screenHeight, (0xB8 shl 24) or (BACKGROUND and 0x00FFFFFF))
+        panel(ctx, UiRect(panelRect.x - 3, panelRect.y + 4, panelRect.width + 6, panelRect.height),
+            0x55000000, 0x11000000, 10)
+        panel(ctx, panelRect)
+        rounded(ctx, UiRect(panelRect.x + 1, panelRect.y + 1,
+            (panelRect.width - 2).coerceAtLeast(1), 2), ACCENT, 1)
+    }
+
+    fun divider(ctx: GuiContext, x: Int, y: Int, width: Int) {
+        if (width > 0) ctx.fill(x, y, x + width, y + 1, BORDER)
+    }
+
+    fun chip(ctx: GuiContext, font: TextRenderer, rect: UiRect, text: String, active: Boolean = false) {
+        rounded(ctx, rect, if (active) ACTIVE else CARD, minOf(6, rect.height / 2))
+        label(ctx, font, text, rect.x + 7, rect.y + (rect.height - 8) / 2,
+            if (active) ACCENT else MUTED, rect.width - 14)
+    }
+
     fun fit(font: TextRenderer, text: String, width: Int): String {
         if (width <= 0) return ""
         if (font.getWidth(text) <= width) return text
