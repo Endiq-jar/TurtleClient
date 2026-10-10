@@ -8,7 +8,7 @@
 - **Minimal title screen:** a flat backdrop and a bare text menu. The old scene switcher and its two backdrop images are gone.
 - **Account switcher:** click the name at the top right of the title menu. Offline profiles and the launcher account are available; official Microsoft device sign-in requires your own approved public application ID. Tokens are memory-only. See [setup and security](docs/ACCOUNTS.md).
 - Repaired HUD lookups, CPS input, live FOV/zoom/brightness, timer/utility actions, crosshair customization, RGBA editing and saved preferences.
-- **Not every legacy prototype is implemented.** Unavailable modules and basic fixed-layout overlays are explicitly identified instead of presenting fake working controls. See the [button audit and manual test checklist](docs/BUTTON_AUDIT.md).
+- **Not every legacy prototype is implemented.** Unavailable modules and unsupported controls are identified instead of presenting fake working features. See the [button audit and manual test checklist](docs/BUTTON_AUDIT.md).
 
 ![Vector loading and module design reference, not an in-game screenshot](docs/turtle-interface-preview.png)
 
@@ -32,7 +32,7 @@ Quick reference:
 - **HUD:** FPS, CPS, ping/history, coordinates, speed, memory, clock, direction,
   server/resource-pack labels, crosshair, attack cooldown, attack-distance readout
   and combo counter. Nearby-player and scoreboard-team tables have layout/filter controls.
-- **Basic fixed-layout overlays:** keystrokes, armor, potion status and UHC readouts.
+- **HUD layout editor:** drag movable HUD elements directly; positions use the existing saved percentage settings. Armor status/bar, keystrokes, potion status and UHC overlays honor their position and scale controls.
 - **Visual controls:** FOV, hold-to-zoom with scroll adjustment, full-bright lightmap,
   and the existing culling/adaptive view-distance/VSync controls.
 - **Utility:** timer start/pause/reset, clean PNG screenshots, session waypoints,
@@ -44,6 +44,13 @@ weather/time controls and freecam. Those are **not implemented features in this
 checkout**. Reach Display reports attack distance; it does not extend attack reach.
 Twelve incomplete legacy prototypes are marked **Unavailable**. See the
 [control audit](docs/BUTTON_AUDIT.md) for the precise limits and manual checks.
+
+## Turtle interface
+Press **Right Shift** in-game to open the module library; press **Right Alt** or choose **HUD Edit** to open the Turtle HUD editor.
+- Drag active HUD widgets to reposition them; the layout is saved in the existing module preferences
+- Select an item in the editor to preview a disabled overlay; toggle modules from the editor's list
+- Use **Revert** to restore positions from when the editor was opened; right-click a widget to open its settings
+- Click the palette dot in the module library to cycle Canopy, Lagoon, and Ember themes
 
 ## ClickGUI
 Press **Right Shift** in-game to open the GUI.

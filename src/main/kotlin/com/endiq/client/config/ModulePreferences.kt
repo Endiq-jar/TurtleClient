@@ -10,6 +10,7 @@ import net.fabricmc.loader.api.FabricLoader
 object ModulePreferenceCodec {
     fun encode(modules:List<Module>)=JsonObject().apply {
         addProperty("schema",1)
+        addProperty("uiTheme",com.endiq.client.gui.components.TurtleTheme.paletteName)
         add("modules",JsonObject().apply { modules.forEach { mod ->
             add(mod.name,JsonObject().apply {
                 addProperty("enabled",mod.enabled);addProperty("favorite",mod.favorited);addProperty("key",mod.key)
@@ -27,6 +28,9 @@ object ModulePreferenceCodec {
         } })
     }
     fun restore(modules:List<Module>,json:JsonObject) {
+        json.get("uiTheme")?.takeUnless { it.isJsonNull }?.let { theme ->
+            runCatching { com.endiq.client.gui.components.TurtleTheme.setPalette(theme.asString) }
+        }
         val saved=json.getAsJsonObject("modules")?:return
         for(mod in modules) runCatching {
             val value=saved.getAsJsonObject(mod.name)?:return@runCatching

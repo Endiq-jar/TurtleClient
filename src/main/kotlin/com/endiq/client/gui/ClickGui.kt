@@ -27,6 +27,9 @@ class ClickGui(private val parent: Screen? = null, initialCapes: Boolean = false
     private var track = panel
     private var searchBox = panel
     private var toolsButton = panel
+    private var themeButton = panel
+    private var hudEditorButton = panel
+    private var toolbarCompact = false
     private var modsButton = panel
     private var capesButton = panel
     private var closeButton = panel
@@ -60,9 +63,16 @@ class ClickGui(private val parent: Screen? = null, initialCapes: Boolean = false
 
     private fun layout() {
         panel = centeredPanel(width, height, 680, 430)
+        toolbarCompact = panel.width < 560
         closeButton = UiRect(panel.right - 29, panel.y + 8, 21, 22)
-        capesButton = UiRect(closeButton.x - 62, closeButton.y, 57, 22)
-        modsButton = UiRect(capesButton.x - 47, closeButton.y, 42, 22)
+        capesButton = UiRect(closeButton.x - if (toolbarCompact) 56 else 62, closeButton.y,
+            if (toolbarCompact) 51 else 57, 22)
+        modsButton = UiRect(capesButton.x - if (toolbarCompact) 42 else 47, closeButton.y,
+            if (toolbarCompact) 38 else 42, 22)
+        hudEditorButton = UiRect(modsButton.x - if (toolbarCompact) 48 else 68, closeButton.y,
+            if (toolbarCompact) 44 else 62, 22)
+        themeButton = UiRect(hudEditorButton.x - if (toolbarCompact) 40 else 46, closeButton.y,
+            if (toolbarCompact) 34 else 40, 22)
         var x = panel.x + 8
         var y = panel.y + 40
         tabs.clear()
@@ -92,11 +102,14 @@ class ClickGui(private val parent: Screen? = null, initialCapes: Boolean = false
         Theme.panel(ctx, UiRect(panel.x - 3, panel.y + 4, panel.width + 6, panel.height), 0x55000000, 0x11000000, 10)
         Theme.panel(ctx, panel)
         ctx.drawTexture(Theme.LOGO, panel.x + 9, panel.y + 8, 25, 25)
-        if (modsButton.x - panel.x > 135) {
+        if (themeButton.x - panel.x > 135) {
             ctx.drawTexture(Theme.WORDMARK, panel.x + 40, panel.y + 12, 96, 18)
-        } else Theme.label(ctx, textRenderer, "TURTLE", panel.x + 39, panel.y + 15, Theme.TEXT, modsButton.x - panel.x - 44)
+        } else Theme.label(ctx, textRenderer, "TURTLE", panel.x + 39, panel.y + 15, Theme.TEXT, themeButton.x - panel.x - 44)
         Theme.button(ctx, textRenderer, modsButton, "Mods", modsButton.contains(mx.toDouble(), my.toDouble()), !capes)
         Theme.button(ctx, textRenderer, capesButton, "Capes", capesButton.contains(mx.toDouble(), my.toDouble()), capes)
+        Theme.button(ctx, textRenderer, hudEditorButton, if (toolbarCompact) "HUD" else "HUD Edit",
+            hudEditorButton.contains(mx.toDouble(), my.toDouble()), enabled = true)
+        Theme.button(ctx, textRenderer, themeButton, "●", themeButton.contains(mx.toDouble(), my.toDouble()))
         iconButton(ctx, closeButton, "close", mx, my)
         for ((rect, index) in tabs) {
             val selected = if (capes) sources[index] == source else categories[index] == category
@@ -149,6 +162,10 @@ class ClickGui(private val parent: Screen? = null, initialCapes: Boolean = false
             val labels=listOf("Download capes","Open local cape folder","Unequip cape")
             labels.getOrNull((mx-toolsButton.x)/30)?.let { Theme.tooltip(ctx,textRenderer,it,mx,my,width,height) }
         }
+        if (hudEditorButton.contains(mx.toDouble(), my.toDouble()))
+            Theme.tooltip(ctx, textRenderer, "Open the drag-and-drop HUD editor", mx, my, width, height)
+        if (themeButton.contains(mx.toDouble(), my.toDouble()))
+            Theme.tooltip(ctx, textRenderer, "Theme: ${Theme.paletteName} · click to cycle", mx, my, width, height)
     }
 
     private fun drawModule(ctx: GuiContext, module: Module, rect: UiRect, mx: Int, my: Int) {
@@ -205,6 +222,12 @@ class ClickGui(private val parent: Screen? = null, initialCapes: Boolean = false
             if (closeButton.contains(mx, my)) { closeGui(); return true }
             if (modsButton.contains(mx, my)) { changeView(false); return true }
             if (capesButton.contains(mx, my)) { changeView(true); return true }
+            if (hudEditorButton.contains(mx, my)) {
+                MinecraftClient.getInstance().setScreen(HudEditorScreen(this)); return true
+            }
+            if (themeButton.contains(mx, my)) {
+                Theme.cyclePalette(); com.endiq.client.config.ModulePreferences.save(); return true
+            }
             for ((rect, index) in tabs) if (rect.contains(mx, my)) {
                 if (capes) source = sources[index] else category = categories[index]
                 scroll.reset(); refreshItems(); updateBounds(); return true

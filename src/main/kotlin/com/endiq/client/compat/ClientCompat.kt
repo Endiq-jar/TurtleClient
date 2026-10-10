@@ -120,19 +120,23 @@ fun sendChatMessage(message: String) {
 *///?}
 }
 
-fun registerGuiKey(): KeyBinding {
+fun registerGuiKey(): KeyBinding = registerTurtleKey("key.turtle-client.gui", GLFW.GLFW_KEY_RIGHT_SHIFT)
+
+fun registerHudEditorKey(): KeyBinding = registerTurtleKey("key.turtle-client.hud_editor", GLFW.GLFW_KEY_RIGHT_ALT)
+
+private fun registerTurtleKey(name: String, keyCode: Int): KeyBinding {
 //? if >=26.1 {
 /*    return net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper.registerKeyMapping(
-        KeyBinding("key.turtle-client.gui", com.mojang.blaze3d.platform.InputConstants.Type.KEYSYM,
-            GLFW.GLFW_KEY_RIGHT_SHIFT, net.minecraft.client.KeyMapping.Category.register(identifier("turtle-client", "general"))))
+        KeyBinding(name, com.mojang.blaze3d.platform.InputConstants.Type.KEYSYM,
+            keyCode, net.minecraft.client.KeyMapping.Category.register(identifier("turtle-client", "general"))))
 *///?} else if >=1.21.9 {
 /*    return net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper.registerKeyBinding(
-        KeyBinding("key.turtle-client.gui", net.minecraft.client.util.InputUtil.Type.KEYSYM,
-            GLFW.GLFW_KEY_RIGHT_SHIFT, net.minecraft.client.option.KeyBinding.Category.create(identifier("turtle-client", "general"))))
+        KeyBinding(name, net.minecraft.client.util.InputUtil.Type.KEYSYM,
+            keyCode, net.minecraft.client.option.KeyBinding.Category.create(identifier("turtle-client", "general"))))
 *///?} else {
     return net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper.registerKeyBinding(
-        KeyBinding("key.turtle-client.gui", net.minecraft.client.util.InputUtil.Type.KEYSYM,
-            GLFW.GLFW_KEY_RIGHT_SHIFT, "TurtleClient"))
+        KeyBinding(name, net.minecraft.client.util.InputUtil.Type.KEYSYM,
+            keyCode, "TurtleClient"))
 //?}
 }
 

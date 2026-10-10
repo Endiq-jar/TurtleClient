@@ -19,9 +19,9 @@ class TextEditorScreen(private val heading:String,private val help:String,value:
         actions.add(UiRect(panel.x+18+w,panel.bottom-36,w,24),UiAction("text.cancel","Cancel") { closeGui() })
     }
     override fun renderGui(ctx:GuiContext,mx:Int,my:Int,delta:Float) {
-        super.renderGui(ctx,mx,my,delta);ctx.fill(0,0,width,height,0xDC0B1418.toInt());Theme.panel(ctx,panel)
-        Theme.label(ctx,textRenderer,heading,panel.x+12,panel.y+14,Theme.TEXT,panel.width-24)
-        Theme.label(ctx,textRenderer,help.ifEmpty { "Ctrl+A: select all / Ctrl+V: paste" },panel.x+12,panel.y+35,Theme.MUTED,panel.width-24)
+        super.renderGui(ctx,mx,my,delta);Theme.modalBackdrop(ctx,width,height,panel)
+        Theme.label(ctx,textRenderer,heading,panel.x+12,panel.y+12,Theme.TEXT,panel.width-24)
+        Theme.label(ctx,textRenderer,help.ifEmpty { "Ctrl+A: select all / Ctrl+V: paste" },panel.x+12,panel.y+32,Theme.MUTED,panel.width-24)
         Theme.panel(ctx,field,Theme.BACKGROUND,Theme.ACCENT,4);start=0
         while(start<input.cursor && textRenderer.getWidth(input.text.substring(start,input.cursor))>field.width-20)start=input.text.offsetByCodePoints(start,1)
         ctx.enableScissor(field.x+5,field.y+2,field.right-5,field.bottom-2)
