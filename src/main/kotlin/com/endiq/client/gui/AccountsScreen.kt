@@ -110,7 +110,12 @@ class AccountsScreen(private val parent:Screen) : ClientScreen("Accounts") {
                                 AccountProfile.Kind.LAUNCHER->"Original launcher account"
                                 AccountProfile.Kind.MICROSOFT->if(Accounts.ready(profile))"Microsoft - ready this session" else "Microsoft - sign-in required"
                             }
-                            Theme.label(ctx,textRenderer,status,row.x+39,row.y+23,Theme.MUTED,row.width-46)
+                            Theme.label(ctx,textRenderer,status,row.x+39,row.y+23,Theme.MUTED,row.width-110)
+                            if(profile.id==Accounts.active?.id) {
+                                val badge=UiRect(row.right-58,row.y+11,50,18)
+                                Theme.rounded(ctx,badge,Theme.ACCENT,8)
+                                Theme.label(ctx,textRenderer,"Active",badge.x+8,badge.y+5,Theme.BACKGROUND)
+                            }
                         }
                     }
                 } finally { ctx.disableScissor() }

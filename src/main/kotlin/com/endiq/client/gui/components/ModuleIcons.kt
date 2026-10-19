@@ -54,7 +54,22 @@ object ModuleIcons {
         "TabStatModule" to "tab-stat",
         "UhcOverlayModule" to "uhc-overlay",
         "DynamicRenderDistanceModule" to "dynamic-render-distance",
-        "AdaptiveVsyncModule" to "adaptive-vsync"
+        "AdaptiveVsyncModule" to "adaptive-vsync",
+        "DayCounterModule" to "day-counter",
+        "HealthDisplayModule" to "health-display",
+        "ToolWarningModule" to "tool-warning",
+        "WingsModule" to "wings",
+        "BannersModule" to "banners",
+        "EmotesModule" to "emotes",
+        "HatsModule" to "hats",
+        "GlassesModule" to "glasses",
+        "MasksModule" to "masks",
+        "ShoesModule" to "shoes",
+        "ParticlesModule" to "particles",
+        "CharactersModule" to "characters",
+        "BestPingJoinerModule" to "best-ping-joiner",
+        "UiSwitchModule" to "ui-switch",
+        "HeatSaverModule" to "heat-saver"
     )
     private val categories = setOf("hud", "pvp", "render", "movement", "utility", "hypixel", "performance")
     fun path(className: String, category: String = "hud"): String {

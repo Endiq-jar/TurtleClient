@@ -452,6 +452,24 @@
       "sourceSha256": "072594be1a86b1ef354d7aedf22c00db999e458480bdf9deac2461af40b0f055"
     },
     {
+      "path": "textures/gui/modules/banners.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 572,
+      "sha256": "d5a1ba8801d1e7bb5e215df98974c8778932d0108a986d2d485e37f181542cf8",
+      "source": "artwork/modules/banners.svg",
+      "sourceSha256": "fa2fc9c5c95fe5838c2ed8f6eff95f2766d43928bca3050abb80ae2c6922d3dc"
+    },
+    {
+      "path": "textures/gui/modules/best-ping-joiner.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 627,
+      "sha256": "13166c7e6ff8e76c1f5f46582c54e1884f3085fa7d33925683454dbf78846eaf",
+      "source": "artwork/modules/best-ping-joiner.svg",
+      "sourceSha256": "9a5b751854fd6cb3a7073004eb2a8832be5571dc10230f06f121d09371018586"
+    },
+    {
       "path": "textures/gui/modules/block-indicator.png",
       "width": 32,
       "height": 32,
@@ -486,6 +504,15 @@
       "sha256": "4b116dc1c17fd3581aba0b585d3852e4b6eaeef1085ed619d7f833e12d0da41c",
       "source": "artwork/modules/camera.svg",
       "sourceSha256": "5f8b18b5d116fda5d661fe1912e08eaac691c11c47768f3de69680b3068b6f18"
+    },
+    {
+      "path": "textures/gui/modules/characters.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 629,
+      "sha256": "75f0560f2358011a79107284fa960b97222c3af8271eac444cbc271e1291afe1",
+      "source": "artwork/modules/characters.svg",
+      "sourceSha256": "cd4b060f05ed709afaf2a8932b0f5523491557821428bfc2372217055109a08f"
     },
     {
       "path": "textures/gui/modules/chat.png",
@@ -551,6 +578,15 @@
       "sourceSha256": "29b4e0ca799f2ccea603931e61b65ae294be31166e8ddeddb347806a959f2647"
     },
     {
+      "path": "textures/gui/modules/day-counter.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 907,
+      "sha256": "3668d1b6f71cb435f6ec7f876d739f7c8122611717edee7609ecf954f3641d77",
+      "source": "artwork/modules/day-counter.svg",
+      "sourceSha256": "db7dcea848e7e44c976a766d99e753341cb75c64ce98c21c6f6fcf0c92c194e9"
+    },
+    {
       "path": "textures/gui/modules/direction-hud.png",
       "width": 32,
       "height": 32,
@@ -567,6 +603,15 @@
       "sha256": "c91b637ab6b56de7b0047e3a47b7e9ad5b34a0b66936a6902327eab25c3762f1",
       "source": "artwork/modules/dynamic-render-distance.svg",
       "sourceSha256": "a75058359ed3a449eb91efc488d6c20a97e3874baccf9590462d5415f70ec209"
+    },
+    {
+      "path": "textures/gui/modules/emotes.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 759,
+      "sha256": "b549ca80ba5ea2c4200520e4f6587e56178d93e98acf2a7bc34df147e9d1bd19",
+      "source": "artwork/modules/emotes.svg",
+      "sourceSha256": "cb304d46e62cd5ce3cebb67cec717bde8b1d50d055dad85062d29b3cc8e69a5b"
     },
     {
       "path": "textures/gui/modules/fov-changer.png",
@@ -605,6 +650,42 @@
       "sourceSha256": "2f4be5f73882bfee6c653543bc3c91c654af65943b917bf27f3393aec329f3bb"
     },
     {
+      "path": "textures/gui/modules/glasses.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 584,
+      "sha256": "5f7fdcf5c0a94806689d6d5da4702c6389ba0790ac39884c357fec2bff3b60fa",
+      "source": "artwork/modules/glasses.svg",
+      "sourceSha256": "b97dd932f1d32b5a45a546989e9fcd239ff8775e28bcfce5312d4ad7556cec9c"
+    },
+    {
+      "path": "textures/gui/modules/hats.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 527,
+      "sha256": "9ebfd78047567ee16419014f6092beaaa8ab2bb6c1782baba2a30a4777ac7559",
+      "source": "artwork/modules/hats.svg",
+      "sourceSha256": "2d6a5197851fb1b471292d978672f5b3163074bac98647be0b587bc185c9d314"
+    },
+    {
+      "path": "textures/gui/modules/health-display.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 816,
+      "sha256": "9aefdd35fb6b922f3a3b7973084752516a64f37977b3e269188dcafdade28687",
+      "source": "artwork/modules/health-display.svg",
+      "sourceSha256": "2b45ba5192f0d425631c6a6a94b6cfedc125f56cbe3ca02ff5732bc1affff490"
+    },
+    {
+      "path": "textures/gui/modules/heat-saver.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 780,
+      "sha256": "66100801ac48927f48f4d58b22b889a8defc08810fdeb819dbbb95d51c997567",
+      "source": "artwork/modules/heat-saver.svg",
+      "sourceSha256": "894b3beff0a9fbabd9d711c203e9bc33aec422cf4bc1a8719e8440b9a3eea6eb"
+    },
+    {
       "path": "textures/gui/modules/hit-color.png",
       "width": 32,
       "height": 32,
@@ -630,6 +711,15 @@
       "sha256": "42651d807691912e2fd3b95ee7487263af88b94b5a29eec648e47e7038af9b2f",
       "source": "artwork/modules/keystrokes.svg",
       "sourceSha256": "9941d6b96520d623f18e63812809138fedef96d9849d1d26653aa2f5bf0c3e55"
+    },
+    {
+      "path": "textures/gui/modules/masks.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 716,
+      "sha256": "3a23fb11e1a620172ad61b3ea63acad8ad317293409540175276337f8dc8f953",
+      "source": "artwork/modules/masks.svg",
+      "sourceSha256": "183c21ee4db63ab2a3553b92aec496a89f35f7db0327376899937ab83707b887"
     },
     {
       "path": "textures/gui/modules/memory-hud.png",
@@ -684,6 +774,15 @@
       "sha256": "e7f4cdbf6007936e9d20d0c474b7930adbbb44e013d115c59c9c71f568174098",
       "source": "artwork/modules/pack-display.svg",
       "sourceSha256": "13d7bce4267e77b937846189225f3a9c933e395821fbb4bbf907fdd2e8198714"
+    },
+    {
+      "path": "textures/gui/modules/particles.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 591,
+      "sha256": "b2a159c61bf4bcb9487e384db26bd9058ea13601f2179cfb32cbc29c7391ad64",
+      "source": "artwork/modules/particles.svg",
+      "sourceSha256": "29b34be0c960b5c2fdddc4a98f91be409e530429ce3a2ad51401068446504c03"
     },
     {
       "path": "textures/gui/modules/ping.png",
@@ -747,6 +846,15 @@
       "sha256": "0c407f63eafa30c0a424a360576565e5861751864c5d3f384e2cc7ee284a5b99",
       "source": "artwork/modules/server-address.svg",
       "sourceSha256": "664397f75ec9b1a51acd7d81684f8da43057ba77a9ddba30d83a93df45183cfe"
+    },
+    {
+      "path": "textures/gui/modules/shoes.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 485,
+      "sha256": "d27c36989fd016ca30ac6f7be13b918decd19e36f09502437d90de3b0ebecb9f",
+      "source": "artwork/modules/shoes.svg",
+      "sourceSha256": "4bc85f9325de80f8afe66c335b915333f9b92d843131b6594b2f634729874caa"
     },
     {
       "path": "textures/gui/modules/skyblock-addons.png",
@@ -830,6 +938,15 @@
       "sourceSha256": "6f14644e79fddfc5a7c9b939dae3bb9dcd9664e99624262d2ff4131eb12d6569"
     },
     {
+      "path": "textures/gui/modules/tool-warning.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 622,
+      "sha256": "b8083c42e4cb75574402a050ce17c8282dfb72309142b96ed1cb94c6a732058d",
+      "source": "artwork/modules/tool-warning.svg",
+      "sourceSha256": "037c28a7ac81ca949b11dd859c070f194161559ad9346110bb4f284deb9c02ad"
+    },
+    {
       "path": "textures/gui/modules/uhc-overlay.png",
       "width": 32,
       "height": 32,
@@ -839,6 +956,15 @@
       "sourceSha256": "dd75194a835d98def32a4b5424ba990b63ef59a16015798f3b2ca51c1b73ddf3"
     },
     {
+      "path": "textures/gui/modules/ui-switch.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 706,
+      "sha256": "1c83d228a419eb941e5d304347d7c3b859b5948dab4dbb5b4f49027a714a1583",
+      "source": "artwork/modules/ui-switch.svg",
+      "sourceSha256": "73cc55b7a3f3be5b7af82afacf9bfd0cb888245d3139b32c1cda4ffabb14b3c8"
+    },
+    {
       "path": "textures/gui/modules/waypoints.png",
       "width": 32,
       "height": 32,
@@ -846,6 +972,15 @@
       "sha256": "a2676db2d4f6fb73fa184bc703fcda60a6148f93c68c9877040a426204623384",
       "source": "artwork/modules/waypoints.svg",
       "sourceSha256": "3d7702209bc75f688cf627261034ef6a6e29ef2359be0ee2be883ab9340f83c0"
+    },
+    {
+      "path": "textures/gui/modules/wings.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 872,
+      "sha256": "83d3dad76eb9cd53e2c75046bd4b0b90e46fe0bdd40735178d92ef6d3bbc26e2",
+      "source": "artwork/modules/wings.svg",
+      "sourceSha256": "a450cc419a537b2a5c714429920f85486de38ddacef71b40730c42ae4f974504"
     },
     {
       "path": "textures/gui/modules/zoom.png",

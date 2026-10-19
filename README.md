@@ -2,7 +2,7 @@
 
 ## Controls, capes and accounts
 
-- **New vector visual identity:** matte controls, a flat turtle mark and **52 distinct built-in module icons**. Editable SVG sources are included.
+- **New vector visual identity:** matte controls, a flat turtle mark and **67 distinct built-in module icons**. Editable SVG sources are included.
 - **Remade startup/resource loading:** real percentage, per-reload time-based smoothing, responsive placement and font-independent loading captions. Vanilla completion/error handling is retained.
 - **Capes from the internet:** your Mojang profile cape, your LabyMod cape and NameMC's public cape index are downloaded on demand and cached — no capes are bundled. Equip one in **Capes** and press **F5** in a world. See [cape sources and limits](CAPES_README.txt).
 - **Minimal title screen:** a flat backdrop and a bare text menu. The old scene switcher and its two backdrop images are gone.
@@ -12,7 +12,7 @@
 
 ![Vector loading and module design reference, not an in-game screenshot](docs/turtle-interface-preview.png)
 
-[All 52 module icons](docs/turtle-module-icons.png) · [SVG sources and regeneration](docs/ARTWORK.md)
+[All 67 module icons](docs/turtle-module-icons.png) · [SVG sources and regeneration](docs/ARTWORK.md)
 
 
 A custom Minecraft client mod built with Fabric + Kotlin for eight Minecraft
@@ -29,9 +29,17 @@ Quick reference:
 
 ## Features and current scope
 
-- **HUD:** FPS, CPS, ping/history, coordinates, speed, memory, clock, direction,
-  server/resource-pack labels, crosshair, attack cooldown, attack-distance readout
-  and combo counter. Nearby-player and scoreboard-team tables have layout/filter controls.
+- **HUD:** FPS, CPS, ping/history, coordinates, speed, memory, clock, day counter,
+  precise health display, direction, server/resource-pack labels, crosshair, attack
+  cooldown, attack-distance readout and combo counter. Nearby-player and
+  scoreboard-team tables have layout/filter controls.
+- **FHASIX parity:** every FHASIX menu entry is present in the mod menu. The
+  ones FHASIX itself only shows there (Wings, Banners, Emotes, Hats, Glasses,
+  Masks, Shoes, Particles, Characters, Best Ping Joiner, UI Switch, Heat Saver)
+  are labelled **Not implemented** and cannot be toggled on - see
+  [the FHASIX mapping](docs/FHASIX_FEATURES.md). Working equivalents stay
+  working, including the sidebar **FPS Boost** preset, Day Counter, Health
+  Display and Tool Warning.
 - **HUD layout editor:** drag movable HUD elements directly; positions use the existing saved percentage settings. Armor status/bar, keystrokes, potion status and UHC overlays honor their position and scale controls.
 - **Visual controls:** FOV, hold-to-zoom with scroll adjustment, full-bright lightmap,
   and the existing culling/adaptive view-distance/VSync controls.

@@ -5,7 +5,11 @@ object ModulePresentation {
     private val prototypes=setOf("AnimationsModule","FreecamModule","NoWeatherModule","TimeChangerModule",
         "ChatModule","NickHiderModule","BossBarModule","ScoreboardModule","TeamCirclesModule",
         "SkyblockAddonsModule","TabStatModule","MotionBlurModule")
-    fun unavailable(module:Module):String? = if(module.javaClass.simpleName in prototypes)
+    /** FHASIX shows these in its menu only ("are not available"); mirrored honestly. */
+    private val fhasixMenuOnly=setOf("WingsModule","BannersModule","EmotesModule","HatsModule","GlassesModule","MasksModule","ShoesModule","ParticlesModule","CharactersModule","BestPingJoinerModule","UiSwitchModule","HeatSaverModule")
+    fun unavailable(module:Module):String? = if(module.javaClass.simpleName in fhasixMenuOnly)
+        "Not implemented: this FHASIX feature only shows in the mod menu."
+        else if(module.javaClass.simpleName in prototypes)
         if(module.javaClass.simpleName=="NickHiderModule")"Unavailable: this prototype does NOT hide your name."
         else "Unavailable: the legacy ${module.name} implementation is incomplete." else null
 

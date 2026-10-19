@@ -57,6 +57,21 @@ object HudRenderer {
             if (it.enabled) it.sprintOn = player?.isSprinting ?: false
         }
 
+        // Tool Warning: your own gear only; the popup module does the talking.
+        mod<com.endiq.client.modules.impl.utility.ToolWarningModule>()?.let { warn ->
+            if (warn.enabled && player != null) {
+                val stacks = buildList {
+                    add(player.mainHandStack); add(player.offHandStack)
+                    if (warn.checkArmor.value) addAll(armorStacks(player))
+                }
+                stacks.firstOrNull { !it.isEmpty && warn.isLow(it.damage, it.maxDamage) }?.let { stack ->
+                    val left = ((stack.maxDamage - stack.damage) * 100 / stack.maxDamage.coerceAtLeast(1))
+                    if (warn.shouldWarn("${stack.item}:${stack.maxDamage}"))
+                        mod<PopupEventsModule>()?.add("${stack.name.string} is about to break ($left% left).")
+                }
+            }
+        }
+
         mod<TimersModule>()?.tick()
 
         mod<FpsModule>()?.tick()
@@ -118,6 +133,8 @@ object HudRenderer {
         mod<SpeedHudModule>()?.let { if (it.enabled) left(it,it.getText()) }
         mod<MemoryHudModule>()?.let { if (it.enabled) left(it,it.getText()) }
         mod<ClockHudModule>()?.let { if (it.enabled) left(it,it.getText()) }
+        mod<DayCounterModule>()?.let { day -> if (day.enabled) left(day,day.getText(client.world?.timeOfDay ?: 0)) }
+        mod<HealthDisplayModule>()?.let { hp -> if (hp.enabled && player != null) left(hp,hp.getText(player.health, player.maxHealth, player.absorptionAmount)) }
         mod<DirectionHudModule>()?.let { if (it.enabled) left(it,it.getText()) }
         mod<ToggleSprintModule>()?.let { if (it.enabled) left(it,it.getText()) }
 

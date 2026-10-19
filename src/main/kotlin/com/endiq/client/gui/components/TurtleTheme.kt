@@ -12,9 +12,11 @@ object TurtleTheme {
     )
 
     private val palettes = listOf(
-        Palette("Canopy", 0xFF0E1611.toInt(), 0xFA151F19.toInt(), 0xFF18221D.toInt(),
-            0xFF213128.toInt(), 0xFF344239.toInt(), 0xFF96CCA9.toInt(), 0xFF263F30.toInt(),
-            0xFFE7EEE9.toInt(), 0xFFA6B5AA.toInt(), 0xFF748779.toInt(), 0xFFE49B8C.toInt()),
+        // Approved sidebar redesign (03-07): flat solids only, no nine-slice
+        // textures per button, so a frame of GUI is a handful of fills.
+        Palette("Canopy", 0xFF0B1210.toInt(), 0xFA131E1A.toInt(), 0xFF1A2922.toInt(),
+            0xFF24382E.toInt(), 0xFF2A3D34.toInt(), 0xFF8FE3B0.toInt(), 0xFF263F30.toInt(),
+            0xFFF2F7F3.toInt(), 0xFFA9BCB0.toInt(), 0xFF6E8577.toInt(), 0xFFE49B8C.toInt()),
         Palette("Lagoon", 0xFF0D1519.toInt(), 0xFA131F24.toInt(), 0xFF17272B.toInt(),
             0xFF20363A.toInt(), 0xFF354F51.toInt(), 0xFF78D2C0.toInt(), 0xFF213F3B.toInt(),
             0xFFE6F1ED.toInt(), 0xFFA8BDB7.toInt(), 0xFF718B84.toInt(), 0xFFE99A91.toInt()),
@@ -83,10 +85,48 @@ object TurtleTheme {
         }
     }
 
-    fun panel(ctx: GuiContext, rect: UiRect, color: Int = PANEL, border: Int = BORDER, radius: Int = 7) {
-        if (paletteIndex == 0 && color == PANEL && border == BORDER) { skin(ctx,rect,"panel");return }
+    fun panel(ctx: GuiContext, rect: UiRect, color: Int = PANEL, border: Int = BORDER, radius: Int = 6) {
+        // Flat fill + 1px border for every palette: the old nine-slice skin
+        // cost nine texture draws per panel and is no longer used.
         rounded(ctx, rect, border, radius)
         rounded(ctx, rect.inset(1), color, (radius - 1).coerceAtLeast(0))
+    }
+
+    /** Pill toggle from the approved cards: track plus one knob, two fills. */
+    fun switch(ctx: GuiContext, rect: UiRect, on: Boolean, enabled: Boolean = true) {
+        val track = when { !enabled -> BACKGROUND; on -> ACCENT; else -> 0xFF3A4741.toInt() }
+        rounded(ctx, rect, track, rect.height / 2)
+        val knob = (rect.height - 4).coerceAtLeast(1)
+        rounded(ctx, UiRect(rect.x + if (on) rect.width - knob - 2 else 2, rect.y + 2, knob, knob),
+            if (enabled) 0xFFFFFFFF.toInt() else SUBTLE, knob / 2)
+    }
+
+    /** Segmented (dashed) outline used for HUD-editor widgets; plain fills. */
+    fun dashed(ctx: GuiContext, rect: UiRect, color: Int, dash: Int = 5, gap: Int = 3) {
+        var x = rect.x
+        while (x < rect.right) { ctx.fill(x, rect.y, minOf(x + dash, rect.right), rect.y + 1, color); x += dash + gap }
+        x = rect.x
+        while (x < rect.right) { ctx.fill(x, rect.bottom - 1, minOf(x + dash, rect.right), rect.bottom, color); x += dash + gap }
+        var y = rect.y
+        while (y < rect.bottom) { ctx.fill(rect.x, y, rect.x + 1, minOf(y + dash, rect.bottom), color); y += dash + gap }
+        y = rect.y
+        while (y < rect.bottom) { ctx.fill(rect.right - 1, y, rect.right, minOf(y + dash, rect.bottom), color); y += dash + gap }
+    }
+
+    /** Sidebar row (03/04): mint fill + dark text when selected, flat otherwise. */
+    fun sidebarRow(ctx: GuiContext, font: TextRenderer, rect: UiRect, icon: String?, labelText: String,
+                   count: String, selected: Boolean, hovered: Boolean, mx: Int) {
+        if (selected) rounded(ctx, rect, ACCENT, 5)
+        else if (hovered) rounded(ctx, rect, HOVER, 5)
+        val fg = if (selected) BACKGROUND else TEXT
+        val muted = if (selected) BACKGROUND else MUTED
+        var tx = rect.x + 7
+        if (icon != null) { ctx.drawTexture(icon(icon), tx, rect.y + (rect.height - 14) / 2, 14, 14, fg); tx += 19 }
+        label(ctx, font, labelText, tx, rect.y + (rect.height - 8) / 2, fg, rect.width - (tx - rect.x) - 24)
+        if (count.isNotEmpty()) {
+            val w = font.getWidth(count)
+            label(ctx, font, count, rect.right - w - 7, rect.y + (rect.height - 8) / 2, muted)
+        }
     }
 
     /** Shared dim layer and raised modal surface for every in-game Turtle screen. */
@@ -125,20 +165,11 @@ object TurtleTheme {
 
     fun button(ctx: GuiContext, font: TextRenderer, rect: UiRect, text: String, hovered: Boolean, primary: Boolean = false,
                enabled: Boolean = true, danger: Boolean = false) {
-        if (paletteIndex == 0) {
-            val material = when {
-                !enabled -> "disabled"
-                danger -> if (hovered) "danger_hover" else "danger"
-                primary -> if (hovered) "primary_hover" else "primary"
-                hovered -> "hover"
-                else -> "normal"
-            }
-            skin(ctx, rect, material)
-        } else {
+        run {
             val fill = when {
                 !enabled -> BACKGROUND
                 danger -> if (hovered) DANGER else 0x33201816
-                primary -> if (hovered) ACCENT else ACTIVE
+                primary -> ACCENT
                 hovered -> HOVER
                 else -> CARD
             }
@@ -154,8 +185,7 @@ object TurtleTheme {
             !enabled -> SUBTLE
             danger && hovered -> BACKGROUND
             danger -> DANGER
-            primary && hovered -> BACKGROUND
-            primary -> ACCENT
+            primary -> BACKGROUND
             else -> TEXT
         }
         label(ctx, font, value, rect.x + (rect.width - font.getWidth(value)) / 2, rect.y + (rect.height - 8) / 2, textColor)

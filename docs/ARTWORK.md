@@ -32,7 +32,7 @@ small windows. The mark, wordmark, progress track and status have separate bound
 
 ## A distinct icon for every built-in module
 
-All **52 registered modules**, including entries labelled Unavailable, now have
+All **67 registered modules**, including entries labelled Unavailable, now have
 their own pictogram. The library cards and settings headers use the same resolver.
 FPS has a monitor/graph, CPS a mouse, coordinates axes, ping a wireless signal,
 speed a gauge, memory a RAM stick, the timer a stopwatch, and so on. They no longer
@@ -45,7 +45,7 @@ all reuse their category's icon.
 - A bytecode-based test enumerates actual registrations and requires a unique,
   present icon for each one. Cards and settings wiring are tested too.
 
-[See all 52 module icons](turtle-module-icons.png).
+[See all 67 module icons](turtle-module-icons.png).
 
 Artwork does **not** change module availability. Incomplete prototypes remain
 Unavailable, as documented in [the control audit](BUTTON_AUDIT.md).

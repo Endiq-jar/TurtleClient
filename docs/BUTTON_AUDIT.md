@@ -5,7 +5,7 @@ The repair is not just replacement artwork. Source-level checks found missing ha
 | Area | Finding | Change |
 |---|---|---|
 | Startup/resource loading | Generated-looking presentation; status implied world generation | Flat vector identity, actual resource percentage, per-overlay smoothing and font-independent captions; vanilla lifecycle retained |
-| Built-in module identity | All cards reused category icons | 52 dedicated SVG pictograms, mapped by stable class and used in cards/settings; registration/wiring tests |
+| Built-in module identity | All cards reused category icons | 67 dedicated SVG pictograms, mapped by stable class and used in cards/settings; registration/wiring tests |
 | Title account pill | Decorative only | Account screen, offline profiles, Microsoft device flow and disconnected session switching |
 | Title navigation | No account-permission gate/error feedback | Multiplayer permission check; folder failures are visible |
 | Title screen chrome | Scene switcher plus two bundled 1024x576 backdrop images | Flat backdrop and a bare text menu; the switcher and both images are removed |
@@ -46,7 +46,7 @@ Armor icons/bar, keystrokes, potion status and UHC now have draggable percentage
 Automated tests cover action dispatch, scrolling, editable text, settings and palette persistence/bounds, CPS expiry, clock behavior, PNG bounds, six mesh types, authentication transitions and version-specific bytecode contracts. **Minecraft has not been launched in the build sandbox.** Manually verify:
 
 - [ ] Cold startup and repeated F3+T/resource-pack reloads: progress, captions, completion/error handling and overlay removal.
-- [ ] All 52 module icons in cards/settings, including muted unavailable entries and small GUI scales.
+- [ ] All 67 module icons in cards/settings, including muted unavailable entries and small GUI scales.
 - [ ] All title actions and account restrictions on a normal and offline launcher account.
 - [ ] Account cancel/expiry, app setup, approved Microsoft sign-in, switch/restore and signed multiplayer chat.
 - [ ] Screen resize/GUI scale, fractional wheel input, dragging and keyboard navigation.

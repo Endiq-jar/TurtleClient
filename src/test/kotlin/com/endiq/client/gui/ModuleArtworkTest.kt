@@ -23,7 +23,7 @@ class ModuleArtworkTest {
             .filter { it.opcode==Opcodes.NEW && it.desc.startsWith("com/endiq/client/modules/impl/") }
             .map { it.desc.substringAfterLast('/') }.toSet()
         assertEquals(registered,ModuleIcons.keys.keys)
-        assertEquals(52,registered.size)
+        assertEquals(67,registered.size)
         val catalog=loader.getResourceAsStream("assets/turtle-client/module-icons.json")!!.bufferedReader().use {
             JsonParser.parseReader(it).asJsonObject["modules"].asJsonArray
         }
