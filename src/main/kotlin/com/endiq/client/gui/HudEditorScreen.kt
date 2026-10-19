@@ -36,6 +36,10 @@ class HudEditorScreen(private val parent: Screen? = null) : ClientScreen("Turtle
     private var closeButton = panel
     private var revertButton = panel
     private var doneButton = panel
+    private var snapButton = panel
+    private var gridButton = panel
+    private var snapToGrid = true
+    private var gridSize = 4
     private var hideButton = panel
     private var sidebarHidden = false
     private var compactToolbar = false
@@ -66,13 +70,13 @@ class HudEditorScreen(private val parent: Screen? = null) : ClientScreen("Turtle
         val right = width - 10
         compactToolbar = width < 560
         closeButton = UiRect(right - 25, top, 23, 23)
-        if (compactToolbar) {
-            doneButton = UiRect(closeButton.x - 27, top, 23, 23)
-            revertButton = UiRect(doneButton.x - 27, top, 23, 23)
-        } else {
-            doneButton = UiRect(closeButton.x - 78, top, 72, 23)
-            revertButton = UiRect(doneButton.x - 88, top, 82, 23)
-        }
+        // Bottom toolbar (06): Snap / Grid / Revert / Done, always in one place.
+        var tx = ((width - 348) / 2).coerceAtLeast(8)
+        val ty = height - 40
+        snapButton = UiRect(tx, ty, 104, 23); tx += 110
+        gridButton = UiRect(tx, ty, 76, 23); tx += 82
+        revertButton = UiRect(tx, ty, 76, 23); tx += 82
+        doneButton = UiRect(tx, ty, 68, 23)
         hideButton = UiRect(if (sidebarHidden) panel.x else panel.right - 28, top, 23, 23)
         if (!sidebarHidden) {
             searchBox = UiRect(panel.x + 8, panel.y + 38, panel.width - 16, 22)
@@ -115,6 +119,8 @@ class HudEditorScreen(private val parent: Screen? = null) : ClientScreen("Turtle
         "SpeedHudModule" -> "Speed: 4.20 m/s"
         "MemoryHudModule" -> "RAM: 1024/4096 MB"
         "ClockHudModule" -> "Time: 12:34"
+        "DayCounterModule" -> "Day: 12"
+        "HealthDisplayModule" -> "HP: 20.0/20"
         "DirectionHudModule" -> "N 0°"
         "ServerAddressModule" -> "Server: example.net"
         "PackDisplayModule" -> "Pack: Turtle Default"
@@ -230,14 +236,20 @@ class HudEditorScreen(private val parent: Screen? = null) : ClientScreen("Turtle
         updateBounds()
         ctx.fill(0, 0, width, height, 0x18000000)
 
+        if (dragging != null) {
+            // Alignment guides while dragging (06): two 1px fills, no texture.
+            ctx.fill(width / 2, 0, width / 2 + 1, height, 0x5538D2A8)
+            ctx.fill(0, height / 2, width, height / 2 + 1, 0x5538D2A8)
+        }
         val widgetList = widgets()
         widgetList.forEach { widget -> drawWidget(ctx, widget, mx, my) }
         drawTopBar(ctx, mx, my)
         if (!sidebarHidden) drawSidebar(ctx, mx, my)
 
+        drawBottomBar(ctx, mx, my)
         selected?.let { module ->
             val info = "${module.name}  ·  ${if (module.enabled) "enabled" else "preview only"}"
-            Theme.label(ctx, textRenderer, info, panel.right + 14, height - 17, Theme.MUTED, width - panel.right - 28)
+            Theme.label(ctx, textRenderer, info, panel.right + 14, height - 56, Theme.MUTED, width - panel.right - 28)
         }
     }
 
@@ -248,6 +260,8 @@ class HudEditorScreen(private val parent: Screen? = null) : ClientScreen("Turtle
         val fill = if (widget.module.enabled) Theme.ACTIVE else Theme.CARD
         val edge = if (selectedWidget || hovered) Theme.ACCENT else Theme.BORDER
         Theme.panel(ctx, bounds, fill, edge, 5)
+        if (selectedWidget) Theme.dashed(ctx, bounds.inset(-2), Theme.ACCENT)
+        else if (hovered) Theme.dashed(ctx, bounds, Theme.ACCENT)
         val color = if (widget.module.enabled) Theme.TEXT else Theme.MUTED
         Theme.label(ctx, textRenderer, widget.preview, bounds.x + 5, bounds.y + (bounds.height - 8) / 2,
             color, bounds.width - 10)
@@ -268,20 +282,24 @@ class HudEditorScreen(private val parent: Screen? = null) : ClientScreen("Turtle
         ctx.drawTexture(Theme.LOGO, bar.x + 7, bar.y + 4, 18, 18)
         Theme.label(ctx, textRenderer, if (compactToolbar) "HUD" else "HUD EDITOR", bar.x + 31, bar.y + 9, Theme.TEXT,
             if (compactToolbar) bar.width - 62 else Int.MAX_VALUE)
-        if (compactToolbar) {
-            iconButton(ctx, revertButton, "refresh", mx, my)
-            iconButton(ctx, doneButton, "check", mx, my)
-            if (revertButton.contains(mx.toDouble(), my.toDouble()))
-                Theme.tooltip(ctx, textRenderer, "Revert HUD positions", mx, my, width, height)
-            if (doneButton.contains(mx.toDouble(), my.toDouble()))
-                Theme.tooltip(ctx, textRenderer, "Save and close", mx, my, width, height)
-        } else {
-            Theme.button(ctx, textRenderer, revertButton, "Revert", revertButton.contains(mx.toDouble(), my.toDouble()))
-            Theme.button(ctx, textRenderer, doneButton, "Done", doneButton.contains(mx.toDouble(), my.toDouble()), true)
-        }
         Theme.button(ctx, textRenderer, hideButton, if (sidebarHidden) "+" else "-",
             hideButton.contains(mx.toDouble(), my.toDouble()))
         iconButton(ctx, closeButton, "close", mx, my)
+    }
+
+    private fun drawBottomBar(ctx: GuiContext, mx: Int, my: Int) {
+        val bar = UiRect(snapButton.x - 8, snapButton.y - 6, (doneButton.right - snapButton.x) + 16, 35)
+        Theme.panel(ctx, bar, Theme.PANEL, Theme.BORDER, 6)
+        Theme.button(ctx, textRenderer, snapButton, if (snapToGrid) "Snap: On" else "Snap: Off",
+            snapButton.contains(mx.toDouble(), my.toDouble()), snapToGrid)
+        Theme.button(ctx, textRenderer, gridButton, "Grid: ${gridSize}px",
+            gridButton.contains(mx.toDouble(), my.toDouble()))
+        Theme.button(ctx, textRenderer, revertButton, "Revert", revertButton.contains(mx.toDouble(), my.toDouble()))
+        Theme.button(ctx, textRenderer, doneButton, "Done", doneButton.contains(mx.toDouble(), my.toDouble()), true)
+        if (revertButton.contains(mx.toDouble(), my.toDouble()))
+            Theme.tooltip(ctx, textRenderer, "Revert HUD positions", mx, my, width, height)
+        if (doneButton.contains(mx.toDouble(), my.toDouble()))
+            Theme.tooltip(ctx, textRenderer, "Save and close", mx, my, width, height)
     }
 
     private fun drawSidebar(ctx: GuiContext, mx: Int, my: Int) {
@@ -326,8 +344,12 @@ class HudEditorScreen(private val parent: Screen? = null) : ClientScreen("Turtle
     }
 
     private fun setWidgetPosition(widget: Widget, mx: Double, my: Double) {
-        val x = (mx - grabX).coerceIn(0.0, (width - widget.rect.width).coerceAtLeast(0).toDouble())
-        val y = (my - grabY).coerceIn(0.0, (height - widget.rect.height).coerceAtLeast(0).toDouble())
+        var x = (mx - grabX).coerceIn(0.0, (width - widget.rect.width).coerceAtLeast(0).toDouble())
+        var y = (my - grabY).coerceIn(0.0, (height - widget.rect.height).coerceAtLeast(0).toDouble())
+        if (snapToGrid && gridSize > 1) {
+            x = kotlin.math.round(x / gridSize) * gridSize
+            y = kotlin.math.round(y / gridSize) * gridSize
+        }
         val anchorX = when (widget.xAnchor) {
             XAnchor.LEFT -> x
             XAnchor.CENTER -> x + widget.rect.width / 2.0
@@ -357,6 +379,8 @@ class HudEditorScreen(private val parent: Screen? = null) : ClientScreen("Turtle
             if (closeButton.contains(mx, my)) { closeGui(); return true }
             if (doneButton.contains(mx, my)) { closeGui(); return true }
             if (revertButton.contains(mx, my)) { revert(); return true }
+            if (snapButton.contains(mx, my)) { snapToGrid = !snapToGrid; feedback = if (snapToGrid) "Snapping to ${gridSize}px grid." else "Snapping off."; return true }
+            if (gridButton.contains(mx, my)) { gridSize = when (gridSize) { 2 -> 4; 4 -> 8; 8 -> 16; else -> 2 }; return true }
             if (hideButton.contains(mx, my)) { sidebarHidden = !sidebarHidden; layout(); return true }
             if (!sidebarHidden) {
                 if (searchBox.contains(mx, my)) { searchFocused = true; search.end(); return true }

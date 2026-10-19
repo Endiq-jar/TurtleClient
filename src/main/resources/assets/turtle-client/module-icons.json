@@ -312,6 +312,96 @@
       "key": "adaptive-vsync",
       "label": "Adaptive VSync",
       "texture": "textures/gui/modules/adaptive-vsync.png"
+    },
+    {
+      "class": "DayCounterModule",
+      "key": "day-counter",
+      "label": "Day Counter",
+      "texture": "textures/gui/modules/day-counter.png"
+    },
+    {
+      "class": "HealthDisplayModule",
+      "key": "health-display",
+      "label": "Health Display",
+      "texture": "textures/gui/modules/health-display.png"
+    },
+    {
+      "class": "ToolWarningModule",
+      "key": "tool-warning",
+      "label": "Tool Warning",
+      "texture": "textures/gui/modules/tool-warning.png"
+    },
+    {
+      "class": "WingsModule",
+      "key": "wings",
+      "label": "Wings",
+      "texture": "textures/gui/modules/wings.png"
+    },
+    {
+      "class": "BannersModule",
+      "key": "banners",
+      "label": "Banners",
+      "texture": "textures/gui/modules/banners.png"
+    },
+    {
+      "class": "EmotesModule",
+      "key": "emotes",
+      "label": "Emotes",
+      "texture": "textures/gui/modules/emotes.png"
+    },
+    {
+      "class": "HatsModule",
+      "key": "hats",
+      "label": "Hats",
+      "texture": "textures/gui/modules/hats.png"
+    },
+    {
+      "class": "GlassesModule",
+      "key": "glasses",
+      "label": "Glasses",
+      "texture": "textures/gui/modules/glasses.png"
+    },
+    {
+      "class": "MasksModule",
+      "key": "masks",
+      "label": "Masks",
+      "texture": "textures/gui/modules/masks.png"
+    },
+    {
+      "class": "ShoesModule",
+      "key": "shoes",
+      "label": "Shoes",
+      "texture": "textures/gui/modules/shoes.png"
+    },
+    {
+      "class": "ParticlesModule",
+      "key": "particles",
+      "label": "Particles",
+      "texture": "textures/gui/modules/particles.png"
+    },
+    {
+      "class": "CharactersModule",
+      "key": "characters",
+      "label": "Characters",
+      "texture": "textures/gui/modules/characters.png"
+    },
+    {
+      "class": "BestPingJoinerModule",
+      "key": "best-ping-joiner",
+      "label": "Best Ping Joiner",
+      "texture": "textures/gui/modules/best-ping-joiner.png"
+    },
+    {
+      "class": "UiSwitchModule",
+      "key": "ui-switch",
+      "label": "UI Switch",
+      "texture": "textures/gui/modules/ui-switch.png"
+    },
+    {
+      "class": "HeatSaverModule",
+      "key": "heat-saver",
+      "label": "Heat Saver",
+      "texture": "textures/gui/modules/heat-saver.png"
     }
   ]
 }

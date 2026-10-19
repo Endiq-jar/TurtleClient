@@ -21,7 +21,7 @@ object ModuleManager {
         register(PingModule()); register(PotionStatusModule()); register(ServerAddressModule())
         register(ReachDisplayModule()); register(SpeedHudModule()); register(MemoryHudModule())
         register(ClockHudModule()); register(DirectionHudModule()); register(ToggleSprintModule())
-        register(NetGraphModule())
+        register(NetGraphModule()); register(DayCounterModule()); register(HealthDisplayModule())
         // PvP
         register(HitColorModule()); register(PvpInfoModule()); register(TeamCirclesModule())
         register(ComboCounterModule())
@@ -31,19 +31,23 @@ object ModuleManager {
         register(AnimationsModule()); register(MotionBlurModule())
         register(NoWeatherModule()); register(TimeChangerModule()); register(ZoomModule())
         register(FovChangerModule()); register(FullBrightModule()); register(CullingModule())
+        register(WingsModule()); register(BannersModule()); register(EmotesModule())
+        register(HatsModule()); register(GlassesModule()); register(MasksModule())
+        register(ShoesModule()); register(ParticlesModule()); register(CharactersModule())
         // Utility
         register(AutoTextModule()); register(CameraModule()); register(ChatModule())
         register(NickHiderModule()); register(PopupEventsModule())
         register(TimersModule()); register(WaypointsModule()); register(TeamViewModule())
+        register(ToolWarningModule()); register(BestPingJoinerModule()); register(UiSwitchModule())
         // Hypixel
         register(HypixelAddonsModule()); register(SkyblockAddonsModule())
         register(TabStatModule()); register(UhcOverlayModule())
         // Performance
-        register(DynamicRenderDistanceModule()); register(AdaptiveVsyncModule())
+        register(DynamicRenderDistanceModule()); register(AdaptiveVsyncModule()); register(HeatSaverModule())
 
         modules.filter { it.name in listOf("Auto Hide HUD", "Camera", "UHC Overlay",
             "Net Graph", "Combo Counter", "FOV Changer", "Full Bright", "Team View",
-            "Dynamic Render Distance", "Adaptive VSync") }
+            "Dynamic Render Distance", "Adaptive VSync", "Day Counter", "Health Display", "Tool Warning") }
             .forEach { it.isNew = true }
     }
 

@@ -42,10 +42,10 @@ class ModSettingsGui(private val mod: Module, private val parent: Screen) : Clie
 
     override fun init() {
         scroll.endDrag()
-        panel = centeredPanel(width, height, 420, 414)
+        panel = centeredPanel(width, height, 520, 430)
         closeButton = UiRect(panel.right - 30, panel.y + 9, 22, 22)
-        enableButton = UiRect(panel.x + 10, panel.y + 43, 100, 23)
-        favoriteButton = UiRect(panel.right - 106, panel.y + 43, 96, 23)
+        enableButton = UiRect(panel.right - 76, panel.y + 11, 36, 20)
+        favoriteButton = UiRect(panel.x + 10, panel.y + 43, 96, 23)
         viewport = UiRect(panel.x + 1, panel.y + 88, panel.width - 14, (panel.height - 140).coerceAtLeast(1))
         scrollbar = UiRect(panel.right - 10, viewport.y + 4, 6, (viewport.height - 8).coerceAtLeast(1))
         keyButton = UiRect(panel.x + 60, panel.bottom - 40, panel.width - 130, 23)
@@ -57,13 +57,16 @@ class ModSettingsGui(private val mod: Module, private val parent: Screen) : Clie
     override fun renderGui(ctx: GuiContext, mx: Int, my: Int, delta: Float) {
         super.renderGui(ctx, mx, my, delta)
         Theme.modalBackdrop(ctx, width, height, panel)
-        ctx.drawTexture(Theme.moduleIcon(mod), panel.x + 10, panel.y + 9, 25, 25, Theme.ACCENT)
-        Theme.label(ctx, textRenderer, mod.name, panel.x + 43, panel.y + 10, Theme.TEXT, panel.width - 84)
-        Theme.label(ctx, textRenderer, "${mod.category.displayName.uppercase()}  ·  MODULE SETTINGS", panel.x + 43, panel.y + 25, Theme.SUBTLE, panel.width - 84)
+        Theme.rounded(ctx, UiRect(panel.x + 9, panel.y + 8, 28, 28), if (mod.enabled) Theme.ACTIVE else Theme.CARD, 6)
+        ctx.drawTexture(Theme.moduleIcon(mod), panel.x + 11, panel.y + 10, 25, 25, Theme.ACCENT)
+        Theme.label(ctx, textRenderer, mod.name, panel.x + 43, panel.y + 10, Theme.TEXT, panel.width - 130)
+        Theme.label(ctx, textRenderer, "${mod.category.displayName.uppercase()}  ·  MODULE SETTINGS", panel.x + 43, panel.y + 25, Theme.SUBTLE, panel.width - 130)
         if (closeButton.contains(mx.toDouble(), my.toDouble())) Theme.rounded(ctx, closeButton, Theme.HOVER)
         ctx.drawTexture(Theme.icon("close"), closeButton.x + 4, closeButton.y + 4, 14, 14, Theme.MUTED)
-        Theme.button(ctx, textRenderer, enableButton, if(mod.unavailableReason!=null)"Unavailable" else if (mod.enabled) "Enabled" else "Disabled", enableButton.contains(mx.toDouble(), my.toDouble()), mod.enabled,mod.unavailableReason==null)
-        Theme.button(ctx, textRenderer, favoriteButton, if (mod.favorited) "Favorited" else "Favorite", favoriteButton.contains(mx.toDouble(), my.toDouble()))
+        Theme.label(ctx, textRenderer, if (mod.unavailableReason != null) "Unavailable" else if (mod.enabled) "Enabled" else "Disabled",
+            enableButton.x - 72, enableButton.y + 6, if (mod.enabled) Theme.ACCENT else Theme.SUBTLE, 68)
+        Theme.switch(ctx, enableButton, mod.enabled, mod.unavailableReason == null)
+        Theme.button(ctx, textRenderer, favoriteButton, if (mod.favorited) "Favorited" else "Favorite", favoriteButton.contains(mx.toDouble(), my.toDouble()), mod.favorited)
         Theme.label(ctx, textRenderer, ModulePresentation.note(mod), panel.x + 10, panel.y + 74, Theme.MUTED, panel.width - 20)
         ctx.fill(panel.x + 10, viewport.y, panel.right - 10, viewport.y + 1, Theme.BORDER)
         updateBounds()
@@ -91,7 +94,9 @@ class ModSettingsGui(private val mod: Module, private val parent: Screen) : Clie
 
     private fun drawSetting(ctx: GuiContext, setting: Setting, rect: UiRect, mx: Int, my: Int) {
         val hovered = rect.contains(mx.toDouble(), my.toDouble())
-        if (hovered) Theme.rounded(ctx, rect, Theme.HOVER, 4)
+        // Each setting is its own flat card (05); no textures, two fills.
+        Theme.panel(ctx, UiRect(rect.x - 4, rect.y + 1, rect.width + 8, rect.height - 2),
+            if (hovered) Theme.HOVER else Theme.CARD, Theme.BORDER, 5)
         when (setting) {
             is ActionSetting -> Theme.button(ctx,textRenderer,UiRect(rect.x,rect.y+2,rect.width,24),setting.name,
                 hovered, false, setting.available())
@@ -113,9 +118,7 @@ class ModSettingsGui(private val mod: Module, private val parent: Screen) : Clie
             }
             is BoolSetting -> {
                 Theme.label(ctx, textRenderer, setting.name, rect.x, rect.y + 7, Theme.TEXT, rect.width - 48)
-                val toggle = UiRect(rect.right - 34, rect.y + 3, 34, 17)
-                Theme.rounded(ctx, toggle, if (setting.value) Theme.ACTIVE else Theme.CARD, 8)
-                Theme.rounded(ctx, UiRect(toggle.x + if (setting.value) 19 else 3, toggle.y + 3, 11, 11), if (setting.value) Theme.ACCENT else Theme.SUBTLE, 5)
+                Theme.switch(ctx, UiRect(rect.right - 34, rect.y + 3, 34, 17), setting.value)
             }
             is DropdownSetting -> {
                 Theme.label(ctx, textRenderer, setting.name, rect.x, rect.y + 2, Theme.TEXT, rect.width)
