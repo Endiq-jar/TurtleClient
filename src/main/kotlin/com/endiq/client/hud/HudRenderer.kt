@@ -419,6 +419,9 @@ object HudRenderer {
             }
         }
 
+        // Custom crosshair: replaces the vanilla crosshair hidden by CrosshairMixin.
+        CrosshairRenderer.draw(ctx)
+
         // Team View
         mod<TeamViewModule>()?.let {
             if (it.enabled && player != null) {
