@@ -188,6 +188,12 @@ val LivingEntity.statusEffects get() = activeEffects
 val PlayerEntity.hungerManager get() = foodData
 fun PlayerEntity.getAttackCooldownProgress(delta: Float) = getAttackStrengthScale(delta)
 val ItemStack.damage: Int get() = damageValue
+val ItemStack.name get() = hoverName
+val LivingEntity.mainHandStack get() = mainHandItem
+val LivingEntity.offHandStack get() = offhandItem
+// 26.x replaced level day time with per-world clocks; the overworld clock is
+// what day counters and vanilla /time daytime use.
+val ClientWorld.timeOfDay: Long get() = overworldClockTime
 *///?}
 
 fun playerName(): String =
